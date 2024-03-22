@@ -1,0 +1,81 @@
+# Changing windows focus
+
+# moving arrows with FN and vim motion keys
+fn - j: skhd -k "down"
+fn - k: skhd -k "up"
+fn - h: skhd -k "left"
+fn - l: skhd -k "right"
+
+# Change layout style
+alt - d : yabai -m space --layout bsp
+alt - f : yabai -m window --toggle split; yabai -m space --balance;
+
+# Change window focus within space
+alt - j : /opt/homebrew/bin/yabai -m window --focus south || /opt/homebrew/bin/yabai -m display --focus south;
+alt - k : /opt/homebrew/bin/yabai -m window --focus north || /opt/homebrew/bin/yabai -m display --focus north;
+alt - h : /opt/homebrew/bin/yabai -m window --focus west  || /opt/homebrew/bin/yabai -m display --focus west;
+alt - l : /opt/homebrew/bin/yabai -m window --focus east || /opt/homebrew/bin/yabai -m display --focus east; 
+
+# change focus between external dispalys (left and right)
+alt - s: yabai -m display --focus prev
+alt - g: yabai -m display --focus next
+
+# modify the layout of the windows
+
+# rotate layout clockwise
+shift + alt - r : yabai -m space --rotate 270
+# flip along y-axis
+shift + alt - y : yabai -m space --mirror y-axis
+# flip along x-axis
+shift + alt - x : yabai -m space --mirror x-axis
+# toggle window float
+shift + alt - t : yabai -m window --toggle float --grid 4:4:1:1:2:2
+
+# modify the size of the windows
+
+# maximize a window
+shift + alt - m : yabai -m window --toggle zoom-fullscreen
+# balance out tree of windows (resize to occupy same area)
+shift + alt - e : yabai -m space --balance
+
+# swap windows
+shift + alt - j : yabai -m window --swap south
+shift + alt - k : yabai -m window --swap north
+shift + alt - h : yabai -m window --swap west
+shift + alt - l : yabai -m window --swap east
+
+# move window and split
+ctrl + alt - j : yabai -m window --warp south
+ctrl + alt - k : yabai -m window --warp north
+ctrl + alt - h : yabai -m window --warp west
+ctrl + alt - l : yabai -m window --warp east
+
+# move window to display left and right
+shift + alt - s : yabai -m window --display prev; yabai -m display --focus prev;
+shift + alt - g : yabai -m window --display next; yabai -m display --focus next;
+
+#move window to prev and next space
+shift + alt - p : yabai -m window --space prev;
+shift + alt - n : yabai -m window --space next;
+
+# move window to space #
+shift + alt - 1 : yabai -m window --space 1;
+shift + alt - 2 : yabai -m window --space 2;
+shift + alt - 3 : yabai -m window --space 3;
+shift + alt - 4 : yabai -m window --space 4;
+shift + alt - 5 : yabai -m window --space 5;
+shift + alt - 6 : yabai -m window --space 6;
+shift + alt - 7 : yabai -m window --space 7;
+shift + alt - 8 : yabai -m window --space 8;
+shift + alt - 9 : yabai -m window --space 9;
+
+# stop/start/restart yabai
+ctrl + alt - q : yabai --stop-service
+ctrl + alt - s : yabai --start-service
+ctrl + alt - r : yabai --restart-service
+
+# resize windows
+shift + ctrl + alt - h : yabai -m window --resize right:-20:0 2> /dev/null || yabai -m window --resize left:-20:0 2> /dev/null
+shift + ctrl + alt - j : yabai -m window --resize bottom:0:20 2> /dev/null || yabai -m window --resize top:0:20 2> /dev/null
+shift + ctrl + alt - k : yabai -m window --resize bottom:0:-20 2> /dev/null || yabai -m window --resize top:0:-20 2> /dev/null
+shift + ctrl + alt - l : yabai -m window --resize right:20:0 2> /dev/null || yabai -m window --resize left:20:0 2> /dev/null

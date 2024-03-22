@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../src/add-quick-access-overlay.tsx"],
+  "sourcesContent": ["import { LaunchProps, closeMainWindow, open } from \"@raycast/api\";\n\nexport default async function Command(props: LaunchProps<{ arguments: Arguments.AddQuickAccessOverlay }>) {\n  let url = \"cleanshot://add-quick-access-overlay\";\n\n  url += `?filepath=${encodeURIComponent(props.arguments.filepath)}`;\n\n  await closeMainWindow();\n  open(url);\n}\n"],
+  "mappings": "yaAAA,IAAAA,EAAA,GAAAC,EAAAD,EAAA,aAAAE,IAAA,eAAAC,EAAAH,GAAA,IAAAI,EAAmD,wBAEnD,eAAOF,EAA+BG,EAAoE,CACxG,IAAIC,EAAM,uCAEVA,GAAO,aAAa,mBAAmBD,EAAM,UAAU,QAAQ,IAE/D,QAAM,mBAAgB,KACtB,QAAKC,CAAG,CACV",
+  "names": ["add_quick_access_overlay_exports", "__export", "Command", "__toCommonJS", "import_api", "props", "url"]
+}

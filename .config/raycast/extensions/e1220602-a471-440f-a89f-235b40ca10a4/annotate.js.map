@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../src/annotate.tsx"],
+  "sourcesContent": ["import { LaunchProps, closeMainWindow, open } from \"@raycast/api\";\n\nexport default async function Command(props: LaunchProps<{ arguments: Arguments.Annotate }>) {\n  let url = \"cleanshot://open-annotate\";\n\n  if (props?.arguments?.filepath) {\n    url += `?filepath=${encodeURIComponent(props.arguments.filepath)}`;\n  }\n\n  await closeMainWindow();\n  open(url);\n}\n"],
+  "mappings": "yaAAA,IAAAA,EAAA,GAAAC,EAAAD,EAAA,aAAAE,IAAA,eAAAC,EAAAH,GAAA,IAAAI,EAAmD,wBAEnD,eAAOF,EAA+BG,EAAuD,CAC3F,IAAIC,EAAM,4BAEND,GAAO,WAAW,WACpBC,GAAO,aAAa,mBAAmBD,EAAM,UAAU,QAAQ,KAGjE,QAAM,mBAAgB,KACtB,QAAKC,CAAG,CACV",
+  "names": ["annotate_exports", "__export", "Command", "__toCommonJS", "import_api", "props", "url"]
+}
