@@ -289,7 +289,57 @@ require('lazy').setup({
         topdelete = { text = '‾' },
         changedelete = { text = '~' },
       },
+      signcolumn = true,
+      on_attach = function(buffer)
+        local gs = package.loaded.gitsigns
+
+        local function map(mode, l, r, desc)
+          vim.keymap.set(mode, l, r, { buffer = buffer, desc = desc })
+        end
+
+        -- stylua: ignore start
+        map("n", "]h", gs.next_hunk, "Next Hunk")
+        map("n", "[h", gs.prev_hunk, "Prev Hunk")
+        map({ "n", "v" }, "<leader>ghs", ":Gitsigns stage_hunk<CR>", "Stage Hunk")
+        map({ "n", "v" }, "<leader>ghr", ":Gitsigns reset_hunk<CR>", "Reset Hunk")
+        map("n", "<leader>ghS", gs.stage_buffer, "Stage Buffer")
+        map("n", "<leader>ghu", gs.undo_stage_hunk, "Undo Stage Hunk")
+        map("n", "<leader>ghR", gs.reset_buffer, "Reset Buffer")
+        map("n", "<leader>ghp", gs.preview_hunk_inline, "Preview Hunk Inline")
+        map("n", "<leader>ghb", function() gs.blame_line({ full = true }) end, "Blame Line")
+        map("n", "<leader>ghd", gs.diffthis, "Diff This")
+        map("n", "<leader>ghD", function() gs.diffthis("~") end, "Diff This ~")
+        map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "GitSigns Select Hunk")
+      end,
     },
+  },
+
+  {
+    'NeogitOrg/neogit',
+    dependencies = {
+      'nvim-lua/plenary.nvim', -- required
+      'sindrets/diffview.nvim', -- optional - Diff integration
+
+      -- Only one of these is needed, not both.
+      'nvim-telescope/telescope.nvim', -- optional
+      'ibhagwan/fzf-lua', -- optional
+    },
+    opts = {
+      telescope_sorter = function()
+        return require('telescope').extensions.fzf.native_fzf_sorter()
+      end,
+    },
+    config = function()
+      require('neogit').setup {
+        integrations = {
+          diffview = true,
+        },
+      }
+
+      vim.keymap.set('n', '<leader>gg', function()
+        require('neogit').open()
+      end, { desc = '[G]it [G]raph' })
+    end,
   },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
@@ -507,6 +557,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
+      vim.keymap.set('n', '<leader>sG', builtin.git_status, { desc = '[S]earch [G]it Changed Files' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
@@ -890,6 +941,9 @@ require('lazy').setup({
           { name = 'path' },
           { name = 'copilot' },
         },
+        experimental = {
+          ghost_text = true,
+        },
       }
     end,
   },
@@ -1052,12 +1106,12 @@ require('lazy').setup({
     event = 'VimEnter',
     opts = function()
       local logo = [[
-          ██████╗       ███╗   ██╗██╗   ██╗██╗███╗   ███╗
-         ██╔════╝       ████╗  ██║██║   ██║██║████╗ ████║
-         ██║  ███╗█████╗██╔██╗ ██║██║   ██║██║██╔████╔██║
-         ██║   ██║╚════╝██║╚██╗██║╚██╗ ██╔╝██║██║╚██╔╝██║
-         ╚██████╔╝      ██║ ╚████║ ╚████╔╝ ██║██║ ╚═╝ ██║
-          ╚═════╝       ╚═╝  ╚═══╝  ╚═══╝  ╚═╝╚═╝     ╚═╝
+      ██████╗       ███╗   ██╗██╗   ██╗██╗███╗   ███╗
+     ██╔════╝       ████╗  ██║██║   ██║██║████╗ ████║
+     ██║  ███╗█████╗██╔██╗ ██║██║   ██║██║██╔████╔██║
+     ██║   ██║╚════╝██║╚██╗██║╚██╗ ██╔╝██║██║╚██╔╝██║
+     ╚██████╔╝      ██║ ╚████║ ╚████╔╝ ██║██║ ╚═╝ ██║
+      ╚═════╝       ╚═╝  ╚═══╝  ╚═══╝  ╚═╝╚═╝     ╚═╝
     ]]
 
       logo = string.rep('\n', 8) .. logo .. '\n\n'
