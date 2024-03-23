@@ -149,6 +149,8 @@ export PATH="/Users/danielmac/Library/Python/3.9/bin:$PATH"
 # Herd injected PHP 8.3 configuration.
 export HERD_PHP_83_INI_SCAN_DIR="/Users/danielmac/Library/Application Support/Herd/config/php/83/"
 
+export PATH="$HOME/.dotfiles/bin:$PATH"
+
 alias nv="nvim"
 alias vim="nvim"
 eval $(thefuck --alias)
