@@ -143,7 +143,7 @@ esac
 # pnpm end
 
 # python
-export PATH="/Users/danielmac/Library/Python/3.9/bin:$PATH"
+export PATH="$(brew --prefix)/opt/python@3.12/libexec/bin:$PATH"
 # python end
 
 # Herd injected PHP 8.3 configuration.
@@ -154,3 +154,4 @@ export PATH="$HOME/.dotfiles/bin:$PATH"
 alias nv="nvim"
 alias vim="nvim"
 eval $(thefuck --alias)
+eval "$(gh copilot alias -- zsh)"
