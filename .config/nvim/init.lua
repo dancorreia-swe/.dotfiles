@@ -124,6 +124,9 @@ vim.g.maplocalleader = ' '
 -- Set to true if you have a Nerd Font installed
 vim.g.have_nerd_font = true
 
+-- Disables netrw
+vim.g.loaded_netrw = 1
+
 -- [[ Setting options ]]
 -- See `:help vim.opt`
 -- NOTE: You can change these options as you wish!
@@ -375,66 +378,6 @@ require('lazy').setup({
     end,
   },
 
-  {
-    'ThePrimeagen/harpoon',
-    branch = 'harpoon2',
-    dependencies = { 'nvim-lua/plenary.nvim' },
-    config = function()
-      local harpoon = require 'harpoon'
-
-      harpoon:setup()
-
-      vim.keymap.set('n', '<leader>a', function()
-        harpoon:list():append()
-      end, { desc = 'Mark [A] file' })
-
-      --[[ vim.keymap.set('n', '<C-h>', function()
-        harpoon:list():select(1)
-      end)
-      vim.keymap.set('n', '<C-t>', function()
-        harpoon:list():select(2)
-      end)
-      vim.keymap.set('n', '<C-n>', function()
-        harpoon:list():select(3)
-      end)
-      vim.keymap.set('n', '<C-s>', function()
-        harpoon:list():select(4)
-      end)
-
-      -- Toggle previous & next buffers stored within Harpoon list
-      vim.keymap.set('n', '<C-S-P>', function()
-        harpoon:list():prev()
-      end)
-      vim.keymap.set('n', '<C-S-N>', function()
-        harpoon:list():next()
-      end) ]]
-
-      -- basic telescope configuration
-      local conf = require('telescope.config').values
-      local function toggle_telescope(harpoon_files)
-        local file_paths = {}
-        for _, item in ipairs(harpoon_files.items) do
-          table.insert(file_paths, item.value)
-        end
-
-        require('telescope.pickers')
-          .new({}, {
-            prompt_title = 'Harpoon',
-            finder = require('telescope.finders').new_table {
-              results = file_paths,
-            },
-            previewer = conf.file_previewer {},
-            sorter = conf.generic_sorter {},
-          })
-          :find()
-      end
-
-      vim.keymap.set('n', '<leader>se', function()
-        toggle_telescope(harpoon:list())
-      end, { desc = 'Open harpoon window' })
-    end,
-  },
-
   -- NOTE: Plugins can specify dependencies.
   --
   -- The dependencies are proper plugin specifications as well - anything
@@ -502,19 +445,23 @@ require('lazy').setup({
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
         --
-        -- defaults = {
-        --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
+        defaults = {
+          -- mappings = {
+          --   i = { ['<c-enter>'] = 'to_fuzzy_refine' },
+          -- },
+          -- file_ignore_patterns = { '.git/', 'vendor/', 'node_modules/', 'dist/', '.github/', '.cache', '/public/build/' },
+        },
+        -- pickers = {
+        --   find_files = {
+        --     find_command = { 'rg', '--files', '--hidden', '--glob', '!**/.git/*' },
         --   },
         -- },
-        -- pickers = {}
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
           },
           file_browser = {
             -- disables netrw and use telescope-file-browser in its place
-            hijack_netrw = true,
             initial_mode = 'normal',
           },
         },
@@ -555,6 +502,9 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
       vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>sF', function()
+        builtin.find_files { no_ignore = true, hidden = true }
+      end, { desc = '[S]earch all [F]iles' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
@@ -594,6 +544,19 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
       end, { desc = '[S]earch [N]eovim files' })
+
+      local ts_group = vim.api.nvim_create_augroup('TelescopeOnEnter', { clear = true })
+      vim.api.nvim_create_autocmd({ 'VimEnter' }, {
+        callback = function()
+          local first_arg = vim.v.argv[3]
+          if first_arg and vim.fn.isdirectory(first_arg) == 1 then
+            -- Vim creates a buffer for folder. Close it.
+            vim.cmd ':bd 1'
+            require('telescope.builtin').find_files { search_dirs = { first_arg } }
+          end
+        end,
+        group = ts_group,
+      })
     end,
   },
 
@@ -819,14 +782,6 @@ require('lazy').setup({
   },
 
   {
-    'folke/persistence.nvim',
-    event = 'BufReadPre', -- this will only start session saving when an actual file was opened
-    opts = {
-      -- add any custom options here
-    },
-  },
-
-  {
     'zbirenbaum/copilot.lua',
     config = function()
       require('copilot').setup {}
@@ -863,6 +818,10 @@ require('lazy').setup({
           {
             'rafamadriz/friendly-snippets',
             config = function()
+              local luasnip = require 'luasnip'
+              luasnip.filetype_extend('typescriptreact', { 'javascript' })
+              luasnip.filetype_extend('vue', { 'vue ' })
+              luasnip.filetype_extend('vue', { 'javascript ' })
               require('luasnip.loaders.from_vscode').lazy_load()
             end,
           },
@@ -947,14 +906,6 @@ require('lazy').setup({
         },
       }
     end,
-  },
-
-  {
-    'andymass/vim-matchup',
-    confg = function()
-      vim.g.matchup_matchparen_offscreen = { method = 'popup' }
-    end,
-    opts = {},
   },
 
   { 'catppuccin/nvim', name = 'catppuccin', priority = 1000, opts = {
@@ -1097,87 +1048,6 @@ require('lazy').setup({
     },
   },
 
-  {
-    'm4xshen/autoclose.nvim',
-    opts = {},
-  },
-
-  {
-    'nvimdev/dashboard-nvim',
-    event = 'VimEnter',
-    opts = function()
-      local logo = [[
-      ██████╗       ███╗   ██╗██╗   ██╗██╗███╗   ███╗
-     ██╔════╝       ████╗  ██║██║   ██║██║████╗ ████║
-     ██║  ███╗█████╗██╔██╗ ██║██║   ██║██║██╔████╔██║
-     ██║   ██║╚════╝██║╚██╗██║╚██╗ ██╔╝██║██║╚██╔╝██║
-     ╚██████╔╝      ██║ ╚████║ ╚████╔╝ ██║██║ ╚═╝ ██║
-      ╚═════╝       ╚═╝  ╚═══╝  ╚═══╝  ╚═╝╚═╝     ╚═╝
-    ]]
-
-      logo = string.rep('\n', 8) .. logo .. '\n\n'
-
-      local opts = {
-        theme = 'doom',
-        hide = {
-          -- this is taken care of by lualine
-          -- enabling this messes up the actual laststatus setting after loading a file
-          statusline = false,
-        },
-        config = {
-          header = vim.split(logo, '\n'),
-        -- stylua: ignore
-        center = {
-          { action = "Telescope find_files",                                    desc = " Find file",       icon = " ", key = "f" },
-          { action = "ene | startinsert",                                        desc = " New file",        icon = " ", key = "n" },
-          { action = "Telescope oldfiles",                                       desc = " Recent files",    icon = " ", key = "r" },
-          { action = "Telescope live_grep",                                      desc = " Find text",       icon = " ", key = "g" },
-          { action = "require('telescope.builtin').find_files { cwd = vim.fn.stdpath 'config' }", desc = " Config",          icon = " ", key = "c" },
-          { action = 'lua require("persistence").load()',                        desc = " Restore Session", icon = " ", key = "s" },
-          { action = "Lazy",                                                     desc = " Lazy",            icon = "󰒲 ", key = "l" },
-          { action = "qa",                                                       desc = " Quit",            icon = " ", key = "q" },
-        },
-          footer = function()
-            local stats = require('lazy').stats()
-            local ms = (math.floor(stats.startuptime * 100 + 0.5) / 100)
-            return { '⚡ Neovim loaded ' .. stats.loaded .. '/' .. stats.count .. ' plugins in ' .. ms .. 'ms' }
-          end,
-        },
-      }
-
-      for _, button in ipairs(opts.config.center) do
-        button.desc = button.desc .. string.rep(' ', 43 - #button.desc)
-        button.key_format = '  %s'
-      end
-
-      -- close Lazy and re-open when the dashboard is ready
-      if vim.o.filetype == 'lazy' then
-        vim.cmd.close()
-        vim.api.nvim_create_autocmd('User', {
-          pattern = 'DashboardLoaded',
-          callback = function()
-            require('lazy').show()
-          end,
-        })
-      end
-
-      return opts
-    end,
-  },
-
-  {
-    'mrjones2014/smart-splits.nvim',
-    config = function()
-      local smart_splits = require 'smart-splits'
-
-      vim.keymap.set('n', '<C-h>', smart_splits.move_cursor_left)
-      vim.keymap.set('n', '<C-j>', smart_splits.move_cursor_down)
-      vim.keymap.set('n', '<C-k>', smart_splits.move_cursor_up)
-      vim.keymap.set('n', '<C-l>', smart_splits.move_cursor_right)
-      vim.keymap.set('n', '<C-\\>', smart_splits.move_cursor_previous)
-    end,
-  },
-
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
@@ -1196,7 +1066,7 @@ require('lazy').setup({
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   --    For additional information, see `:help lazy.nvim-lazy.nvim-structuring-your-plugins`
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the

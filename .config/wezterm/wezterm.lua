@@ -20,10 +20,11 @@ config.window_padding = {
 }
 config.use_fancy_tab_bar = false
 
-local SOLID_LEFT_ARROW = wezterm.nerdfonts.pl_right_hard_divider
 local SOLID_RIGHT_ARROW = wezterm.nerdfonts.pl_left_hard_divider
-local SOLID_SQUARE = wezterm.nerdfonts.fa_square
-local HALF_CIRLCE_RIGHT = wezterm.nerdfonts.ple_right_half_circle_thick
+-- local SOLID_LEFT_ARROW = wezterm.nerdfonts.pl_right_hard_divider
+-- local SOLID_SQUARE = wezterm.nerdfonts.fa_square
+-- local HALF_CIRLCE_RIGHT = wezterm.nerdfonts.ple_right_half_circle_thick
+
 -- This function returns the suggested title for a tab.
 -- It prefers the title that was set via `tab:set_title()`
 -- or `wezterm cli set-tab-title`, but falls back to the
@@ -40,7 +41,7 @@ function tab_title(tab_info)
 end
 
 wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_width)
-	local edge_background = "#0b0022"
+	local edge_background = "rgba(0, 0, 0, 0.2)"
 	local background = "#1E1E24"
 	local foreground = "#808080"
 
@@ -272,6 +273,7 @@ local function split_nav(resize_or_move, key)
 		end),
 	}
 end
+
 config.keys = {
 	{
 		mods = "LEADER",
@@ -346,8 +348,5 @@ config.keys = {
 		}),
 	},
 }
--- config.keys = {
--- 	-- move between split panes
--- }
 
 return config
