@@ -17,8 +17,8 @@ alt - h : /opt/homebrew/bin/yabai -m window --focus west  || /opt/homebrew/bin/y
 alt - l : /opt/homebrew/bin/yabai -m window --focus east || /opt/homebrew/bin/yabai -m display --focus east; 
 
 # change focus between external dispalys (left and right)
-alt - s: yabai -m display --focus prev
-alt - g: yabai -m display --focus next
+alt - s: yabai -m display --focus west || yabai -m display --focus south
+alt - g: yabai -m display --focus east || yabai -m display --focus north
 
 # modify the layout of the windows
 
@@ -51,8 +51,8 @@ ctrl + alt - h : yabai -m window --warp west
 ctrl + alt - l : yabai -m window --warp east
 
 # move window to display left and right
-shift + alt - s : yabai -m window --display prev; yabai -m display --focus prev;
-shift + alt - g : yabai -m window --display next; yabai -m display --focus next;
+shift + alt - s : yabai -m window --display west || yabai -m window --display south; yabai -m display --focus west || yabai -m display --focus south;
+shift + alt - g : yabai -m window --display east || yabai -m window --display north; yabai -m display --focus east || yabai -m display --focus north;
 
 #move window to prev and next space
 shift + alt - p : yabai -m window --space prev;
