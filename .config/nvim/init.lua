@@ -759,6 +759,12 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        javascript = { { 'biome', 'prettierd', 'prettier' } },
+        typescriptreact = { { 'biome', 'prettierd', 'prettier' } },
+        javascriptreact = { { 'biome', 'prettierd', 'prettier' } },
+        json = { { 'biome', 'prettierd', 'prettier' } },
+        html = { { 'biome', 'prettierd', 'prettier' } },
+        css = { { 'biome', 'prettierd', 'prettier' } },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -822,11 +828,16 @@ require('lazy').setup({
       --  into multiple repos for maintenance purposes.
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
+      'onsails/lspkind-nvim',
     },
     config = function()
       -- See `:help cmp`
       local cmp = require 'cmp'
       local luasnip = require 'luasnip'
+      local lspkind = require 'lspkind'
+      local types = require 'cmp.types'
+      local str = require 'cmp.utils.str'
+
       luasnip.config.setup {}
 
       cmp.setup {
@@ -854,7 +865,7 @@ require('lazy').setup({
           -- Accept ([y]es) the completion.
           --  This will auto-import if your LSP supports it.
           --  This will expand snippets if the LSP sent a snippet.
-          ['<Enter>'] = cmp.mapping.confirm { select = true },
+          ['<CR>'] = cmp.mapping.confirm { select = true },
 
           -- Manually trigger a completion from nvim-cmp.
           --  Generally you don't need this, because nvim-cmp will display
@@ -892,6 +903,45 @@ require('lazy').setup({
         experimental = {
           ghost_text = true,
         },
+        formatting = {
+          expandable_indicator = true,
+          fields = {
+            cmp.ItemField.Abbr,
+            cmp.ItemField.Kind,
+            cmp.ItemField.Menu,
+            cmp.ItemField.Info,
+          },
+          format = lspkind.cmp_format {
+            mode = 'symbol_text',
+            maxwidth = 60,
+            before = function(entry, vim_item)
+              vim_item.menu = ({
+                copilot = '',
+                nvim_lsp = 'ﲳ',
+                nvim_lua = '',
+                treesitter = '',
+                path = 'ﱮ',
+                buffer = '﬘',
+                zsh = '',
+                vsnip = '',
+                spell = '暈',
+                emoji = 'ﲃ',
+              })[entry.source.name]
+
+              local word = entry:get_insert_text()
+              if entry.completion_item.insertTextFormat == types.lsp.InsertTextFormat.Snippet then
+                word = vim.lsp.util.parse_snippet(word)
+              end
+              word = str.oneline(word)
+              if entry.completion_item.insertTextFormat == types.lsp.InsertTextFormat.Snippet and string.sub(vim_item.abbr, -1, -1) == '~' then
+                word = word .. '~'
+              end
+              vim_item.abbr = word
+
+              return vim_item
+            end,
+          },
+        },
       }
     end,
   },
@@ -905,8 +955,10 @@ require('lazy').setup({
     'luisiacc/gruvbox-baby',
     priority = 1000,
     config = function()
-      -- Enable transparent mode
+      vim.g.gruvbox_baby_background_color = 'dark'
       vim.g.gruvbox_baby_transparent_mode = 1
+      vim.g.gruvbox_baby_function_style = 'NONE'
+      vim.g.gruvbox_baby_keyword_style = 'bold'
     end,
     init = function()
       -- Load the colorscheme here.
@@ -996,11 +1048,16 @@ require('lazy').setup({
       }
     end,
   },
+  {
+    'windwp/nvim-ts-autotag',
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    opts = {},
+  },
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     opts = {
-      ensure_installed = { 'bash', 'c', 'html', 'lua', 'markdown', 'vim', 'vimdoc', 'elixir' },
+      ensure_installed = { 'typescript', 'tsx', 'bash', 'c', 'html', 'lua', 'markdown', 'vim', 'vimdoc', 'elixir', 'javascript', 'json' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -1014,6 +1071,9 @@ require('lazy').setup({
       endwise = {
         enable = true,
       },
+      autotag = {
+        enable = true,
+      },
     },
     config = function(_, opts)
       -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
@@ -1024,7 +1084,6 @@ require('lazy').setup({
       -- with nvim-treesitter. You should go explore a few and see what interests you:
       --
       --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
-      --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
       --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
     end,
   },
