@@ -191,7 +191,6 @@ vim.opt.scrolloff = 10
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
-
 vim.keymap.set('i', 'kj', '<Esc>')
 
 -- Set highlight on search, but clear on pressing <Esc> in normal mode
@@ -207,7 +206,6 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
---
 -- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
 -- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
@@ -238,6 +236,24 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
   callback = function()
     vim.highlight.on_yank()
+  end,
+})
+
+-- Auto save files when focus is lost
+vim.api.nvim_create_autocmd('FocusLost', {
+  desc = 'Auto save files when focus is lost',
+  group = vim.api.nvim_create_augroup('kickstart-autosave', { clear = true }),
+  callback = function()
+    vim.cmd 'silent! wa'
+  end,
+})
+
+-- Auto save files when buffer is hidden
+vim.api.nvim_create_autocmd('BufLeave', {
+  desc = 'Auto save files when buffer is hidden',
+  group = vim.api.nvim_create_augroup('kickstart-autosave', { clear = false }),
+  callback = function()
+    vim.cmd 'silent! wa'
   end,
 })
 
@@ -315,34 +331,6 @@ require('lazy').setup({
         map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "GitSigns Select Hunk")
       end,
     },
-  },
-
-  {
-    'NeogitOrg/neogit',
-    dependencies = {
-      'nvim-lua/plenary.nvim', -- required
-      'sindrets/diffview.nvim', -- optional - Diff integration
-
-      -- Only one of these is needed, not both.
-      'nvim-telescope/telescope.nvim', -- optional
-      'ibhagwan/fzf-lua', -- optional
-    },
-    opts = {
-      telescope_sorter = function()
-        return require('telescope').extensions.fzf.native_fzf_sorter()
-      end,
-    },
-    config = function()
-      require('neogit').setup {
-        integrations = {
-          diffview = true,
-        },
-      }
-
-      vim.keymap.set('n', '<leader>hG', function()
-        require('neogit').open()
-      end, { desc = '[G]it Gui' })
-    end,
   },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
