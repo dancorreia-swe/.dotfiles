@@ -8,10 +8,10 @@ function module.apply_to_config(config)
 	config.enable_tab_bar = true
 	config.tab_bar_at_bottom = true
 	config.window_padding = {
-		left = 16,
-		right = 16,
-		top = 16,
-		bottom = 16,
+		left = 8,
+		right = 8,
+		top = 8,
+		bottom = 8,
 	}
 	config.use_fancy_tab_bar = false
 

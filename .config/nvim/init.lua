@@ -946,17 +946,11 @@ require('lazy').setup({
     end,
   },
 
-  { 'catppuccin/nvim', name = 'catppuccin', priority = 1000, opts = {
-    flavour = 'mocha',
-    transparent_background = true,
-  } },
-
   {
     'luisiacc/gruvbox-baby',
-    priority = 1000,
     config = function()
       vim.g.gruvbox_baby_background_color = 'dark'
-      vim.g.gruvbox_baby_transparent_mode = 1
+      vim.g.gruvbox_baby_transparent_mode = 0
       vim.g.gruvbox_baby_function_style = 'NONE'
       vim.g.gruvbox_baby_keyword_style = 'bold'
     end,
@@ -964,7 +958,71 @@ require('lazy').setup({
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'gruvbox-baby'
+      -- vim.cmd.colorscheme 'gruvbox-baby'
+      --
+      -- -- You can configure highlights by doing something like:
+      -- vim.cmd.hi 'Comment gui=none'
+    end,
+  },
+  {
+    'rebelot/kanagawa.nvim',
+    priority = 2000,
+    lazy = false,
+    config = function()
+      require('kanagawa').setup {
+        compile = false, -- enable compiling the colorscheme
+        undercurl = true, -- enable undercurls
+        commentStyle = { italic = true },
+        functionStyle = { bold = true, italic = false },
+        keywordStyle = { italic = true, bold = false },
+        statementStyle = { bold = true },
+        typeStyle = {},
+        transparent = true, -- do not set background color
+        dimInactive = false, -- dim inactive window `:h hl-NormalNC`
+        terminalColors = true, -- define vim.g.terminal_color_{0,17}
+        colors = { -- add/modify theme and palette colors
+          palette = {},
+          theme = {
+            all = {
+              ui = {
+                bg_gutter = 'none',
+              },
+              syn = {
+                paramter = 'yellow',
+              },
+            },
+          },
+        },
+        overrides = function(colors)
+          local theme = colors.theme
+          return {
+            TelescopeTitle = { fg = theme.ui.special, bold = true },
+            TelescopePromptNormal = { bg = theme.ui.bg_p1 },
+            TelescopePromptBorder = { fg = theme.ui.bg_p1, bg = theme.ui.bg_p1 },
+            TelescopeResultsNormal = { fg = theme.ui.fg_dim, bg = theme.ui.bg_m1 },
+            TelescopeResultsBorder = { fg = theme.ui.bg_m1, bg = theme.ui.bg_m1 },
+            TelescopePreviewNormal = { bg = theme.ui.bg_dim },
+            TelescopePreviewBorder = { bg = theme.ui.bg_dim, fg = theme.ui.bg_dim },
+
+            Pmenu = { fg = theme.ui.shade0, bg = theme.ui.bg_p1 }, -- add `blend = vim.o.pumblend` to enable transparency
+            PmenuSel = { fg = 'NONE', bg = theme.ui.bg_p2 },
+            PmenuSbar = { bg = theme.ui.bg_m1 },
+            PmenuThumb = { bg = theme.ui.bg_p2 },
+            Visual = { bg = theme.ui.bg_p2 },
+          }
+        end,
+        theme = 'dragon', -- Load "wave" theme when 'background' option is not set
+        background = { -- map the value of 'background' option to a theme
+          dark = 'dragon', -- try "dragon" !
+          light = 'wave',
+        },
+      }
+    end,
+    init = function()
+      -- Load the colorscheme here.
+      -- Like many other themes, this one has different styles, and you could load
+      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
+      vim.cmd.colorscheme 'kanagawa'
 
       -- You can configure highlights by doing something like:
       vim.cmd.hi 'Comment gui=none'
@@ -1021,29 +1079,95 @@ require('lazy').setup({
   },
   {
     'nvim-lualine/lualine.nvim',
-    dependencies = { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
+    dependencies = { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font, { 'AndreM222/copilot-lualine' } },
     config = function()
+      local mode_map = {
+        ['n'] = 'NORMAL',
+        ['no'] = 'O-PENDING',
+        ['nov'] = 'O-PENDING',
+        ['noV'] = 'O-PENDING',
+        ['no�'] = 'O-PENDING',
+        ['niI'] = 'NORMAL',
+        ['niR'] = 'NORMAL',
+        ['niV'] = 'NORMAL',
+        ['nt'] = 'NORMAL',
+        ['v'] = 'VISUAL',
+        ['vs'] = 'VISUAL',
+        ['V'] = 'V-LINE',
+        ['Vs'] = 'V-LINE',
+        ['�'] = 'V-BLOCK',
+        ['�s'] = 'V-BLOCK',
+        ['s'] = 'SELECT',
+        ['S'] = 'S-LINE',
+        ['�'] = 'S-BLOCK',
+        ['i'] = 'INSERT',
+        ['ic'] = 'INSERT',
+        ['ix'] = 'INSERT',
+        ['R'] = 'REPLACE',
+        ['Rc'] = 'REPLACE',
+        ['Rx'] = 'REPLACE',
+        ['Rv'] = 'V-REPLACE',
+        ['Rvc'] = 'V-REPLACE',
+        ['Rvx'] = 'V-REPLACE',
+        ['c'] = 'COMMAND',
+        ['cv'] = 'EX',
+        ['ce'] = 'EX',
+        ['r'] = 'REPLACE',
+        ['rm'] = 'MORE',
+        ['r?'] = 'CONFIRM',
+        ['!'] = 'SHELL',
+        ['t'] = 'TERMINAL',
+      }
+
       require('lualine').setup {
         options = {
-          theme = 'gruvbox-baby',
           section_separators = { left = '', right = '' },
-          component_separators = { left = '', right = '' },
+          component_separators = { left = '', right = '' },
         },
         sections = {
-          lualine_a = { 'mode' },
-          lualine_b = { 'branch' },
-          lualine_c = { 'filename' },
-          lualine_x = { 'encoding', 'fileformat', 'filetype' },
-          lualine_y = { 'progress' },
-          lualine_z = { 'location' },
+          lualine_a = {
+            {
+              function()
+                return '  ' .. mode_map[vim.api.nvim_get_mode().mode] or '__'
+              end,
+              separator = { left = '' },
+              right_padding = 2,
+            },
+          },
+          lualine_b = {
+            'filename',
+            'branch',
+            {
+              'diff',
+              symbols = { added = ' ', modified = '󰝤 ', removed = ' ' },
+            },
+          },
+          lualine_c = {
+            '%=',
+          },
+          lualine_x = {
+            'copilot',
+          },
+          lualine_y = {
+            {
+              'diagnostics',
+              sources = { 'nvim_diagnostic' },
+              symbols = { error = ' ', warn = ' ', info = ' ' },
+            },
+            'filetype',
+            'progress',
+          },
+          lualine_z = {
+            { 'location', separator = { right = '' }, left_padding = 2 },
+          },
         },
         inactive_sections = {
-          lualine_a = {},
+          lualine_a = { 'filename' },
           lualine_b = {},
-          lualine_c = { 'filename' },
-          lualine_x = { 'location' },
+          lualine_c = {},
+          lualine_x = {},
           lualine_y = {},
-          lualine_z = {},
+          lualine_z = { 'location' },
         },
       }
     end,
