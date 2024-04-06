@@ -563,6 +563,7 @@ require('lazy').setup({
       -- `neodev` configures Lua LSP for your Neovim config, runtime and plugins
       -- used for completion, annotations and signatures of Neovim apis
       { 'folke/neodev.nvim', opts = {} },
+      { 'folke/neoconf.nvim', opts = {} },
     },
     config = function()
       -- Brief aside: **What is LSP?**
@@ -683,6 +684,7 @@ require('lazy').setup({
       --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
+
       local servers = {
         -- clangd = {},
         -- gopls = {},
@@ -694,13 +696,26 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`tsserver`) will work just fine
-        -- tsserver = {},
-        --
-
+        tsserver = {
+          init_options = {
+            plugins = {
+              {
+                name = '@vue/typescript-plugin',
+                location = '/Users/danielmac/.local/share/nvim/mason/packages/vue-language-server/node_modules/@vue/language-server',
+                languages = { 'vue' },
+              },
+            },
+          },
+          filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
+        },
+        emmet_language_server = {
+          filetypes = { 'html', 'css', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue', 'blade' },
+        },
         lua_ls = {
           -- cmd = {...},
           -- filetypes = { ...},
           -- capabilities = {},
+
           settings = {
             Lua = {
               completion = {
@@ -741,38 +756,6 @@ require('lazy').setup({
         },
       }
     end,
-  },
-
-  { -- Autoformat
-    'stevearc/conform.nvim',
-    opts = {
-      notify_on_error = false,
-      format_on_save = function(bufnr)
-        -- Disable "format_on_save lsp_fallback" for languages that don't
-        -- have a well standardized coding style. You can add additional
-        -- languages here or re-enable it for the disabled ones.
-        local disable_filetypes = { c = true, cpp = true }
-        return {
-          timeout_ms = 500,
-          lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
-        }
-      end,
-      formatters_by_ft = {
-        lua = { 'stylua' },
-        javascript = { { 'biome', 'prettierd', 'prettier' } },
-        typescriptreact = { { 'biome', 'prettierd', 'prettier' } },
-        javascriptreact = { { 'biome', 'prettierd', 'prettier' } },
-        json = { { 'biome', 'prettierd', 'prettier' } },
-        html = { { 'biome', 'prettierd', 'prettier' } },
-        css = { { 'biome', 'prettierd', 'prettier' } },
-        -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
-        -- You can use a sub-list to tell conform to run *until* a formatter
-        -- is found.
-        -- javascript = { { "prettierd", "prettier" } },
-      },
-    },
   },
 
   {
@@ -829,6 +812,15 @@ require('lazy').setup({
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
       'onsails/lspkind-nvim',
+      {
+        'roobert/tailwindcss-colorizer-cmp.nvim',
+        -- optionally, override the default options:
+        config = function()
+          require('tailwindcss-colorizer-cmp').setup {
+            color_square_width = 2,
+          }
+        end,
+      },
     },
     config = function()
       -- See `:help cmp`
@@ -937,6 +929,7 @@ require('lazy').setup({
                 word = word .. '~'
               end
               vim_item.abbr = word
+              vim_item = require('tailwindcss-colorizer-cmp').formatter(entry, vim_item)
 
               return vim_item
             end,
@@ -947,241 +940,21 @@ require('lazy').setup({
   },
 
   {
-    'luisiacc/gruvbox-baby',
-    config = function()
-      vim.g.gruvbox_baby_background_color = 'dark'
-      vim.g.gruvbox_baby_transparent_mode = 0
-      vim.g.gruvbox_baby_function_style = 'NONE'
-      vim.g.gruvbox_baby_keyword_style = 'bold'
-    end,
-    init = function()
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      -- vim.cmd.colorscheme 'gruvbox-baby'
-      --
-      -- -- You can configure highlights by doing something like:
-      -- vim.cmd.hi 'Comment gui=none'
-    end,
-  },
-  {
-    'rebelot/kanagawa.nvim',
-    priority = 2000,
-    lazy = false,
-    config = function()
-      require('kanagawa').setup {
-        compile = false, -- enable compiling the colorscheme
-        undercurl = true, -- enable undercurls
-        commentStyle = { italic = true },
-        functionStyle = { bold = true, italic = false },
-        keywordStyle = { italic = true, bold = false },
-        statementStyle = { bold = true },
-        typeStyle = {},
-        transparent = true, -- do not set background color
-        dimInactive = false, -- dim inactive window `:h hl-NormalNC`
-        terminalColors = true, -- define vim.g.terminal_color_{0,17}
-        colors = { -- add/modify theme and palette colors
-          palette = {},
-          theme = {
-            all = {
-              ui = {
-                bg_gutter = 'none',
-              },
-              syn = {
-                paramter = 'yellow',
-              },
-            },
-          },
-        },
-        overrides = function(colors)
-          local theme = colors.theme
-          return {
-            TelescopeTitle = { fg = theme.ui.special, bold = true },
-            TelescopePromptNormal = { bg = theme.ui.bg_p1 },
-            TelescopePromptBorder = { fg = theme.ui.bg_p1, bg = theme.ui.bg_p1 },
-            TelescopeResultsNormal = { fg = theme.ui.fg_dim, bg = theme.ui.bg_m1 },
-            TelescopeResultsBorder = { fg = theme.ui.bg_m1, bg = theme.ui.bg_m1 },
-            TelescopePreviewNormal = { bg = theme.ui.bg_dim },
-            TelescopePreviewBorder = { bg = theme.ui.bg_dim, fg = theme.ui.bg_dim },
-
-            Pmenu = { fg = theme.ui.shade0, bg = theme.ui.bg_p1 }, -- add `blend = vim.o.pumblend` to enable transparency
-            PmenuSel = { fg = 'NONE', bg = theme.ui.bg_p2 },
-            PmenuSbar = { bg = theme.ui.bg_m1 },
-            PmenuThumb = { bg = theme.ui.bg_p2 },
-            Visual = { bg = theme.ui.bg_p2 },
-          }
-        end,
-        theme = 'dragon', -- Load "wave" theme when 'background' option is not set
-        background = { -- map the value of 'background' option to a theme
-          dark = 'dragon', -- try "dragon" !
-          light = 'wave',
-        },
-      }
-    end,
-    init = function()
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'kanagawa'
-
-      -- You can configure highlights by doing something like:
-      vim.cmd.hi 'Comment gui=none'
-    end,
-  },
-
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is.
-    --
-    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'folke/tokyonight.nvim',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
-  },
-  -- Highlight todo, notes, etc in comments
-  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
-
-  { -- Collection of various small independent plugins/modules
-    'echasnovski/mini.nvim',
-    config = function()
-      -- Better Around/Inside textobjects
-      --
-      -- Examples:
-      --  - va)  - [V]isually select [A]round [)]paren
-      --  - yinq - [Y]ank [I]nside [N]ext [']quote
-      --  - ci'  - [C]hange [I]nside [']quote
-      require('mini.ai').setup { n_lines = 500 }
-
-      -- Add/delete/replace surroundings (brackets, quotes, etc.)
-      --
-      -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
-      -- - sd'   - [S]urround [D]elete [']quotes
-      -- - sr)'  - [S]urround [R]eplace [)] [']
-      require('mini.surround').setup()
-
-      -- Simple and easy statusline.
-      --  You could remove this setup call if you don't like it,
-      --  and try some other statusline plugin
-      -- local statusline = require 'mini.statusline'
-      -- set use_icons to true if you have a Nerd Font
-      -- statusline.setup { use_icons = vim.g.have_nerd_font }
-
-      -- You can configure sections in the statusline by overriding their
-      -- default behavior. For example, here we set the section for
-      -- cursor location to LINE:COLUMN
-      ---@diagnostic disable-next-line: duplicate-set-field
-      -- statusline.section_location = function()
-      --   return '%2l:%-2v'
-      -- end
-
-      -- ... and there is more!
-      --  Check out: https://github.com/echasnovski/mini.nvim
-    end,
-  },
-  {
-    'nvim-lualine/lualine.nvim',
-    dependencies = { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font, { 'AndreM222/copilot-lualine' } },
-    config = function()
-      local mode_map = {
-        ['n'] = 'NORMAL',
-        ['no'] = 'O-PENDING',
-        ['nov'] = 'O-PENDING',
-        ['noV'] = 'O-PENDING',
-        ['no�'] = 'O-PENDING',
-        ['niI'] = 'NORMAL',
-        ['niR'] = 'NORMAL',
-        ['niV'] = 'NORMAL',
-        ['nt'] = 'NORMAL',
-        ['v'] = 'VISUAL',
-        ['vs'] = 'VISUAL',
-        ['V'] = 'V-LINE',
-        ['Vs'] = 'V-LINE',
-        ['�'] = 'V-BLOCK',
-        ['�s'] = 'V-BLOCK',
-        ['s'] = 'SELECT',
-        ['S'] = 'S-LINE',
-        ['�'] = 'S-BLOCK',
-        ['i'] = 'INSERT',
-        ['ic'] = 'INSERT',
-        ['ix'] = 'INSERT',
-        ['R'] = 'REPLACE',
-        ['Rc'] = 'REPLACE',
-        ['Rx'] = 'REPLACE',
-        ['Rv'] = 'V-REPLACE',
-        ['Rvc'] = 'V-REPLACE',
-        ['Rvx'] = 'V-REPLACE',
-        ['c'] = 'COMMAND',
-        ['cv'] = 'EX',
-        ['ce'] = 'EX',
-        ['r'] = 'REPLACE',
-        ['rm'] = 'MORE',
-        ['r?'] = 'CONFIRM',
-        ['!'] = 'SHELL',
-        ['t'] = 'TERMINAL',
-      }
-
-      require('lualine').setup {
-        options = {
-          section_separators = { left = '', right = '' },
-          component_separators = { left = '', right = '' },
-        },
-        sections = {
-          lualine_a = {
-            {
-              function()
-                return '  ' .. mode_map[vim.api.nvim_get_mode().mode] or '__'
-              end,
-              separator = { left = '' },
-              right_padding = 2,
-            },
-          },
-          lualine_b = {
-            'filename',
-            'branch',
-            {
-              'diff',
-              symbols = { added = ' ', modified = '󰝤 ', removed = ' ' },
-            },
-          },
-          lualine_c = {
-            '%=',
-          },
-          lualine_x = {
-            'copilot',
-          },
-          lualine_y = {
-            {
-              'diagnostics',
-              sources = { 'nvim_diagnostic' },
-              symbols = { error = ' ', warn = ' ', info = ' ' },
-            },
-            'filetype',
-            'progress',
-          },
-          lualine_z = {
-            { 'location', separator = { right = '' }, left_padding = 2 },
-          },
-        },
-        inactive_sections = {
-          lualine_a = { 'filename' },
-          lualine_b = {},
-          lualine_c = {},
-          lualine_x = {},
-          lualine_y = {},
-          lualine_z = { 'location' },
-        },
-      }
-    end,
-  },
-  {
     'windwp/nvim-ts-autotag',
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
     opts = {},
   },
+
+  {
+    'nvim-treesitter/nvim-treesitter-textobjects',
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+  },
+
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     opts = {
-      ensure_installed = { 'typescript', 'tsx', 'bash', 'c', 'html', 'lua', 'markdown', 'vim', 'vimdoc', 'elixir', 'javascript', 'json' },
+      ensure_installed = { 'typescript', 'tsx', 'bash', 'c', 'html', 'lua', 'markdown', 'vim', 'vimdoc', 'elixir', 'javascript', 'json', 'php', 'php_only' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -1198,9 +971,46 @@ require('lazy').setup({
       autotag = {
         enable = true,
       },
+      textobjects = {
+        select = {
+          enable = true,
+          lookahead = true,
+          keymaps = {
+            ['af'] = '@function.outer',
+            ['if'] = '@function.inner',
+            ['ac'] = '@class.outer',
+            ['ic'] = '@class.inner',
+          },
+          selection_modes = {
+            ['@parameter.outer'] = 'v', -- charwise
+            ['@function.outer'] = 'V', -- linewise
+            ['@class.outer'] = '<c-v>', -- blockwise
+          },
+        },
+        move = {
+          enable = true,
+          set_jumps = true,
+        },
+      },
     },
     config = function(_, opts)
       -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
+      local parser_config = require('nvim-treesitter.parsers').get_parser_configs()
+
+      -- parser_config.blade = {
+      --   install_info = {
+      --     url = 'https://github.com/EmranMR/tree-sitter-blade',
+      --     files = { 'src/parser.c' },
+      --     branch = 'main',
+      --   },
+      --   filetype = 'blade',
+      -- }
+      --
+      -- vim.filetype.add {
+      --   pattern = {
+      --     ['.*%.blade%.php'] = 'blade',
+      --   },
+      -- }
 
       ---@diagnostic disable-next-line: missing-fields
       require('nvim-treesitter.configs').setup(opts)
