@@ -28,3 +28,6 @@ yabai -m mouse_drop_action swap
 yabai -m rule --add app="^System Settings$" manage=off
 # yabai -m rule --add app="^System Preferences" manage=off
 yabai -m rule --add app="^Calculator$" manage=off
+
+# Active borders to show which window is active
+borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0 &
