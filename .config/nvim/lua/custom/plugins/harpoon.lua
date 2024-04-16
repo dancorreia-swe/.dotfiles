@@ -12,93 +12,49 @@ return {
       harpoon:list():add()
     end, { desc = 'Mark [A] file' })
 
-    vim.keymap.set('n', '<leader>n', function()
-      harpoon:list():select(1)
-    end, { desc = 'Go to (1) Harpoon buffer' })
+    vim.keymap.set('n', '<leader>sm', function()
+      harpoon.ui:toggle_quick_menu(harpoon:list())
+    end, { desc = '[S]earch [M]arked Files' })
 
-    vim.keymap.set('n', '<leader>p', function()
-      harpoon:list():select(2)
-    end, { desc = 'Go to (2) Harpoon buffer' })
-
-    --[[ vim.keymap.set('n', '<C-n>', function()
-      harpoon:list():select(3)
-    end)
-
-    vim.keymap.set('n', '<C-s>', function()
-      harpoon:list():select(4)
-    end) ]]
-
-    -- Toggle previous & next buffers stored within Harpoon list
     vim.keymap.set('n', '<leader>j', function()
-      harpoon:list():prev()
-    end, { desc = 'Toggle next Harpoon buffer' })
+      harpoon:list():select(1)
+    end, { desc = '[j] Harpoon Buffer [1]' })
 
     vim.keymap.set('n', '<leader>k', function()
+      harpoon:list():select(2)
+    end, { desc = '[k] Harpoon Buffer [2]' })
+
+    vim.keymap.set('n', '<leader>o', function()
+      harpoon:list():select(3)
+    end, { desc = '[o] Harpoon Buffer [3]' })
+
+    vim.keymap.set('n', '<leader>m', function()
+      harpoon:list():select(4)
+    end, { desc = '[m] Harpoon Buffer [4]' })
+
+    -- Toggle previous & next buffers stored within Harpoon list
+    vim.keymap.set('n', '<C-p>', function()
+      harpoon:list():prev()
+    end, { desc = 'Select [P]revious Harpoon Buffer' })
+
+    vim.keymap.set('n', '<C-n>', function()
       harpoon:list():next()
-    end, { desc = 'Toggle previous Harpoon buffer' })
+    end, { desc = 'Select [N]ext Harpoon Buffer' })
 
-    -- basic telescope configuration
-    local conf = require('telescope.config').values
-    local function toggle_telescope(harpoon_files)
-      local file_paths = {}
-      for _, item in ipairs(harpoon_files.items) do
-        table.insert(file_paths, item.value)
-      end
+    harpoon:extend {
+      UI_CREATE = function(cx)
+        vim.keymap.set('n', '<C-v>', function()
+          harpoon.ui:select_menu_item { vsplit = true }
+        end, { buffer = cx.bufnr })
 
-      local make_finder = function()
-        local paths = {}
-        for _, item in ipairs(harpoon_files.items) do
-          table.insert(paths, item.value)
-        end
+        vim.keymap.set('n', '<C-x>', function()
+          harpoon.ui:select_menu_item { split = true }
+        end, { buffer = cx.bufnr })
 
-        return require('telescope.finders').new_table {
-          results = paths,
-        }
-      end
-
-      require('telescope.pickers')
-        .new({}, {
-          prompt_title = 'Harpoon',
-          finder = require('telescope.finders').new_table {
-            results = file_paths,
-          },
-          previewer = conf.file_previewer {},
-          sorter = conf.generic_sorter {},
-          attach_mappings = function(prompt_buffer_number, map)
-            map(
-              'n',
-              'dd', -- your mapping here
-              function()
-                local state = require 'telescope.actions.state'
-                local selected_entry = state.get_selected_entry()
-                local current_picker = state.get_current_picker(prompt_buffer_number)
-
-                harpoon:list():remove_at(selected_entry.index)
-                current_picker:refresh(make_finder())
-              end,
-              { desc = 'Delete entry' }
-            )
-            map(
-              'n',
-              '<C-d>', -- your mapping here
-              function()
-                local state = require 'telescope.actions.state'
-                local selected_entry = state.get_selected_entry()
-                local current_picker = state.get_current_picker(prompt_buffer_number)
-
-                harpoon:list():remove_at(selected_entry.index)
-                current_picker:refresh(make_finder())
-              end
-            )
-
-            return true
-          end,
-        })
-        :find()
-    end
-
-    vim.keymap.set('n', '<leader>se', function()
-      toggle_telescope(harpoon:list())
-    end, { desc = 'Open harpoon window' })
+        vim.keymap.set('n', '<C-t>', function()
+          harpoon.ui:select_menu_item { tabedit = true }
+        end, { buffer = cx.bufnr })
+      end,
+    }
   end,
 }

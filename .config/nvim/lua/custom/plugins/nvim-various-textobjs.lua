@@ -5,6 +5,7 @@ return {
     opts = {
       useDefaultKeymaps = true,
       disableKeymaps = {
+        'gcc',
         'gc',
       },
     },

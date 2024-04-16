@@ -18,12 +18,57 @@ return {
     'nvim-neotest/nvim-nio',
 
     -- Installs the debug adapters for you
-    'williamboman/mason.nvim',
-    'jay-babu/mason-nvim-dap.nvim',
+    {
+      'williamboman/mason.nvim',
+      opts = function(_, opts)
+        opts.ensure_installed = opts.ensure_installed or {}
+        table.insert(opts.ensure_installed, 'js-debug-adapter')
+      end,
+    },
 
+    'jay-babu/mason-nvim-dap.nvim',
     -- Add your own debuggers here
     'leoluz/nvim-dap-go',
   },
+  opts = function()
+    local dap = require 'dap'
+    if not dap.adapters['pwa-node'] then
+      require('dap').adapters['pwa-node'] = {
+        type = 'server',
+        host = 'localhost',
+        port = '${port}',
+        executable = {
+          command = 'node',
+          -- 💀 Make sure to update this path to point to your installation
+          args = {
+            require('mason-registry').get_package('js-debug-adapter'):get_install_path() .. '/js-debug/src/dapDebugServer.js',
+            '${port}',
+          },
+        },
+      }
+    end
+    for _, language in ipairs { 'typescript', 'javascript', 'typescriptreact', 'javascriptreact' } do
+      if not dap.configurations[language] then
+        dap.configurations[language] = {
+          {
+            type = 'pwa-node',
+            request = 'launch',
+            name = 'Launch file',
+            program = '${file}',
+            runtimeExecutable = 'ts-node',
+            cwd = '${workspaceFolder}',
+          },
+          {
+            type = 'pwa-node',
+            request = 'attach',
+            name = 'Attach',
+            processId = require('dap.utils').pick_process,
+            cwd = '${workspaceFolder}',
+          },
+        }
+      end
+    end
+  end,
   config = function()
     local dap = require 'dap'
     local dapui = require 'dapui'
@@ -42,9 +87,11 @@ return {
       ensure_installed = {
         -- Update this to ensure that you have the debuggers for the langs you want
         'delve',
+        'js-de',
       },
     }
 
+    -- custom adapter for running tasks before starting debug
     -- Basic debugging keymaps, feel free to change to your liking!
     vim.keymap.set('n', '<F5>', dap.continue, { desc = 'Debug: Start/Continue' })
     vim.keymap.set('n', '<F1>', dap.step_into, { desc = 'Debug: Step Into' })
