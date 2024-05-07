@@ -1,4 +1,4 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+#git clone --depth 1 -- https://github.com/marlonrichert/zsh-autocomplete.git $ZSH_CUSTOM/plugins/zsh-autocomplete Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -79,7 +79,7 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting nvm laravel vi-mode thefuck brew git-flow-avh git-flow)
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting fast-syntax-highlighting zsh-autocomplete nvm laravel vi-mode thefuck brew git-flow-avh git-flow)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -146,6 +146,9 @@ esac
 export PATH="$(brew --prefix)/opt/python@3.12/libexec/bin:$PATH"
 # python end
 
+# Herd injected PHP 8.1 configuration.
+export HERD_PHP_81_INI_SCAN_DIR="/Users/danielmac/Library/Application Support/Herd/config/php/81/"
+
 # Herd injected PHP 8.3 configuration.
 export HERD_PHP_83_INI_SCAN_DIR="/Users/danielmac/Library/Application Support/Herd/config/php/83/"
 
@@ -155,3 +158,30 @@ alias nv="nvim"
 alias vim="nvim"
 eval $(thefuck --alias)
 eval "$(gh copilot alias -- zsh)"
+
+# better ls
+alias ls="eza --color=always --long --git --no-filesize --icons=always --no-time --no-user --no-permissions -G"
+
+# better cd (zoxide)
+eval "$(zoxide init zsh)"
+
+alias cd="z"
+
+# fzf
+export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always --line-range :500 {}'"
+export FZF_ALT_C_OPTS="--preview 'eza --tree --color=always {} | head -200'"
+
+# Advanced customization of fzf options via _fzf_comprun function
+# - The first argument to the function is the name of the command.
+# - You should make sure to pass the rest of the arguments to fzf.
+_fzf_comprun() {
+  local command=$1
+  shift
+
+  case "$command" in
+    cd)           fzf --preview 'eza --tree --color=always {} | head -200' "$@" ;;
+    export|unset) fzf --preview "eval 'echo \$'{}"         "$@" ;;
+    ssh)          fzf --preview 'dig {}'                   "$@" ;;
+    *)            fzf --preview "bat -n --color=always --line-range :500 {}" "$@" ;;
+  esac
+}
