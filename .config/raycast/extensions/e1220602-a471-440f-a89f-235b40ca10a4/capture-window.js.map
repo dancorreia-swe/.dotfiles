@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../src/capture-window.tsx"],
-  "sourcesContent": ["import { closeMainWindow, open } from \"@raycast/api\";\n\nexport default async function Command() {\n  const url = \"cleanshot://capture-window\";\n  await closeMainWindow();\n  open(url);\n}\n"],
-  "mappings": "yaAAA,IAAAA,EAAA,GAAAC,EAAAD,EAAA,aAAAE,IAAA,eAAAC,EAAAH,GAAA,IAAAI,EAAsC,wBAEtC,eAAOF,GAAiC,CACtC,IAAMG,EAAM,6BACZ,QAAM,mBAAgB,KACtB,QAAKA,CAAG,CACV",
-  "names": ["capture_window_exports", "__export", "Command", "__toCommonJS", "import_api", "url"]
-}
