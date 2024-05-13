@@ -224,6 +224,10 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
+-- Keybindst to quick move between quicklist items
+vim.keymap.set('n', ']q', '<cmd>cnext<CR>', { desc = 'Move to the next quickfix item' })
+vim.keymap.set('n', '[q', '<cmd>cprev<CR>', { desc = 'Move to the previous quickfix item' })
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
