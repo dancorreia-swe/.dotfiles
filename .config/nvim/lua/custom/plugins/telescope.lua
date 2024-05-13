@@ -21,9 +21,7 @@ return { -- Fuzzy Finder (files, lsp, etc)
     -- Useful for getting pretty icons, but requires a Nerd Font.
     { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
     { 'LukasPietzschmann/telescope-tabs' },
-    {
-      'ahmedkhalf/project.nvim',
-    },
+    { 'debugloop/telescope-undo.nvim' },
   },
   config = function()
     -- Telescope is a fuzzy finder that comes with a lot of different things that
@@ -70,6 +68,7 @@ return { -- Fuzzy Finder (files, lsp, etc)
           -- disables netrw and use telescope-file-browser in its place
           initial_mode = 'normal',
         },
+        undo = {},
       },
 
       -- You can specify your own layouts for the preview window
@@ -100,6 +99,7 @@ return { -- Fuzzy Finder (files, lsp, etc)
     pcall(require('telescope').load_extension, 'ui-select')
     pcall(require('telescope').load_extension, 'telescope-tabs')
     pcall(require('telescope').load_extension, 'file_browser')
+    pcall(require('telescope').load_extension, 'undo')
 
     -- See `:help telescope.builtin`
     local builtin = require 'telescope.builtin'
@@ -152,6 +152,9 @@ return { -- Fuzzy Finder (files, lsp, etc)
     vim.keymap.set('n', '<leader>sn', function()
       builtin.find_files { cwd = vim.fn.stdpath 'config' }
     end, { desc = '[S]earch [N]eovim files' })
+
+    -- Shortcut for undo history
+    vim.keymap.set('n', '<leader>u', '<cmd>Telescope undo<cr>', { desc = '[U]ndo History' })
 
     local ts_group = vim.api.nvim_create_augroup('TelescopeOnEnter', { clear = true })
     vim.api.nvim_create_autocmd({ 'VimEnter' }, {
