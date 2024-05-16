@@ -133,6 +133,7 @@ return {
           { name = 'luasnip' },
           { name = 'path' },
           { name = 'copilot' },
+          { name = 'neorg' },
         },
         experimental = {
           ghost_text = true,

@@ -30,6 +30,7 @@ return {
         'php',
         'php_only',
         'markdown_inline',
+        'norg',
       },
       -- Autoinstall languages that are not installed
       auto_install = true,

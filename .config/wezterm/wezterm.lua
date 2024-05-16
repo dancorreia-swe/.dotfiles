@@ -14,7 +14,7 @@ cursor_config.apply_to_config(config)
 tab_bar_config.apply_to_config(config)
 right_status_bar_config.apply_to_config(config)
 
-config.color_scheme = "Cyberdream"
+config.color_scheme = "rose-pine"
 config.colors = {
 	tab_bar = {
 		background = "rgba(0, 0, 0, 0.2)",

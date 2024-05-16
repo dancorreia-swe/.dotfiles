@@ -13,6 +13,12 @@ return {
       require('neorg').setup {
         load = {
           ['core.defaults'] = {},
+          ['core.completion'] = {
+            config = {
+              engine = 'nvim-cmp',
+            },
+          },
+          ['core.integrations.nvim-cmp'] = {},
           ['core.concealer'] = {},
           ['core.dirman'] = {
             config = {

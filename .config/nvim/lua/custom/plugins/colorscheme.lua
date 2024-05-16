@@ -1,16 +1,15 @@
 return {
-  'scottmckendry/cyberdream.nvim',
+  'rose-pine/neovim',
   lazy = false,
   priority = 1000,
+  name = 'rose-pine',
   config = function()
-    require('cyberdream').setup {
-      -- Recommended - see "Configuring" below for more config options
-      transparent = true,
-      italic_comments = true,
-      hide_fillchars = true,
-      borderless_telescope = true,
-      terminal_colors = true,
+    require('rose-pine').setup {
+      dim_inactive_windows = true,
+      styles = {
+        transparency = true,
+      },
     }
-    vim.cmd 'colorscheme cyberdream'
+    vim.cmd 'colorscheme rose-pine'
   end,
 }
