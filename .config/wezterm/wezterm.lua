@@ -19,9 +19,9 @@ config.colors = {
 	tab_bar = {
 		background = "rgba(0, 0, 0, 0.2)",
 	},
-	cursor_bg = "#FABD2f",
-	cursor_border = "#EEBD35",
-	background = "#0D0E0F",
+	cursor_bg = "#f6c177",
+	cursor_border = "#ea9d34",
+	background = "#15131E",
 }
 
 config.leader = { key = "Space", mods = "SHIFT", timeout_milliseconds = 1000 }
