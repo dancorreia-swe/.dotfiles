@@ -24,14 +24,15 @@ return {
         header = vim.split(logo, '\n'),
         -- stylua: ignore
         center = {
-          { action = "Telescope find_files",                                    desc = " Find file",       icon = " ", key = "f" },
+          { action = "Telescope find_files",                                     desc = " Find file",       icon = " ", key = "f" },
           { action = "ene | startinsert",                                        desc = " New file",        icon = " ", key = "n" },
           { action = "Telescope oldfiles",                                       desc = " Recent files",    icon = " ", key = "r" },
           { action = "Telescope live_grep",                                      desc = " Find text",       icon = " ", key = "g" },
-          { action = ":lua MiniFiles.open()",                                      desc = " Worktree",       icon = "󱘎 ", key = "g" },
-          { action = "require('telescope.builtin').find_files { cwd = vim.fn.stdpath 'config' }", desc = " Config",          icon = " ", key = "c" },
+          { action = ":lua MiniFiles.open()",                                    desc = " Worktree",        icon = "󱘎 ", key = "w" },
           { action = 'lua require("persistence").load()',                        desc = " Restore Session", icon = " ", key = "s" },
+          { action = "Neorg index",                                              desc = " Neorg",           icon = " ", key = "o" },
           { action = "Lazy",                                                     desc = " Lazy",            icon = "󰒲 ", key = "l" },
+          { action = "require('telescope.builtin').find_files { cwd = vim.fn.stdpath 'config' }", desc = " Config", icon = " ", key = "c" },
           { action = "qa",                                                       desc = " Quit",            icon = " ", key = "q" },
         },
         footer = function()
