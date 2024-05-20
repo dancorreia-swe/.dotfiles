@@ -1,16 +1,15 @@
 return {
   { -- Copilot
     'zbirenbaum/copilot.lua',
-    config = function()
-      require('copilot').setup {}
-    end,
+    opts = {
+      suggestion = { enabled = false },
+      panel = { enabled = false },
+    },
   },
 
   {
     'zbirenbaum/copilot-cmp',
-    config = function()
-      require('copilot_cmp').setup()
-    end,
+    opts = {},
   },
 
   { -- Autocompletion
@@ -164,9 +163,6 @@ return {
               })[entry.source.name]
 
               local word = entry:get_insert_text()
-              if entry.completion_item.insertTextFormat == types.lsp.InsertTextFormat.Snippet then
-                word = vim.lsp.util.parse_snippet(word)
-              end
               word = str.oneline(word)
               if entry.completion_item.insertTextFormat == types.lsp.InsertTextFormat.Snippet and string.sub(vim_item.abbr, -1, -1) == '~' then
                 word = word .. '~'
@@ -176,6 +172,21 @@ return {
 
               return vim_item
             end,
+          },
+          sorting = {
+            priority_weight = 2,
+            comparators = {
+              cmp.config.compare.offset,
+              -- cmp.config.compare.scopes, --this is commented in nvim-cmp too
+              cmp.config.compare.exact,
+              cmp.config.compare.score,
+              cmp.config.compare.recently_used,
+              cmp.config.compare.locality,
+              cmp.config.compare.kind,
+              cmp.config.compare.sort_text,
+              cmp.config.compare.length,
+              cmp.config.compare.order,
+            },
           },
         },
       }
