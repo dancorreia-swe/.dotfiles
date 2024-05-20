@@ -3,17 +3,22 @@ return {
   config = function()
     require('guess-indent').setup {
       auto_cmd = true, -- Set to false to disable automatic execution
-      override_editorconfig = false, -- Set to true to override settings set by .editorconfig
+      override_editorconfig = false,
       filetype_exclude = { -- A list of filetypes for which the auto command gets disabled
         'netrw',
         'tutor',
       },
-      buftype_exclude = { -- A list of buffer types for which the auto command gets disabled
+      buftype_exclude = {
         'help',
         'nofile',
         'terminal',
         'prompt',
       },
+
+      vim.api.nvim_create_autocmd('VimEnter', {
+        group = vim.api.nvim_create_augroup('GuessIndent', { clear = true }),
+        command = "autocmd BufReadPost * :silent lua require('guess-indent').set_from_buffer(true)",
+      }),
     }
   end,
 } -- Detect tabstop and shiftwidth automatially
