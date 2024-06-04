@@ -10,7 +10,7 @@ return {
   end,
   lazy = false,
   dependencies = {
-    'JoosepAlviste/nvim-ts-context-commentstring',
     'nvim-treesitter/nvim-treesitter',
+    'JoosepAlviste/nvim-ts-context-commentstring',
   },
 }
