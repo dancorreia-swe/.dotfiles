@@ -24,11 +24,11 @@ return {
       harpoon:list():select(2)
     end, { desc = '[k] Harpoon Buffer [2]' })
 
-    vim.keymap.set('n', '<leader>o', function()
+    vim.keymap.set('n', '<leader>p', function()
       harpoon:list():select(3)
     end, { desc = '[o] Harpoon Buffer [3]' })
 
-    vim.keymap.set('n', '<leader>m', function()
+    vim.keymap.set('n', '<leader>n', function()
       harpoon:list():select(4)
     end, { desc = '[m] Harpoon Buffer [4]' })
 
