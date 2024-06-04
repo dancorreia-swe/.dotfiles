@@ -1,7 +1,7 @@
 local module = {}
 
 function module.apply_to_config(config)
-	config.color_scheme = "rose-pine"
+	config.color_scheme = "Catppuccin Mocha"
 	config.colors = {
 		tab_bar = {
 			background = "rgba(0, 0, 0, 0.2)",
