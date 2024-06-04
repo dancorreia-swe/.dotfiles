@@ -25,6 +25,8 @@ return {
         'vim',
         'vimdoc',
         'elixir',
+        'heex',
+        'eex',
         'javascript',
         'json',
         'php',

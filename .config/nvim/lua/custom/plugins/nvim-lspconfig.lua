@@ -146,38 +146,90 @@ return { -- LSP Configuration & Plugins
       --    https://github.com/pmizio/typescript-tools.nvim
       --
       -- But for many setups, the LSP (`tsserver`) will work just fine
-      tsserver = {
+
+      tailwindcss = {
+        filetypes = {
+          'css',
+          'scss',
+          'sass',
+          'html',
+          'htmldjango',
+          'heex',
+          'elixir',
+          'eruby',
+          'javascript',
+          'javascriptreact',
+          'typescript',
+          'typescriptreact',
+          'rust',
+          'svelte',
+        },
         init_options = {
-          plugins = {
-            {
-              name = '@vue/typescript-plugin',
-              location = '/Users/danielmac/.nvm/versions/node/v21.6.0/lib/node_modules/@vue/typescript-plugin',
-              languages = { 'vue' },
-            },
+          userLanguages = {
+            elixir = 'html-eex',
+            eelixir = 'html-eex',
+            heex = 'html-eex',
           },
         },
-        filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
-      },
-      intelephense = {
-        -- init_options = {
-        -- licenceKey = '~/intelephense/licence.txt',
-        -- },
-      },
-      emmet_language_server = {
-        filetypes = { 'html', 'css', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue', 'blade' },
-      },
-      lua_ls = {
-        -- cmd = {...},
-        -- filetypes = { ...},
-        -- capabilities = {},
-
         settings = {
-          Lua = {
-            completion = {
-              callSnippet = 'Replace',
+          tailwindCSS = {
+            lint = {
+              cssConflict = 'warning',
+              invalidApply = 'error',
+              invalidConfigPath = 'error',
+              invalidScreen = 'error',
+              invalidTailwindDirective = 'error',
+              invalidVariant = 'error',
+              recommendedVariantOrder = 'warning',
             },
-            -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-            -- diagnostics = { disable = { 'missing-fields' } },
+            experimental = {
+              classRegex = {
+                [[class= "([^"]*)]],
+                [[class: "([^"]*)]],
+                '~H""".*class="([^"]*)".*"""',
+                '~F""".*class="([^"]*)".*"""',
+                '"([^"]*)"',
+              },
+            },
+            validate = true,
+          },
+        },
+        tsserver = {
+          init_options = {
+            plugins = {
+              {
+                name = '@vue/typescript-plugin',
+                location = '/Users/danielmac/.nvm/versions/node/v21.6.0/lib/node_modules/@vue/typescript-plugin',
+                languages = { 'vue' },
+              },
+            },
+          },
+          filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
+        },
+        intelephense = {
+          -- init_options = {
+          -- licenceKey = '~/intelephense/licence.txt',
+          -- },
+        },
+        emmet_language_server = {
+          filetypes = { 'html', 'css', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue', 'blade', 'heex', 'eelixr' },
+        },
+        prettier = {
+          filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue' },
+        },
+        lua_ls = {
+          -- cmd = {...},
+          -- filetypes = { ...},
+          -- capabilities = {},
+
+          settings = {
+            Lua = {
+              completion = {
+                callSnippet = 'Replace',
+              },
+              -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
+              -- diagnostics = { disable = { 'missing-fields' } },
+            },
           },
         },
       },
@@ -196,6 +248,8 @@ return { -- LSP Configuration & Plugins
     local ensure_installed = vim.tbl_keys(servers or {})
     vim.list_extend(ensure_installed, {
       'stylua', -- Used to format Lua code
+      'prettierd',
+      'tailwindcss-language-server',
     })
     require('mason-tool-installer').setup { ensure_installed = ensure_installed }
     require('mason-lspconfig').setup {
