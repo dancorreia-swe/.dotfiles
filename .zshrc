@@ -75,7 +75,7 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting fast-syntax-highlighting zsh-autocomplete nvm laravel vi-mode thefuck brew git-flow-avh git-flow)
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting fast-syntax-highlighting zsh-autocomplete nvm laravel thefuck brew git-flow-avh git-flow)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -159,6 +159,7 @@ alias ls="eza --color=always --long --git --no-filesize --icons=always --no-time
 eval "$(zoxide init zsh)"
 
 alias cd="z"
+alias sail='sh $([ -f sail ] && echo sail || echo vendor/bin/sail)'
 
 # fzf
 export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always --line-range :500 {}'"
