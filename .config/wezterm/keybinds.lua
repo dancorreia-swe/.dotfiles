@@ -66,6 +66,8 @@ function module.apply_to_config(config)
 				mode = "SwapWithActive",
 			}),
 		},
+		{ key = "{", mods = "SHIFT|ALT", action = wezterm.action.MoveTabRelative(-1) },
+		{ key = "}", mods = "SHIFT|ALT", action = wezterm.action.MoveTabRelative(1) },
 		{
 			mods = "CTRL | SHIFT",
 			key = "w",

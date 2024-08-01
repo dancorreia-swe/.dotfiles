@@ -217,6 +217,9 @@ return { -- LSP Configuration & Plugins
         prettier = {
           filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue' },
         },
+        eslint_d = {
+          filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue' },
+        },
         lua_ls = {
           -- cmd = {...},
           -- filetypes = { ...},
