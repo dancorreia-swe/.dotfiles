@@ -19,23 +19,6 @@ return {
     config = function()
       require('neorg').setup {
         load = {
-          ['core.keybinds'] = {
-            config = {
-              neorg_leader = ',',
-              hook = function(keybinds)
-                keybinds.remap_event('norg', 'i', '<S-CR>', 'core.itero.next-iteration')
-                keybinds.map('norg', 'n', keybinds.leader .. 'jt', '<cmd>Neorg journal today<CR>', { desc = '[neorg] journal today' })
-                keybinds.map('norg', 'n', keybinds.leader .. 'jp', '<cmd>Neorg journal template<CR>', { desc = '[neorg] journal template' })
-                keybinds.map('norg', 'n', keybinds.leader .. 'jT', '<cmd>Neorg journal tomorrow<CR>', { desc = '[neorg] journal tomorrow' })
-                keybinds.map('norg', 'n', keybinds.leader .. 'jy', '<cmd>Neorg journal yesterday<CR>', { desc = '[neorg] journal yesterday' })
-                keybinds.map_event_to_mode('norg', {
-                  n = {
-                    { keybinds.leader .. 'ge', 'core.esupports.hop.hop-link', 'external', opts = { desc = 'Open External Link' } },
-                  },
-                }, {})
-              end,
-            },
-          },
           ['core.defaults'] = {},
           ['core.completion'] = {
             config = {
@@ -60,6 +43,12 @@ return {
 
       vim.keymap.set('n', '<leader>[', '<cmd>Neorg index<CR>', { desc = 'Neorg Index' })
       vim.keymap.set('n', '<leader>]', '<cmd>Neorg return<CR>', { desc = 'Neorg Return' })
+
+      vim.keymap.set('n', '<leader>jt', '<cmd>Neorg journal today<CR>', { desc = '[neorg] Journal today' })
+      vim.keymap.set('n', '<leader>jT', '<cmd>Neorg journal tomorrow<CR>', { desc = '[neorg] Journal tomorrow' })
+      vim.keymap.set('n', '<leader>jy', '<cmd>Neorg journal yesterday<CR>', { desc = '[neorg] Journal yesterday' })
+      vim.keymap.set('n', '<leader>jp', '<cmd>Neorg journal template<CR>', { desc = '[neorg] Journal template' })
+      vim.keymap.set('n', '<leader>jl', '<cmd>Neorg journal toc<CR>', { desc = '[neorg] Journal TOC' })
 
       vim.wo.foldlevel = 99
       vim.wo.conceallevel = 2
