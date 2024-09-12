@@ -3,7 +3,7 @@ return {
   ---@module 'oil'
   ---@type oil.SetupOpts
   keys = {
-    { '<leader>e', '<cmd>Oil --float<CR>', desc = '[E]xplorer' },
+    -- { '<leader>e', '<cmd>Oil --float<CR>', desc = '[E]xplorer' },
   },
   opts = {
     default_file_explorer = true,
