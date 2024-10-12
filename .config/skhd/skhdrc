@@ -86,3 +86,6 @@ alt - n : yabai -m space --create && \
              yabai -m space --focus "${index}"
 
 alt + shift - d : yabai -m space --destroy
+
+# spotify shortcut
+lshift + rshift - m : open -a Spotify
