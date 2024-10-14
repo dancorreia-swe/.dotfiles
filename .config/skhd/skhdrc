@@ -89,3 +89,8 @@ alt + shift - d : yabai -m space --destroy
 
 # spotify shortcut
 lshift + rshift - m : open -a Spotify
+
+hyper - l : skhd -k "right"
+hyper - h : skhd -k "left"
+hyper - j : skhd -k "down"
+hyper - k : skhd -k "up"
