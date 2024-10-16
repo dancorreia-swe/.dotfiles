@@ -136,9 +136,7 @@ return {
           { name = 'neorg' },
         },
         experimental = {
-          ghost_text = {
-            hl_group = 'CmpGhostText',
-          },
+          ghost_text = true,
         },
         formatting = {
           expandable_indicator = true,

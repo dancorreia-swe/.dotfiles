@@ -8,9 +8,9 @@ return {
     ---@diagnostic disable-next-line: missing-parameter
     harpoon:setup()
 
-    vim.keymap.set('n', '<leader>a', function()
+    vim.keymap.set('n', '<leader>m', function()
       harpoon:list():add()
-    end, { desc = 'Mark [A] file' })
+    end, { desc = '[M]ark file' })
 
     vim.keymap.set('n', '<leader>sm', function()
       harpoon.ui:toggle_quick_menu(harpoon:list())
