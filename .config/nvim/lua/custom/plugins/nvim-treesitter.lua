@@ -28,7 +28,7 @@ return {
         'heex',
         'eex',
         'javascript',
-        'json',
+        'json5',
         'php',
         'php_only',
         'markdown_inline',

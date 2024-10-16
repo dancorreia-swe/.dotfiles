@@ -14,7 +14,13 @@ return { -- LSP Configuration & Plugins
     -- used for completion, annotations and signatures of Neovim apis
     { 'folke/neodev.nvim', opts = {} },
     { 'folke/neoconf.nvim', opts = {} },
+    {
+      'b0o/SchemaStore.nvim',
+      lazy = true,
+      version = false,
+    },
   },
+
   config = function()
     -- Brief aside: **What is LSP?**
     --
@@ -123,6 +129,14 @@ return { -- LSP Configuration & Plugins
     --  When you add nvim-cmp, luasnip, etc. Neovim now has *more* capabilities.
     --  So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
     local capabilities = vim.lsp.protocol.make_client_capabilities()
+    capabilities.textDocument.completion.completionItem.snippetSupport = true
+    -- capabilities.textDocument.completion.completionItem.resolveSupport = {
+    --   properties = {
+    --     'documentation',
+    --     'detail',
+    --     'additionalTextEdits',
+    --   },
+    -- }
     capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
     -- Enable the following language servers
@@ -219,6 +233,20 @@ return { -- LSP Configuration & Plugins
         },
         eslint_d = {
           filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue' },
+        },
+        jsonls = {
+          on_new_config = function(new_config)
+            new_config.settings.json.schemas = new_config.settings.json.schemas or {}
+            vim.list_extend(new_config.settings.json.schemas, require('schemastore').json.schemas())
+          end,
+          settings = {
+            json = {
+              format = {
+                enable = true,
+              },
+              validate = { enable = true },
+            },
+          },
         },
         lua_ls = {
           -- cmd = {...},

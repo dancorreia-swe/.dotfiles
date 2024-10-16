@@ -130,12 +130,15 @@ return {
         sources = {
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
+          { name = 'buffer' },
           { name = 'path' },
           { name = 'copilot' },
           { name = 'neorg' },
         },
         experimental = {
-          ghost_text = true,
+          ghost_text = {
+            hl_group = 'CmpGhostText',
+          },
         },
         formatting = {
           expandable_indicator = true,
