@@ -80,6 +80,11 @@ rshift + cmd - 7 : yabai -m space --focus 7
 rshift + cmd - 8 : yabai -m space --focus 8
 rshift + cmd - 9 : yabai -m space --focus 9
 
+# change spaces prev-next
+alt - p : yabai -m space --focus prev
+alt - n : yabai -m space --focus next
+
+
 # stop/start/restart yabai
 ctrl + alt - q : yabai --stop-service
 ctrl + alt - s : yabai --start-service
@@ -92,15 +97,17 @@ shift + ctrl + alt - k : yabai -m window --resize bottom:0:-20 2> /dev/null || y
 shift + ctrl + alt - l : yabai -m window --resize right:20:0 2> /dev/null || yabai -m window --resize left:20:0 2> /dev/null
 
 # create a new space and focus on it
-alt - n : yabai -m space --create && \
+hyper - n : yabai -m space --create && \
              index="$(yabai -m query --spaces --display | jq 'map(select(.["is-native-fullscreen"] == false))[-1].index')" && \
              yabai -m space --focus "${index}"
 
+# destroy space
 alt + shift - d : yabai -m space --destroy
 
 # spotify shortcut
 lshift + rshift - m : open -a Spotify
 
+# arrow keys
 hyper - l : skhd -k "right"
 hyper - h : skhd -k "left"
 hyper - j : skhd -k "down"
