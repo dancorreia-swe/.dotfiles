@@ -7,8 +7,8 @@ fn - h: skhd -k "left"
 fn - l: skhd -k "right"
 
 # Change layout style
-alt - d : yabai -m space --layout bsp
-alt - f : yabai -m window --toggle split; yabai -m space --balance;
+alt + shift - b : yabai -m space --layout bsp # bsp
+alt + shift - c : yabai -m window --toggle split; yabai -m space --balance; #columns
 
 # Change window focus within space
 alt - j : /opt/homebrew/bin/yabai -m window --focus south || /opt/homebrew/bin/yabai -m display --focus south;
@@ -83,7 +83,6 @@ rshift + cmd - 9 : yabai -m space --focus 9
 # change spaces prev-next
 alt - p : yabai -m space --focus prev
 alt - n : yabai -m space --focus next
-
 
 # stop/start/restart yabai
 ctrl + alt - q : yabai --stop-service
