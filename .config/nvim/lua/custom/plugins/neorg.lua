@@ -38,6 +38,12 @@ return {
           ['core.highlights'] = {},
           ['core.summary'] = {},
           ['core.ui.calendar'] = {},
+          ['core.export'] = {},
+          ['core.export.markdown'] = {
+            config = {
+              extensions = 'all',
+            },
+          },
         },
       }
 
