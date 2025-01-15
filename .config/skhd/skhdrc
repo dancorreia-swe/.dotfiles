@@ -73,8 +73,8 @@ alt - 8 : yabai -m space --focus 8
 alt - 9 : yabai -m space --focus 9
 
 # change spaces prev-next
-alt - p : yabai -m space --focus prev
-alt - n : yabai -m space --focus next
+alt - p : yabai -m space --focus prev || yabai -m space --focus last
+alt - n : yabai -m space --focus next || yabai -m space --focus first
 
 # stop/start/restart yabai
 ctrl + alt - q : yabai --stop-service
