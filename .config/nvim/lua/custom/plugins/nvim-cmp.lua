@@ -1,17 +1,4 @@
 return {
-  { -- Copilot
-    'zbirenbaum/copilot.lua',
-    opts = {
-      suggestion = { enabled = false },
-      panel = { enabled = false },
-    },
-  },
-
-  {
-    'zbirenbaum/copilot-cmp',
-    opts = {},
-  },
-
   { -- Autocompletion
     'hrsh7th/nvim-cmp',
     event = 'InsertEnter',
