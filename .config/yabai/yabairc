@@ -27,6 +27,13 @@ yabai -m config mouse_action2 resize
 # when window is dropped in center of another window, swap them (on edges it will split it)
 yabai -m mouse_drop_action swap
 
+# Active borders to show which window is active
+borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0 &
+
+# Focus on remaining window when other is closed
+yabai -m signal --add event=window_destroyed action="yabai -m query --windows --window &> /dev/null || yabai -m window --focus mouse"
+yabai -m signal --add event=application_terminated action="yabai -m query --windows --window &> /dev/null || yabai -m window --focus mouse"
+
 # Disable specific apps
 yabai -m rule --add app="^System Settings$" manage=off
 yabai -m rule --add app="^System Preferences$" manage=off
@@ -34,10 +41,3 @@ yabai -m rule --add app="^Calculator$" manage=off
 yabai -m rule --add app="^CleanShot X$" manage=off
 yabai -m rule --add app="^Simulator" manage=off
 yabai -m rule --add app="^Raycast$" title="^Settings$" manage=off
-
-# Active borders to show which window is active
-borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0 &
-
-# Focus on remaining window when other is closed
-yabai -m signal --add event=window_destroyed action="yabai -m query --windows --window &> /dev/null || yabai -m window --focus mouse"
-yabai -m signal --add event=application_terminated action="yabai -m query --windows --window &> /dev/null || yabai -m window --focus mouse"
