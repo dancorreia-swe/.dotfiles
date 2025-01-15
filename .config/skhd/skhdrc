@@ -3,10 +3,10 @@ alt + shift - b : yabai -m space --layout bsp # bsp
 alt + shift - c : yabai -m window --toggle split; yabai -m space --balance; #columns
 
 # Change window focus within space
-alt - j : /opt/homebrew/bin/yabai -m window --focus south || /opt/homebrew/bin/yabai -m display --focus south;
-alt - k : /opt/homebrew/bin/yabai -m window --focus north || /opt/homebrew/bin/yabai -m display --focus north;
-alt - h : /opt/homebrew/bin/yabai -m window --focus west  || /opt/homebrew/bin/yabai -m display --focus west;
-alt - l : /opt/homebrew/bin/yabai -m window --focus east || /opt/homebrew/bin/yabai -m display --focus east; 
+alt - j : yabai -m window --focus south || yabai -m display --focus south;
+alt - k : yabai -m window --focus north || yabai -m display --focus north;
+alt - h : yabai -m window --focus west || yabai -m display --focus west;
+alt - l : yabai -m window --focus east || yabai -m display --focus east; 
 
 # change focus between external dispalys (left and right)
 alt - s: yabai -m display --focus west || yabai -m display --focus south
