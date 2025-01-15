@@ -107,8 +107,5 @@ ctrl + alt - q : yabai --stop-service
 ctrl + alt - s : yabai --start-service
 ctrl + alt - r : yabai --restart-service
 
-### Stack the Focused Window ####
-hyper - h : yabai -m window --stack mouse
-
 ### Spotify Shortcut ####
 lshift + rshift - m : open -a Spotify
