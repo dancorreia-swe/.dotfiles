@@ -97,7 +97,7 @@ return {
           markdown = true,
           mason = true,
           mini = false,
-          navic = { enabled = false },
+          navic = { enabled = true, custom_bg = 'NONE' },
           neogit = false,
           neotest = false,
           noice = false,

@@ -19,6 +19,11 @@ return { -- LSP Configuration & Plugins
       lazy = true,
       version = false,
     },
+    { 'SmiteshP/nvim-navic', opts = {
+      lsp = {
+        auto_attach = true,
+      },
+    } },
   },
 
   config = function()
