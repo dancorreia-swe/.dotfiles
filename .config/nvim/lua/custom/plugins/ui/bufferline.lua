@@ -7,10 +7,11 @@ return {
     require('bufferline').setup {
       options = {
         hover = {
-          enabled = false,
+          enabled = true,
           delay = 200,
           reveal = { 'close' },
         },
+        separator_style = 'thin',
       },
     }
 
