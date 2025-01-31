@@ -193,3 +193,5 @@ function y() {
 	rm -f -- "$tmp"
 }
 
+
+export GPG_TTY=$(tty)
