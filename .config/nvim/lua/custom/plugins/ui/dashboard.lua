@@ -32,7 +32,9 @@ return {
           { action = 'lua require("persistence").load()',                        desc = " Restore Session", icon = " ", key = "s" },
           { action = "Neorg index",                                              desc = " Neorg",           icon = " ", key = "o" },
           { action = "Lazy",                                                     desc = " Lazy",            icon = "󰒲 ", key = "l" },
-          { action = "FzfLua files { cwd = vim.fn.stdpath 'config' }", desc = " Config", icon = " ", key = "c" },
+          { action = function ()
+            require('fzf-lua').files { cwd = vim.fn.stdpath 'config' }
+          end, desc = " Config", icon = " ", key = "c" },
           { action = "qa",                                                       desc = " Quit",            icon = " ", key = "q" },
         },
         footer = function()
