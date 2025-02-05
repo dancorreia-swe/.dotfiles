@@ -62,7 +62,7 @@ function module.apply_to_config(config)
 			[70] = wezterm.nerdfonts.md_battery_70,
 			[80] = wezterm.nerdfonts.md_battery_80,
 			[90] = wezterm.nerdfonts.md_battery_90,
-			[100] = wezterm.nerdfonts.md_battery_100,
+			[100] = wezterm.nerdfonts.md_battery,
 		}
 
 		local charging_battery_percentage = {
