@@ -40,7 +40,7 @@ vim.g.maplocalleader = ' '
 vim.g.have_nerd_font = true
 
 -- Disables netrw
-vim.g.loaded_netrw = 1
+-- vim.g.loaded_netrw = 1
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
