@@ -1,12 +1,14 @@
+local wezterm = require("wezterm")
+
+local colors_config = require("wez-colorscheme")
 local font_config = require("font")
 local cursor_config = require("cursor")
 local window_config = require("window")
 local tab_bar_config = require("tab-bar")
 local keybinds_config = require("keybinds")
 local right_status_bar_config = require("right-status-bar")
-local colors_config = require("wez-colorscheme")
 
-local config = {}
+local config = wezterm.config_builder()
 
 font_config.apply_to_config(config)
 window_config.apply_to_config(config)
