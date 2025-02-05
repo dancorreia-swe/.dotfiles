@@ -27,7 +27,7 @@ return {
           { action = "FzfLua files",                                     desc = " Find file",       icon = " ", key = "f" },
           { action = "ene | startinsert",                                        desc = " New file",        icon = " ", key = "n" },
           { action = "FzfLua oldfiles",                                       desc = " Recent files",    icon = " ", key = "r" },
-          { action = "Telescope live_grep",                                      desc = " Find text",       icon = " ", key = "g" },
+          { action = "FzfLua live_grep",                                      desc = " Find text",       icon = " ", key = "g" },
           { action = "Yazi cwd",                                    desc = " Worktree",        icon = "󱘎 ", key = "w" },
           { action = 'lua require("persistence").load()',                        desc = " Restore Session", icon = " ", key = "s" },
           { action = "Neorg index",                                              desc = " Neorg",           icon = " ", key = "o" },
