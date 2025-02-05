@@ -4,12 +4,12 @@ auto_upgrade = true
 final_space = true
 
 [secondary_prompt]
-  template = '❯❯ '
+  template = '󱤀  '
   foreground = 'magenta'
   background = 'transparent'
 
 [transient_prompt]
-  template = '❯ '
+  template = '󰈈  '
   foreground = ''
   background = 'transparent'
   foreground_templates = [
@@ -43,6 +43,7 @@ final_space = true
       [blocks.segments.properties.mapped_locations]
         "~/Projects/" = " "
         "~/Downloads/" = " "
+        "~/notes/" = " "
         "~/.config/" = " "
 
   [[blocks.segments]]
@@ -133,7 +134,7 @@ final_space = true
 
   [[blocks.segments]]
     style = 'plain'
-    template = ' '
+    template = '󰛐 '
     foreground = ''
     background = 'transparent'
     type = 'text'
