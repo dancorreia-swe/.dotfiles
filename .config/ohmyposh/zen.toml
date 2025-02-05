@@ -35,10 +35,15 @@ final_space = true
 
     [blocks.segments.properties]
       cycle = ['cyan', 'magenta', 'blue']
-      folder_icon = ''
+      folder_icon = ' '
       home_icon = ' '
       max_width = 20
-      style = 'powerlevel'
+      style = 'agnoster_short'
+
+      [blocks.segments.properties.mapped_locations]
+        "~/Projects/" = " "
+        "~/Downloads/" = " "
+        "~/.config/" = " "
 
   [[blocks.segments]]
     style = 'powerline'
@@ -59,6 +64,11 @@ final_space = true
       fetch_status = true
       fetch_upstream_icon = true
       truncate_symbol = '…'
+
+      [blocks.segments.properties.mapped_branches]
+        "feat/*" = "🚀 "
+        "bug/*" = "🐛 "
+        "hotfix/*" = "🔥 "
 
 [[blocks]]
   type = 'prompt'
@@ -85,6 +95,12 @@ final_space = true
     foreground = '#4063D8'
     background = ''
     type = 'php'
+
+  [[blocks.segments]]
+    type = "bun"
+    style = "plain"
+    foreground = "#3C82F6"
+    template = " 🥟 {{ .Full }} "
 
 [[blocks]]
   type = 'rprompt'
