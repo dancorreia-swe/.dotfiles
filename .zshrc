@@ -104,6 +104,7 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias P="~/Projects"
 alias lg="lazygit"
+alias lzd="lazydocker"
 alias ff="fastfetch"
 
 export NVM_DIR="$HOME/.nvm"
