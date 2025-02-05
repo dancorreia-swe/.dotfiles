@@ -88,6 +88,14 @@ return {
       mode = 'v',
       desc = 'Debug Print Variable',
     },
+    {
+      '<leader>rr',
+      function()
+        require('refactoring').select_refactor()
+      end,
+      mode = { 'n', 'x' },
+      desc = 'Select Refactor',
+    },
   },
   opts = {
     prompt_func_return_type = {
@@ -113,8 +121,4 @@ return {
     show_success_message = true, -- shows a message with information about the refactor on success
     -- i.e. [Refactor] Inlined 3 variable occurrences
   },
-  config = function(_, opts)
-    require('refactoring').setup(opts)
-    require('telescope').load_extension 'refactoring'
-  end,
 }
