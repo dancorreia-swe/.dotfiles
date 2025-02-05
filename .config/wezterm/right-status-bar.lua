@@ -52,34 +52,71 @@ function module.apply_to_config(config)
 		table.insert(cells, date)
 
 		-- An entry for each battery (typically 0 or 1 battery)
+		local battery_percentage = {
+			[10] = wezterm.nerdfonts.md_battery_10,
+			[20] = wezterm.nerdfonts.md_battery_20,
+			[30] = wezterm.nerdfonts.md_battery_30,
+			[40] = wezterm.nerdfonts.md_battery_40,
+			[50] = wezterm.nerdfonts.md_battery_50,
+			[60] = wezterm.nerdfonts.md_battery_60,
+			[70] = wezterm.nerdfonts.md_battery_70,
+			[80] = wezterm.nerdfonts.md_battery_80,
+			[90] = wezterm.nerdfonts.md_battery_90,
+			[100] = wezterm.nerdfonts.md_battery_100,
+		}
+
+		local charging_battery_percentage = {
+			[10] = wezterm.nerdfonts.md_battery_charging_10,
+			[20] = wezterm.nerdfonts.md_battery_charging_20,
+			[30] = wezterm.nerdfonts.md_battery_charging_30,
+			[40] = wezterm.nerdfonts.md_battery_charging_40,
+			[50] = wezterm.nerdfonts.md_battery_charging_50,
+			[60] = wezterm.nerdfonts.md_battery_charging_60,
+			[70] = wezterm.nerdfonts.md_battery_charging_70,
+			[80] = wezterm.nerdfonts.md_battery_charging_80,
+			[90] = wezterm.nerdfonts.md_battery_charging_90,
+			[100] = wezterm.nerdfonts.md_battery_charging_100,
+		}
+
 		for _, b in ipairs(wezterm.battery_info()) do
-			table.insert(cells, string.format("%.0f%%", b.state_of_charge * 100))
+			local charge_level = math.floor(b.state_of_charge * 100)
+			local nearest_ten = math.floor(charge_level / 10) * 10
+			local battery_status = b.state == "Charging" and charging_battery_percentage or battery_percentage
+			local battery_icon = battery_status[nearest_ten] or battery_status[10]
+
+			local battery_data = { [b.state] = battery_icon .. "  " .. string.format("%.0f%%", charge_level) }
+			table.insert(cells, battery_data)
 		end
 
 		-- The powerline < symbol
 		-- local LEFT_ARROW = utf8.char(0xe0b3)
 		-- The filled in variant of the < symbol
 		local SOLID_LEFT_ARROW_STATUS = utf8.char(0xe0b2)
+		local SEMICIRCLE_LEFT_END = utf8.char(0xE0B6)
 
-		-- Color palette for the backgrounds of each cell
 		local colors = {
-			"#323238",
-			"#1E1E24",
-			-- "#7c5295",
-			-- "#b491c8",
+			"#1e1e2e",
+			"#11111b",
+			"#181825",
 		}
 
 		local ROBOT_ICON = wezterm.nerdfonts.oct_dependabot
 		local SATURN_ICON = wezterm.nerdfonts.fae_planet
 
+		local workspace_name = ""
 		local workspace_icon = ""
 		if window:active_workspace() == "default" then
 			workspace_icon = SATURN_ICON
 		else
 			workspace_icon = ROBOT_ICON
+			workspace_name = window:active_workspace()
 		end
 
-		table.insert(cells, window:active_workspace() .. " " .. workspace_icon)
+		if workspace_name == "" then
+			table.insert(cells, workspace_icon .. "    ")
+		else
+			table.insert(cells, workspace_name .. "  " .. workspace_icon .. "  ")
+		end
 
 		if window:active_workspace() == "default" then
 			table.insert(colors, "#0d0e0f")
@@ -96,28 +133,36 @@ function module.apply_to_config(config)
 		local num_cells = 0
 
 		-- Translate a cell into elements
-		function push(text, is_last, is_first)
+		local function push(text, is_last)
 			local cell_no = num_cells + 1
-			if is_first then
-				table.insert(elements, { Foreground = { Color = colors[cell_no] } })
-				table.insert(elements, { Text = SOLID_LEFT_ARROW_STATUS })
+
+			if type(text) == "table" then
+				local battery_state, battery_value = next(text)
+				local battery_color = (battery_state == "Discharging") and "#FFA066" or "#a6e3a1"
+
+				table.insert(elements, { Foreground = { Color = battery_color } })
+				table.insert(elements, { Background = { Color = "none" } })
+				table.insert(elements, { Text = " " .. tostring(battery_value) .. " " })
+			else
+				if is_last then
+					text_fg = "#cba6f7"
+				end
+
+				table.insert(elements, { Foreground = { Color = text_fg } })
+				table.insert(elements, { Background = { Color = "none" } })
+				table.insert(elements, { Text = " " .. text .. " " })
 			end
 
-			table.insert(elements, { Foreground = { Color = text_fg } })
-			table.insert(elements, { Background = { Color = colors[cell_no] } })
-			table.insert(elements, { Text = " " .. text .. " " })
 			if not is_last then
-				table.insert(elements, { Foreground = { Color = colors[cell_no + 1] } })
-				table.insert(elements, { Text = SOLID_LEFT_ARROW_STATUS })
+				table.insert(elements, { Foreground = { Color = "#45475a" } })
+				table.insert(elements, { Text = "  " .. "| " })
 			end
 			num_cells = num_cells + 1
 		end
 
-		local is_first = true
 		while #cells > 0 do
 			local cell = table.remove(cells, 1)
-			push(cell, #cells == 0, is_first)
-			is_first = false
+			push(cell, #cells == 0)
 		end
 
 		window:set_right_status(wezterm.format(elements))
