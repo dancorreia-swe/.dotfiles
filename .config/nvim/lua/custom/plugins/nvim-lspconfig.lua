@@ -68,26 +68,22 @@ return { -- LSP Configuration & Plugins
           vim.keymap.set('n', keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
         end
 
-        -- { "gd", "<cmd>FzfLua lsp_definitions     jump_to_single_result=true ignore_current_line=true<cr>", desc = "Goto Definition", has = "definition" },
-        -- { "gr", "<cmd>FzfLua lsp_references      jump_to_single_result=true ignore_current_line=true<cr>", desc = "References", nowait = true },
-        -- { "gI", "<cmd>FzfLua lsp_implementations jump_to_single_result=true ignore_current_line=true<cr>", desc = "Goto Implementation" },
-        -- { "gy", "<cmd>FzfLua lsp_typedefs        jump_to_single_result=true ignore_current_line=true<cr>", desc = "Goto T[y]pe Definition" },
         -- -- Jump to the definition of the word under your cursor.
         -- --  This is where a variable was first declared, or where a function is defined, etc.
         -- --  To jump back, press <C-t>.
-        map('gd', require('fzf-lua').lsp_definitions, '[G]oto [D]efinition')
+        map('gd', '<cmd>FzfLua lsp_definitions jump_to_single_result=true ignore_current_line=true<cr>', '[G]oto [D]efinition')
         --
         -- -- Find references for the word under your cursor.
-        map('gr', require('fzf-lua').lsp_references, '[G]oto [R]eferences')
+        map('gr', '<cmd>FzfLua lsp_references jump_to_single_result=true ignore_current_line=true<cr>', '[G]oto [R]eferences')
         --
         -- -- Jump to the implementation of the word under your cursor.
         -- --  Useful when your language has ways of declaring types without an actual implementation.
-        map('gI', require('fzf-lua').lsp_implementations, '[G]oto [I]mplementation')
+        map('gI', '<cmd>FzfLua lsp_implementations jump_to_single_result=true ignore_current_line=true<cr>', '[G]oto [I]mplementation')
         --
         -- -- Jump to the type of the word under your cursor.
         -- --  Useful when you're not sure what type a variable is and you want to see
         -- --  the definition of its *type*, not where it was *defined*.
-        map('<leader>D', require('fzf-lua').lsp_typedefs, 'Type [D]efinition')
+        map('<leader>D', '<cmd>FzfLua lsp_typedefs jump_to_single_result=true ignore_current_line=true<cr>', 'Type [D]efinition')
         --
 
         -- Rename the variable under your cursor.
