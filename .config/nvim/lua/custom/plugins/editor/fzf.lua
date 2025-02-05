@@ -53,6 +53,9 @@ return {
         -- formatter = "path.filename_first",
         formatter = 'path.dirname_first',
       },
+      oldfiles = {
+        include_current_session = true,
+      },
       previewers = {
         builtin = {
           extensions = {
@@ -63,6 +66,7 @@ return {
             ['webp'] = img_previewer,
           },
           ueberzug_scaler = 'fit_contain',
+          syntax_limit_b = 1024 * 100,
         },
       },
       -- Custom LazyVim option to configure vim.ui.select
@@ -209,7 +213,7 @@ return {
     { '<leader>sd', '<cmd>FzfLua diagnostics_document<cr>', desc = 'Document Diagnostics' },
     { '<leader>sD', '<cmd>FzfLua diagnostics_workspace<cr>', desc = 'Workspace Diagnostics' },
 
-    { '<leader>sg', '<cmd>FzflLua live_grep<cr>', desc = 'Grep (Root Dir)' },
+    { '<leader>sg', '<cmd>FzfLua live_grep<cr>', desc = 'Grep (Root Dir)' },
     {
       '<leader>sG',
       function()
