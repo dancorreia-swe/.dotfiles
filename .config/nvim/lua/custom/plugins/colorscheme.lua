@@ -57,7 +57,7 @@ return {
         coc_nvim = false,
         dap = true,
         dap_ui = true,
-        dashboard = false,
+        dashboard = true,
         dropbar = { enabled = true, color_mode = true },
         fern = false,
         fidget = true,
