@@ -12,7 +12,7 @@ return {
       harpoon:list():add()
     end, { desc = '[M]ark file' })
 
-    vim.keymap.set('n', '<leader>sm', function()
+    vim.keymap.set('n', '<leader>M', function()
       harpoon.ui:toggle_quick_menu(harpoon:list())
     end, { desc = '[S]earch [M]arked Files' })
 
