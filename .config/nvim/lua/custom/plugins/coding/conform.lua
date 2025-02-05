@@ -1,6 +1,7 @@
 return { -- Autoformat
   'stevearc/conform.nvim',
   opts = {
+    log_level = vim.log.levels.DEBUG,
     notify_on_error = false,
     format_on_save = function(bufnr)
       -- Disable "format_on_save lsp_fallback" for languages that don't
@@ -12,6 +13,11 @@ return { -- Autoformat
         lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
       }
     end,
+    formatters = {
+      taplo = {
+        args = { 'format', '--option', 'indent_entries=true', '-o', 'indent_tables=true', '-' },
+      },
+    },
     formatters_by_ft = {
       lua = { 'stylua' },
       javascript = { 'prettierd', 'prettier' },
@@ -21,6 +27,7 @@ return { -- Autoformat
       json = { 'prettierd', 'prettier' },
       html = { 'prettierd', 'prettier' },
       css = { 'prettierd', 'prettier' },
+      toml = { 'taplo' },
     },
 
     vim.api.nvim_create_user_command('Format', function(args)

@@ -12,7 +12,10 @@ final_space = true
   template = '❯ '
   foreground = ''
   background = 'transparent'
-  foreground_templates = ['{{if gt .Code 0}}red{{end}}', '{{if eq .Code 0}}magenta{{end}}']
+  foreground_templates = [
+    '{{if gt .Code 0}}red{{end}}',
+    '{{if eq .Code 0}}magenta{{end}}',
+  ]
 
 [[blocks]]
   type = 'prompt'
@@ -43,7 +46,12 @@ final_space = true
     foreground = 'green'
     background = 'transparent'
     type = 'git'
-    foreground_templates = ['{{ if or (.Working.Changed) (.Staging.Changed) }}#FFEB3B{{ end }}', '{{ if and (gt .Ahead 0) (gt .Behind 0) }}#FFCC80{{ end }}', '{{ if gt .Ahead 0 }}#B388FF{{ end }}', '{{ if gt .Behind 0 }}#B388FB{{ end }}']
+    foreground_templates = [
+      '{{ if or (.Working.Changed) (.Staging.Changed) }}#FFEB3B{{ end }}',
+      '{{ if and (gt .Ahead 0) (gt .Behind 0) }}#FFCC80{{ end }}',
+      '{{ if gt .Ahead 0 }}#B388FF{{ end }}',
+      '{{ if gt .Behind 0 }}#B388FB{{ end }}',
+    ]
 
     [blocks.segments.properties]
       branch_icon = ' '
@@ -109,8 +117,11 @@ final_space = true
 
   [[blocks.segments]]
     style = 'plain'
-    template = '❯'
+    template = ' '
     foreground = ''
     background = 'transparent'
     type = 'text'
-    foreground_templates = ['{{if gt .Code 0}}red{{end}}', '{{if eq .Code 0}}magenta{{end}}']
+    foreground_templates = [
+      '{{if gt .Code 0}}red{{end}}',
+      '{{if eq .Code 0}}magenta{{end}}',
+    ]
