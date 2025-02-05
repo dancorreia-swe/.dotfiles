@@ -227,9 +227,22 @@ return {
     { '<leader>sR', '<cmd>FzfLua resume<cr>', desc = 'Resume' },
     { '<leader>sq', '<cmd>FzfLua quickfix<cr>', desc = 'Quickfix List' },
     { '<leader>sw', '<cmd>FzfLua grep_cword<cr>', desc = 'Word (Root Dir)' },
-    -- { '<leader>sW', LazyVim.pick('grep_cword', { root = false }), desc = 'Word (cwd)' },
+    {
+      '<leader>sW',
+      function()
+        require('fzf-lua').grep_cword { cwd = vim.fn.expand '%:p:h' }
+      end,
+      desc = 'Word (cwd)',
+    },
     { '<leader>sw', '<cmd>FzfLua grep_visual<cr>', mode = 'v', desc = 'Selection (Root Dir)' },
-    -- { '<leader>sW', LazyVim.pick('grep_visual', { root = false }), mode = 'v', desc = 'Selection (cwd)' },
+    {
+      '<leader>sW',
+      function()
+        require('fzf-lua').grep_visual { cwd = vim.fn.expand '%:p:h' }
+      end,
+      mode = 'v',
+      desc = 'Selection (cwd)',
+    },
     {
       '<leader>ss',
       function()
