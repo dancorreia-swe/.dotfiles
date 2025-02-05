@@ -108,6 +108,16 @@ final_space = true
   overflow = 'hidden'
 
   [[blocks.segments]]
+    style = 'plain'
+    template = "  {{ .FormattedMs }} "
+    foreground = 'yellow'
+    background = 'transparent'
+    type = 'executiontime'
+
+    [blocks.segments.properties]
+      threshold = 5000
+
+  [[blocks.segments]]
     template = ' '
     foreground = '#00897b'
     background = ''
@@ -116,16 +126,6 @@ final_space = true
 
     [blocks.segments.properties]
       always_enabled = true
-
-  [[blocks.segments]]
-    style = 'plain'
-    template = '{{ .FormattedMs }}'
-    foreground = 'yellow'
-    background = 'transparent'
-    type = 'executiontime'
-
-    [blocks.segments.properties]
-      threshold = 5000
 
 [[blocks]]
   type = 'prompt'
