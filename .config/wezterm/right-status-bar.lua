@@ -81,18 +81,13 @@ function module.apply_to_config(config)
 		for _, b in ipairs(wezterm.battery_info()) do
 			local charge_level = math.floor(b.state_of_charge * 100)
 			local nearest_ten = math.floor(charge_level / 10) * 10
-			local battery_status = b.state == "Charging" and charging_battery_percentage or battery_percentage
+			local battery_status = (b.state == "Charging" or b.state == "Unknown") and charging_battery_percentage
+				or battery_percentage
 			local battery_icon = battery_status[nearest_ten] or battery_status[10]
 
 			local battery_data = { [b.state] = battery_icon .. "  " .. string.format("%.0f%%", charge_level) }
 			table.insert(cells, battery_data)
 		end
-
-		-- The powerline < symbol
-		-- local LEFT_ARROW = utf8.char(0xe0b3)
-		-- The filled in variant of the < symbol
-		local SOLID_LEFT_ARROW_STATUS = utf8.char(0xe0b2)
-		local SEMICIRCLE_LEFT_END = utf8.char(0xE0B6)
 
 		local colors = {
 			"#1e1e2e",
@@ -134,11 +129,15 @@ function module.apply_to_config(config)
 
 		-- Translate a cell into elements
 		local function push(text, is_last)
-			local cell_no = num_cells + 1
-
 			if type(text) == "table" then
 				local battery_state, battery_value = next(text)
-				local battery_color = (battery_state == "Discharging") and "#FFA066" or "#a6e3a1"
+				local battery_colors = {
+					Discharging = "#FFA066",
+					Charging = "#a6e3a1",
+					Unknown = "#89b4fa",
+					Empty = "#f38ba8",
+				}
+				local battery_color = battery_colors[battery_state] or "#FFFFFF"
 
 				table.insert(elements, { Foreground = { Color = battery_color } })
 				table.insert(elements, { Background = { Color = "none" } })
