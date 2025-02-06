@@ -34,6 +34,13 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
--- Keybindst to quick move between quicklist items
+-- Keybinds to quick move between quicklist items
 vim.keymap.set('n', ']q', '<cmd>cnext<CR>', { desc = 'Move to the next quickfix item' })
 vim.keymap.set('n', '[q', '<cmd>cprev<CR>', { desc = 'Move to the previous quickfix item' })
+
+-- Keybinds to use the black hole register aka not yank/delete into the system clipboard
+vim.keymap.set('n', '<leader>p', '"_dP', { desc = 'Paste without' })
+vim.keymap.set('v', '<leader>p', '"_dP', { desc = 'Paste without yanking' })
+
+vim.keymap.set('n', '<leader>d', '"_d', { desc = 'Delete without yanking' })
+vim.keymap.set('v', '<leader>d', '"_d', { desc = 'Delete without yanking' })
