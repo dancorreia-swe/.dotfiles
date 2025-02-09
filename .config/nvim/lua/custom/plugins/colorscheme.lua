@@ -151,6 +151,10 @@ return {
             -- For trouble.nvim
             TroubleNormal = { bg = transparent_background and cp.none or cp.base },
 
+            -- For Snacks (picker)
+            SnacksPickerTitle = { fg = cp.blue, style = { 'bold' } },
+            SnacksPickerDir = { fg = cp.overlay1 },
+
             -- For telescope.nvim
             TelescopeMatching = { fg = cp.lavender },
             TelescopeResultsDiffAdd = { fg = cp.green },

@@ -17,9 +17,9 @@ return {
             section = 'terminal',
             cmd = 'chafa ~/.config/nvim/lua/custom/plugins/anime-girl-nobg-crop.png --size 50x30 --format symbols --stretch --align center; sleep .1',
             height = 30,
-            padding = 4,
+            padding = 1,
           },
-          { section = 'startup', indent = 60 },
+          { section = 'startup', padding = 1 },
         },
         {
           pane = 2,
@@ -49,7 +49,23 @@ return {
     },
     indent = { enabled = true },
     input = { enabled = true },
-    picker = { enabled = true },
+    picker = {
+      enabled = true,
+      win = {
+        -- input window
+        input = {
+          keys = {
+            ['<c-h>'] = { 'toggle_hidden', mode = { 'i', 'n' } },
+          },
+        },
+
+        list = {
+          keys = {
+            ['<c-h>'] = { 'toggle_hidden', mode = { 'i', 'n' } },
+          },
+        },
+      },
+    },
     notifier = {
       enabled = true,
       timeout = 3000,
