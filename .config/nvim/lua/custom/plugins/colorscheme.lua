@@ -64,12 +64,12 @@ return {
         flash = true,
         gitgutter = false,
         gitsigns = true,
-        harpoon = false,
+        harpoon = true,
         headlines = false,
         hop = true,
         illuminate = true,
-        indent_blankline = { enabled = true, colored_indent_levels = false },
         leap = false,
+        snacks = true,
         lightspeed = false,
         lsp_saga = true,
         lsp_trouble = true,
@@ -115,6 +115,8 @@ return {
             DiagnosticVirtualTextInfo = { bg = cp.none },
             DiagnosticVirtualTextHint = { bg = cp.none },
             LspInfoBorder = { link = 'FloatBorder' },
+
+            GitSignsCurrentLineBlame = { fg = cp.overlay2 },
 
             -- For mason.nvim
             MasonNormal = { link = 'NormalFloat' },
