@@ -11,7 +11,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="robbyrussell"
+# ZSH_THEME="robbyrussell"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -73,7 +73,7 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting fast-syntax-highlighting zsh-autocomplete nvm laravel thefuck brew git-flow-avh git-flow)
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting fast-syntax-highlighting zsh-autocomplete nvm thefuck brew git-flow-avh git-flow)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -114,11 +114,14 @@ export NVM_DIR="$HOME/.nvm"
 # Herd injected PHP binary.
 export PATH="/Users/danielmac/Library/Application Support/Herd/bin/":$PATH
 
-# Herd injected PHP 8.2 configuration.
-export HERD_PHP_82_INI_SCAN_DIR="/Users/danielmac/Library/Application Support/Herd/config/php/82/"
-
 # Herd injected PHP 7.4 configuration.
 export HERD_PHP_74_INI_SCAN_DIR="/Users/danielmac/Library/Application Support/Herd/config/php/74/"
+# Herd injected PHP 8.1 configuration.
+export HERD_PHP_81_INI_SCAN_DIR="/Users/danielmac/Library/Application Support/Herd/config/php/81/"
+# Herd injected PHP 8.2 configuration.
+export HERD_PHP_82_INI_SCAN_DIR="/Users/danielmac/Library/Application Support/Herd/config/php/82/"
+# Herd injected PHP 8.3 configuration.
+export HERD_PHP_83_INI_SCAN_DIR="/Users/danielmac/Library/Application Support/Herd/config/php/83/"
 
 # bun completions
 [ -s "/Users/danielmac/.bun/_bun" ] && source "/Users/danielmac/.bun/_bun"
@@ -138,12 +141,6 @@ esac
 # python
 export PATH="$(brew --prefix)/opt/python@3.12/libexec/bin:$PATH"
 # python end
-
-# Herd injected PHP 8.1 configuration.
-export HERD_PHP_81_INI_SCAN_DIR="/Users/danielmac/Library/Application Support/Herd/config/php/81/"
-
-# Herd injected PHP 8.3 configuration.
-export HERD_PHP_83_INI_SCAN_DIR="/Users/danielmac/Library/Application Support/Herd/config/php/83/"
 
 export PATH="$HOME/.dotfiles/bin:$PATH"
 
@@ -191,7 +188,6 @@ function y() {
 	fi
 	rm -f -- "$tmp"
 }
-
 
 export GPG_TTY=$(tty)
 
