@@ -23,22 +23,23 @@ return {
         },
       },
       width = 60,
+      pane_gap = 16,
       sections = {
         {
           section = 'header',
           align = 'center',
           enabled = function()
-            return not (vim.o.columns > 123)
+            return not (vim.o.columns > 135)
           end,
         },
         {
           pane = 1,
           {
             enabled = function()
-              return vim.o.columns > 123
+              return vim.o.columns > 135
             end,
             section = 'terminal',
-            cmd = 'chafa ~/.config/nvim/lua/custom/plugins/anime-girl-nobg-crop.png --size 50x32 --format symbols --stretch --align center; sleep .1',
+            cmd = 'chafa ~/.config/nvim/lua/custom/plugins/anime-girl-nobg-crop.png --size 52x32 --format symbols --stretch --align center; sleep .1',
             height = 32,
             padding = 1,
           },
@@ -46,7 +47,7 @@ return {
             section = 'startup',
             padding = 1,
             enabled = function()
-              return vim.o.columns > 123
+              return vim.o.columns > 135
             end,
           },
         },
@@ -77,7 +78,7 @@ return {
             section = 'startup',
             padding = 1,
             enabled = function()
-              return not (vim.o.columns > 123)
+              return not (vim.o.columns > 135)
             end,
           },
         },
