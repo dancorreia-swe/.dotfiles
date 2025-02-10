@@ -41,6 +41,7 @@ return {
             section = 'terminal',
             cmd = 'chafa ~/.config/nvim/lua/custom/plugins/anime-girl-nobg-crop.png --size 52x32 --format symbols --stretch --align center; sleep .1',
             height = 32,
+            width = 56,
             padding = 1,
           },
           {
