@@ -28,7 +28,7 @@ yabai -m config mouse_action2 resize
 yabai -m mouse_drop_action swap
 
 # Active borders to show which window is active
-borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0 &
+borders active_color=0xFFA6ADC8 inactive_color=0xff494d64 width=5.0 &
 
 # Focus on remaining window when other is closed
 yabai -m signal --add event=window_destroyed action="yabai -m query --windows --window &> /dev/null || yabai -m window --focus mouse"
