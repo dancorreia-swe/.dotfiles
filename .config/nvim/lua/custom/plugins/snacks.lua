@@ -9,17 +9,46 @@ return {
     -- refer to the configuration section below
     bigfile = { enabled = true },
     dashboard = {
+      preset = {
+        keys = {
+          { icon = ' ', key = 'f', desc = 'Find File', action = ":lua Snacks.dashboard.pick('files')" },
+          { icon = ' ', key = 'n', desc = 'New File', action = ':ene | startinsert' },
+          { icon = ' ', key = 'g', desc = 'Find Text', action = ":lua Snacks.dashboard.pick('live_grep')" },
+          { icon = ' ', key = 'r', desc = 'Recent Files', action = ":lua Snacks.dashboard.pick('oldfiles')" },
+          { icon = ' ', key = 'y', desc = 'Yazi', action = '<cmd>Yazi<cr>' },
+          { icon = ' ', key = 'c', desc = 'Config', action = ":lua Snacks.dashboard.pick('files', {cwd = vim.fn.stdpath('config')})" },
+          { icon = ' ', key = 's', desc = 'Restore Session', section = 'session' },
+          { icon = '󰒲 ', key = 'L', desc = 'Lazy', action = ':Lazy', enabled = package.loaded.lazy ~= nil },
+          { icon = ' ', key = 'q', desc = 'Quit', action = ':qa' },
+        },
+      },
       width = 60,
       sections = {
         {
+          section = 'header',
+          align = 'center',
+          enabled = function()
+            return not (vim.o.columns > 123)
+          end,
+        },
+        {
           pane = 1,
           {
+            enabled = function()
+              return vim.o.columns > 123
+            end,
             section = 'terminal',
-            cmd = 'chafa ~/.config/nvim/lua/custom/plugins/anime-girl-nobg-crop.png --size 50x30 --format symbols --stretch --align center; sleep .1',
-            height = 30,
+            cmd = 'chafa ~/.config/nvim/lua/custom/plugins/anime-girl-nobg-crop.png --size 50x32 --format symbols --stretch --align center; sleep .1',
+            height = 32,
             padding = 1,
           },
-          { section = 'startup', padding = 1 },
+          {
+            section = 'startup',
+            padding = 1,
+            enabled = function()
+              return vim.o.columns > 123
+            end,
+          },
         },
         {
           pane = 2,
@@ -43,6 +72,13 @@ return {
             opts = { limit = 3 },
             indent = 2,
             padding = 1,
+          },
+          {
+            section = 'startup',
+            padding = 1,
+            enabled = function()
+              return not (vim.o.columns > 123)
+            end,
           },
         },
       },
