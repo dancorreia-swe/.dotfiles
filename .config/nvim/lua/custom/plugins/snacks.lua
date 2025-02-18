@@ -1,3 +1,36 @@
+local characters = {
+  {
+    cmd = 'chafa -f symbols --symbols sextant -c full --speed=0.9 --clear --stretch "$HOME/.config/nvim/lua/custom/plugins/silf-wolf.gif"; sleep .1',
+    height = 32,
+    width = 72,
+  },
+  {
+    cmd = 'chafa ~/.config/nvim/lua/custom/plugins/anime-girl-nobg-crop.png --size 52x32 --format symbols --stretch --align center; sleep .1',
+    height = 32,
+    width = 56,
+  },
+}
+
+local function random_character_picker()
+  math.randomseed(os.time())
+  local random_index = math.random(1, #characters)
+  return characters[random_index]
+end
+
+local function create_terminal_section()
+  local dashboard_pick = random_character_picker()
+  return {
+    section = 'terminal',
+    cmd = dashboard_pick.cmd,
+    height = dashboard_pick.height,
+    width = dashboard_pick.width,
+    padding = 1,
+    enabled = function()
+      return vim.o.columns > 135
+    end,
+  }
+end
+
 return {
   'folke/snacks.nvim',
   priority = 1000,
@@ -35,14 +68,7 @@ return {
         {
           pane = 1,
           {
-            enabled = function()
-              return vim.o.columns > 135
-            end,
-            section = 'terminal',
-            cmd = 'chafa ~/.config/nvim/lua/custom/plugins/anime-girl-nobg-crop.png --size 52x32 --format symbols --stretch --align center; sleep .1',
-            height = 32,
-            width = 56,
-            padding = 1,
+            create_terminal_section(),
           },
           {
             section = 'startup',
@@ -131,7 +157,7 @@ keys = {
     { "<leader>/", function() Snacks.picker.grep() end, desc = "Grep" },
     { "<leader>:", function() Snacks.picker.command_history() end, desc = "Command History" },
     { "<leader>n", function() Snacks.picker.notifications() end, desc = "Notification History" },
-    { "<leader>e", function() Snacks.explorer() end, desc = "File Explorer" },
+    -- { "<leader>e", function() Snacks.explorer() end, desc = "File Explorer" },
     -- find
     { "<leader>fb", function() Snacks.picker.buffers() end, desc = "Buffers" },
     { "<leader>fc", function() Snacks.picker.files({ cwd = vim.fn.stdpath("config") }) end, desc = "Find Config File" },
