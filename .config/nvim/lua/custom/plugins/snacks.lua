@@ -69,7 +69,7 @@ return {
           pane = 1,
           {
             section = 'terminal',
-            cmd = 'chafa -f symbols --symbols sextant -c full --speed=0.9 --clear --stretch "$HOME/.config/nvim/lua/custom/plugins/silf-wolf.gif"; sleep .1',
+            cmd = 'chafa -f symbols --symbols sextant -c full --speed=0.9 --clear --stretch "$HOME/.config/nvim/lua/custom/plugins/dashboard-pics/silf-wolf.gif"; sleep .1',
             height = 32,
             width = 72,
             padding = 1,
