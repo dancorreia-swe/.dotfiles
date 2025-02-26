@@ -1,15 +1,23 @@
 return {
   'folke/todo-comments.nvim',
-  event = 'VimEnter',
-  dependencies = { 'nvim-lua/plenary.nvim' },
-  opts = { signs = false },
-  init = function()
-    vim.keymap.set('n', ']t', function()
-      require('todo-comments').jump_next()
-    end, { desc = 'Next todo comment' })
-
-    vim.keymap.set('n', '[t', function()
-      require('todo-comments').jump_prev()
-    end, { desc = 'Previous todo comment' })
-  end,
+  event = { 'BufReadPost', 'BufNewFile', 'BufWritePre' },
+  keys = {
+    {
+      ']t',
+      function()
+        require('todo-comments').jump_next()
+      end,
+      mode = 'n',
+      desc = 'Next todo comment',
+    },
+    {
+      '[t',
+      function()
+        require('todo-comments').jump_prev()
+      end,
+      mode = 'n',
+      desc = 'Previous todo comment',
+    },
+  },
+  opts = { signs = true },
 }
