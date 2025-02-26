@@ -41,7 +41,7 @@ final_space = true
       style = 'agnoster_short'
 
       [blocks.segments.properties.mapped_locations]
-        "~/Projects/" = " "
+        "~/Code/" = " "
         "~/Downloads/" = " "
         "~/notes/" = " "
         "~/.config/" = " "
