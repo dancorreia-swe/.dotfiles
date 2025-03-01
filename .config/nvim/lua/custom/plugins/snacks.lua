@@ -154,7 +154,12 @@ return {
       words = { enabled = true },
       lazygit = { enabled = true },
       explorer = { enabled = false },
-      scroll = { enabled = false },
+      scroll = {
+        enabled = true,
+        animate = {
+          duration = { step = 20, total = 120 },
+        },
+      },
     },
     -- stylua: ignore
     keys = {
