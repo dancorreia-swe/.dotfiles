@@ -73,7 +73,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting fast-syntax-highlighting zsh-autocomplete nvm thefuck brew git-flow-avh git-flow)
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting fast-syntax-highlighting zsh-autocomplete thefuck brew git-flow-avh git-flow asdf)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -107,13 +107,8 @@ alias lg="lazygit"
 alias lzd="lazydocker"
 alias ff="fastfetch"
 
-export NVM_DIR="$HOME/.nvm"
-  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
-  [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
-
 # Herd injected PHP binary.
 export PATH="/Users/danielmac/Library/Application Support/Herd/bin/":$PATH
-
 # Herd injected PHP 7.4 configuration.
 export HERD_PHP_74_INI_SCAN_DIR="/Users/danielmac/Library/Application Support/Herd/config/php/74/"
 # Herd injected PHP 8.1 configuration.
@@ -122,6 +117,8 @@ export HERD_PHP_81_INI_SCAN_DIR="/Users/danielmac/Library/Application Support/He
 export HERD_PHP_82_INI_SCAN_DIR="/Users/danielmac/Library/Application Support/Herd/config/php/82/"
 # Herd injected PHP 8.3 configuration.
 export HERD_PHP_83_INI_SCAN_DIR="/Users/danielmac/Library/Application Support/Herd/config/php/83/"
+
+export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 
 # bun completions
 [ -s "/Users/danielmac/.bun/_bun" ] && source "/Users/danielmac/.bun/_bun"
@@ -192,3 +189,4 @@ function y() {
 export GPG_TTY=$(tty)
 
 eval "$(oh-my-posh init zsh --config $HOME/.config/ohmyposh/zen.toml)"
+
