@@ -224,7 +224,7 @@ return { -- LSP Configuration & Plugins
           -- },
         },
         emmet_language_server = {
-          filetypes = { 'html', 'css', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue', 'blade', 'heex', 'eelixr' },
+          filetypes = { 'html', 'css', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue', 'blade', 'heex', 'elixir', 'phoenix-heex' },
         },
         prettier = {
           filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue' },
