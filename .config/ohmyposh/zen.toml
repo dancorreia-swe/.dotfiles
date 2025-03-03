@@ -104,6 +104,12 @@ final_space = true
     foreground = "#3C82F6"
     template = " 🥟 {{ .Full }} "
 
+  [[blocks.segments]]
+    type = "lua"
+    style = "plain"
+    foreground = "blue"
+    template = "  {{ .Major }}.{{ .Minor }} "
+
 [[blocks]]
   type = 'rprompt'
   overflow = 'hidden'
