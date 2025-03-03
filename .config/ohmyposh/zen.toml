@@ -76,12 +76,13 @@ final_space = true
   alignment = 'right'
 
   [[blocks.segments]]
-    style = 'powerline'
+    type = 'elixir'
+    style = 'diamond'
+    leading_diamond = ""
+    trailing_diamond = ""
     template = '  {{ .Major }}.{{ .Minor }} '
     foreground = '#ffffff'
-    powerline_symbol = ''
     background = '#422251'
-    type = 'elixir'
 
   [[blocks.segments]]
     style = 'powerline'
