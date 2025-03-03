@@ -3,6 +3,9 @@ version = 3
 auto_upgrade = true
 final_space = true
 
+[var]
+  ElixirComplete = '<#422251></><#ffffff,#422251></><#422251></>'
+
 [secondary_prompt]
   template = '󱤀  '
   foreground = 'magenta'
@@ -74,13 +77,10 @@ final_space = true
   alignment = 'right'
 
   [[blocks.segments]]
+    style = 'plain'
     type = 'elixir'
-    style = 'diamond'
-    leading_diamond = ""
-    trailing_diamond = ""
-    template = '  {{ .Major }}.{{ .Minor }} '
+    template = "{{.Var.ElixirComplete}} {{ .Major }}.{{ .Minor }} "
     foreground = '#ffffff'
-    background = '#422251'
 
   [[blocks.segments]]
     type = 'node'
