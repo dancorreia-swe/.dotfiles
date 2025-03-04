@@ -28,7 +28,7 @@ return { -- Autoformat
       html = { 'prettierd', 'prettier' },
       css = { 'prettierd', 'prettier' },
       toml = { 'taplo' },
-      markdown = { 'markdownlint' },
+      markdown = { 'prettierd' },
     },
 
     vim.api.nvim_create_user_command('Format', function(args)
