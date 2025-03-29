@@ -20,3 +20,6 @@ fish_add_path "$PNPM_HOME"
 fish_add_path (brew --prefix)"/opt/python@3.12/libexec/bin"
 
 set -gx GPG_TTY (tty)
+
+# fd colors
+set -gx LS_COLORS $(vivid generate catppuccin-mocha)
