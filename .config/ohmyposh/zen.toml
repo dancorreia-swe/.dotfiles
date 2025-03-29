@@ -44,20 +44,20 @@ final_space = true
       [blocks.segments.properties.mapped_locations]
         "~/Code/" = " "
         "~/Downloads/" = " "
-        "~/notes/" = " "
+        "~/vaults/" = " "
         "~/.config/" = " "
 
   [[blocks.segments]]
     type = 'git'
     style = 'powerline'
-    template = '<#FFFFFF>{{ url .UpstreamIcon .UpstreamURL }}</> {{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }}  <#22d3ee> ?{{.Working.Untracked}}</> ~{{ .Working.Modified }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}  {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }}<#34d399>  {{ .StashCount }}</>{{ end }}'
-    foreground = 'green'
+    template = '<#FFFFFF>{{ url .UpstreamIcon .UpstreamURL }}</> {{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }}  <#91d7e3> ★{{.Working.Untracked}}</> {{ .Working.Modified }}{{ if .Working.Deleted }}<#ed8796>  {{.Working.Deleted}}</>{{ end }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} <#f5bde6>✓</> {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }}<#94e2d5>  {{ .StashCount }}</>{{ end }}'
+    foreground = '#a6e3a1'
     background = 'transparent'
     foreground_templates = [
-      '{{ if or (.Working.Changed) (.Staging.Changed) }}#FFEB3B{{ end }}',
-      '{{ if and (gt .Ahead 0) (gt .Behind 0) }}#FFCC80{{ end }}',
-      '{{ if gt .Ahead 0 }}#B388FF{{ end }}',
-      '{{ if gt .Behind 0 }}#B388FB{{ end }}',
+      '{{ if or (.Working.Changed) (.Staging.Changed) }}#eed49f{{ end }}',
+      '{{ if and (gt .Ahead 0) (gt .Behind 0) }}#f5a97f{{ end }}',
+      '{{ if gt .Ahead 0 }}#c6a0f6{{ end }}',
+      '{{ if gt .Behind 0 }}#c6a0f6{{ end }}',
     ]
 
     [blocks.segments.properties]
@@ -71,6 +71,13 @@ final_space = true
         "feat/*" = "🚀 "
         "bug/*" = "🐛 "
         "hotfix/*" = "🔥 "
+
+      [blocks.segments.properties.status_formats]
+        "Modified" = "%d"
+        "Deleted" = "%d"
+        "Untracked" = "★%d"
+        "Added" = "✓%d"
+        "Unmerged" = "%d"
 
 [[blocks]]
   type = 'prompt'
