@@ -1,4 +1,4 @@
-abbr -a C "cd ~/Code"
+abbr -a C "z ~/Code"
 abbr -a lg "lazygit"
 abbr -a lzd "lazydocker"
 abbr -a ff "fastfetch"
