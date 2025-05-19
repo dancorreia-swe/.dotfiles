@@ -15,13 +15,17 @@ alt - 9 : yabai -m space --focus 9
 alt - p : yabai -m space --focus prev || yabai -m space --focus last
 alt - n : yabai -m space --focus next || yabai -m space --focus first
 
-### Cycle Through Stacked Windows ####
-rcmd - e : yabai -m window --focus stack.next || yabai -m window --focus stack.first
-rcmd - q : yabai -m window --focus stack.prev || yabai -m window --focus stack.last
-
 ### Change Window Focus Within Space ####
-alt - j : (yabai -m window --focus south || yabai -m display --focus south) || (yabai -m window --focus stack.next || yabai -m window --focus stack.first)
-alt - k : (yabai -m window --focus north || yabai -m display --focus north) || (yabai -m window --focus stack.prev || yabai -m window --focus stack.last)
+alt - j : /bin/bash -lc \
+  "yabai -m window --focus south \
+    || yabai -m display --focus south \
+    || yabai -m window --focus stack.next \
+    || yabai -m window --focus stack.first"
+alt - k : /bin/bash -lc \
+  "yabai -m window --focus north \
+    || yabai -m display --focus north \
+    || yabai -m window --focus stack.prev \
+    || yabai -m window --focus stack.last"
 alt - h : yabai -m window --focus west || yabai -m display --focus west;
 alt - l : yabai -m window --focus east || yabai -m display --focus east; 
 
