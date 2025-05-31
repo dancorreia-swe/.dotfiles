@@ -29,6 +29,28 @@ alt - k : /bin/bash -lc \
 alt - h : yabai -m window --focus west || yabai -m display --focus west;
 alt - l : yabai -m window --focus east || yabai -m display --focus east; 
 
+### Change Window/Display Focus with Alt + Arrow Keys ###
+alt - down : /bin/bash -lc \
+  "yabai -m window --focus south \
+    || yabai -m display --focus south \
+    || yabai -m window --focus stack.next \
+    || yabai -m window --focus stack.first"
+
+# Focus North  (same as alt - k)
+alt - up : /bin/bash -lc \
+  "yabai -m window --focus north \
+    || yabai -m display --focus north \
+    || yabai -m window --focus stack.prev \
+    || yabai -m window --focus stack.last"
+
+# Focus West   (same as alt - h)
+alt - left : yabai -m window --focus west \
+    || yabai -m display --focus west
+
+# Focus East   (same as alt - l)
+alt - right : yabai -m window --focus east \
+    || yabai -m display --focus east
+
 ### Change Focus Between External Displays ####
 alt - s: yabai -m display --focus west || yabai -m display --focus south
 alt - g: yabai -m display --focus east || yabai -m display --focus north
