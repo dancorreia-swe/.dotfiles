@@ -13,8 +13,8 @@ return {
     vim.keymap.set('n', '<down>', smart_splits.resize_down)
     vim.keymap.set('n', '<up>', smart_splits.resize_up)
     vim.keymap.set('n', '<right>', smart_splits.resize_right)
-    vim.keymap.set('n', '<leader><leader>h', smart_splits.swap_buf_left)
 
+    vim.keymap.set('n', '<leader><leader>h', smart_splits.swap_buf_left)
     vim.keymap.set('n', '<leader><leader>j', smart_splits.swap_buf_down)
     vim.keymap.set('n', '<leader><leader>k', smart_splits.swap_buf_up)
     vim.keymap.set('n', '<leader><leader>l', smart_splits.swap_buf_right)
