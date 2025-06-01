@@ -56,9 +56,9 @@ alt - s: yabai -m display --focus west || yabai -m display --focus south
 alt - g: yabai -m display --focus east || yabai -m display --focus north
 
 ### Create a New Space and Focus on It ####
-hyper - n : yabai -m space --create && \
-             index="$(yabai -m query --spaces --display | jq 'map(select(.["is-native-fullscreen"] == false))[-1].index')" && \
-             yabai -m space --focus "${index}"
+hyper - n : fish -c "yabai -m space --create; and \
+        set -l idx (yabai -m query --spaces --display | jq 'map(select(.[\"is-native-fullscreen\"] == false))[-1].index'); and \
+        yabai -m space --focus \$idx"
 
 ### Destroy Space ####
 alt + shift - d : yabai -m space --destroy
@@ -128,10 +128,10 @@ shift + alt - h : yabai -m window --swap west
 shift + alt - l : yabai -m window --swap east
 
 ### Resize Windows ####
-shift + ctrl + alt - h : yabai -m window --resize right:-20:0 2> /dev/null || yabai -m window --resize left:-20:0 2> /dev/null
-shift + ctrl + alt - j : yabai -m window --resize bottom:0:20 2> /dev/null || yabai -m window --resize top:0:20 2> /dev/null
-shift + ctrl + alt - k : yabai -m window --resize bottom:0:-20 2> /dev/null || yabai -m window --resize top:0:-20 2> /dev/null
-shift + ctrl + alt - l : yabai -m window --resize right:20:0 2> /dev/null || yabai -m window --resize left:20:0 2> /dev/null
+meh - h : yabai -m window --resize right:-20:0 2> /dev/null || yabai -m window --resize left:-20:0 2> /dev/null
+meh - j : yabai -m window --resize bottom:0:20 2> /dev/null || yabai -m window --resize top:0:20 2> /dev/null
+meh - k : yabai -m window --resize bottom:0:-20 2> /dev/null || yabai -m window --resize top:0:-20 2> /dev/null
+meh - l : yabai -m window --resize right:20:0 2> /dev/null || yabai -m window --resize left:20:0 2> /dev/null
 
 ### Control Yabai Service ####
 ctrl + alt - q : yabai --stop-service
@@ -139,4 +139,4 @@ ctrl + alt - s : yabai --start-service
 ctrl + alt - r : yabai --restart-service
 
 ### Spotify Shortcut ####
-lshift + rshift - m : open -a Spotify
+hyper - m : open -a Spotify
