@@ -27,13 +27,32 @@ return {
           table.insert(opts.ensure_installed, 'js-debug-adapter')
         end,
       },
-
       'jay-babu/mason-nvim-dap.nvim',
-      -- Add your own debuggers here
-      'leoluz/nvim-dap-go',
     },
     opts = function()
+      -- PHP Xdebug adapter
       local dap = require 'dap'
+      if not dap.adapters['php-debug-adapter'] then
+        dap.adapters['php-debug-adapter'] = {
+          type = 'executable',
+          command = 'node',
+          args = '$MASON/packages/php-debug-adapter/extension/out/phpDebug.js',
+        }
+      end
+      for _, language in ipairs { 'php' } do
+        if not dap.configurations[language] then
+          dap.configurations[language] = {
+            {
+              type = 'php',
+              request = 'launch',
+              name = 'Listen for Xdebug',
+              port = 9003,
+            },
+          }
+        end
+      end
+
+      -- This is the default adapter for debugging JavaScript and TypeScript
       if not dap.adapters['pwa-node'] then
         require('dap').adapters['pwa-node'] = {
           type = 'server',
@@ -43,7 +62,7 @@ return {
             command = 'node',
             -- 💀 Make sure to update this path to point to your installation
             args = {
-              require('mason-registry').get_package('js-debug-adapter'):get_install_path() .. '/js-debug/src/dapDebugServer.js',
+              '$MASON/packages/js-debug-adapter/js-debug/src/dapDebugServer.js',
               '${port}',
             },
           },
@@ -70,6 +89,32 @@ return {
           }
         end
       end
+
+      -- Elixir adapter
+      if not dap.adapters['mix_task'] then
+        dap.adapters['mix_task'] = {
+          type = 'executable',
+          command = '$MASON/packages/elixir-ls/debug_adapter.sh',
+        }
+      end
+
+      if not dap.configurations['elixir'] then
+        dap.configurations['elixir'] = {
+          {
+            type = 'mix_task',
+            name = 'mix test',
+            task = 'test',
+            taskArgs = { '--trace' },
+            request = 'launch',
+            startApps = true, -- for Phoenix projects
+            projectDir = '${workspaceFolder}',
+            requireFiles = {
+              'test/**/test_helper.exs',
+              'test/**/*_test.exs',
+            },
+          },
+        }
+      end
     end,
     config = function()
       local dap = require 'dap'
@@ -78,7 +123,7 @@ return {
       require('mason-nvim-dap').setup {
         -- Makes a best effort to setup the various debuggers with
         -- reasonable debug configurations
-        automatic_setup = true,
+        automatic_installation = true,
 
         -- You can provide additional configuration to the handlers,
         -- see mason-nvim-dap README for more information
@@ -87,9 +132,9 @@ return {
         -- You'll need to check that you have the required things installed
         -- online, please don't ask me how to install them :)
         ensure_installed = {
-          -- Update this to ensure that you have the debuggers for the langs you want
-          'delve',
-          'js-de',
+          'js-debug-adapter',
+          'php-debug-adapter',
+          'elixir-ls',
         },
       }
 
@@ -132,9 +177,6 @@ return {
       dap.listeners.after.event_initialized['dapui_config'] = dapui.open
       dap.listeners.before.event_terminated['dapui_config'] = dapui.close
       dap.listeners.before.event_exited['dapui_config'] = dapui.close
-
-      -- Install golang specific config
-      require('dap-go').setup()
     end,
   },
 }
