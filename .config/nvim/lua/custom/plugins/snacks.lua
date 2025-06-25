@@ -1,37 +1,3 @@
--- NOTE: I should probably move this to a separate file or just remove it
--- local characters = {
---   {
---     cmd = 'chafa -f symbols --symbols sextant -c full --speed=0.9 --clear --stretch "$HOME/.config/nvim/lua/custom/plugins/silf-wolf.gif"; sleep .1',
---     height = 32,
---     width = 72,
---   },
---   {
---     cmd = 'chafa ~/.config/nvim/lua/custom/plugins/anime-girl-nobg-crop.png --size 52x32 --format symbols --stretch --align center; sleep .1',
---     height = 32,
---     width = 56,
---   },
--- }
---
--- local function random_character_picker()
---   math.randomseed(os.time())
---   local random_index = math.random(1, #characters)
---   return characters[random_index]
--- end
---
--- local function create_terminal_section()
---   local dashboard_pick = random_character_picker()
---   return {
---     section = 'terminal',
---     cmd = dashboard_pick.cmd,
---     height = dashboard_pick.height,
---     width = dashboard_pick.width,
---     padding = 1,
---     enabled = function()
---       return vim.o.columns > 135
---     end,
---   }
--- end
-
 return {
   {
     'folke/snacks.nvim',
@@ -153,7 +119,7 @@ return {
       statuscolumn = { enabled = true },
       words = { enabled = true },
       lazygit = { enabled = true },
-      explorer = { enabled = false },
+      explorer = { enabled = true },
       scroll = {
         enabled = true,
         animate = {
@@ -170,7 +136,7 @@ return {
       { "<leader>/", function() Snacks.picker.grep() end, desc = "Grep" },
       { "<leader>:", function() Snacks.picker.command_history() end, desc = "Command History" },
       { "<leader>N", function() Snacks.picker.notifications() end, desc = "Notification History" },
-      -- { "<leader>e", function() Snacks.explorer() end, desc = "File Explorer" },
+      { "<leader>E", function() Snacks.explorer() end, desc = "File Explorer" },
       { "<leader><space>", function() Snacks.picker.smart() end, desc = "Smart Find Files" },
       { "<leader>,", function() Snacks.picker.buffers() end, desc = "Buffers" },
       { "<leader>/", function() Snacks.picker.grep() end, desc = "Grep" },
@@ -213,6 +179,7 @@ return {
       { "<leader>sj", function() Snacks.picker.jumps() end, desc = "Jumps" },
       { "<leader>sk", function() Snacks.picker.keymaps() end, desc = "Keymaps" },
       { "<leader>sl", function() Snacks.picker.loclist() end, desc = "Location List" },
+      { "<leader>sL", function() Snacks.picker.picker_layouts() end, desc = "Picker Layouts" },
       { "<leader>sm", function() Snacks.picker.marks() end, desc = "Marks" },
       { "<leader>sM", function() Snacks.picker.man() end, desc = "Man Pages" },
       { "<leader>sp", function() Snacks.picker.lazy() end, desc = "Search for Plugin Spec" },
