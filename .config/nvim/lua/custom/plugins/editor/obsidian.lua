@@ -17,12 +17,14 @@ return {
     'ibhagwan/fzf-lua',
   },
   keys = {
-    { '<leader>ot', '<CMD>Obsidian today<CR>', desc = 'Open Obsidian today note' },
-    { '<leader>oy', '<CMD>Obsidian today -1<CR>', desc = 'Open Obsidian yesterday note' },
-    { '<leader>oT', '<CMD>Obsidian today +1<CR>', desc = 'Open Obsidian tomorrow note' },
-    { '<leader>od', '<CMD>Obsidian dailies<CR>', desc = 'Open Obsidian daily picker' },
+    { '<leader>odt', '<CMD>Obsidian today<CR>', desc = 'Open Obsidian today note' },
+    { '<leader>ody', '<CMD>Obsidian today -1<CR>', desc = 'Open Obsidian yesterday note' },
+    { '<leader>odT', '<CMD>Obsidian today +1<CR>', desc = 'Open Obsidian tomorrow note' },
+    { '<leader>oD', '<CMD>Obsidian dailies<CR>', desc = 'Open Obsidian daily picker' },
     { '<leader>og', '<CMD>Obsidian search<CR>', desc = 'Open Obsidian grep picker' },
+    { '<leader>ot', '<CMD>Obsidian tags<CR>', desc = 'Open Obsidian tag picker' },
     { '<leader>ob', '<CMD>Obsidian backlinks<CR>', desc = 'Open Obsidian backlinks picker' },
+    { '<leader>on', '<CMD>Obsidian new<CR>', desc = 'Obsidian new note' },
   },
   config = function()
     require('obsidian').setup {
@@ -30,6 +32,9 @@ return {
         {
           name = 'personal',
           path = '~/vaults/personal',
+          overrides = {
+            notes_subdir = 'slip-box',
+          },
         },
         {
           name = 'work',
@@ -37,6 +42,7 @@ return {
         },
       },
 
+      new_notes_location = 'notes_subdir',
       daily_notes = {
         -- Optional, if you keep daily notes in a separate directory.
         folder = 'daily notes',
