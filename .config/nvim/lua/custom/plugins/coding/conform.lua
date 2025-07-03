@@ -1,8 +1,26 @@
-return { -- Autoformat
+return {
   'stevearc/conform.nvim',
+  dependencies = { 'mason.nvim' },
+  event = { 'BufWritePre' },
+  cmd = { 'ConformInfo' },
+  keys = {
+    {
+      '<leader>F',
+      function()
+        require('conform').format { async = true }
+      end,
+      mode = '',
+      desc = 'Format buffer',
+    },
+  },
   opts = {
+    default_format_opts = {
+      timeout_ms = 3000,
+      async = false, -- not recommended to change
+      quiet = false, -- not recommended to change
+      lsp_format = 'fallback', -- not recommended to change
+    },
     log_level = vim.log.levels.DEBUG,
-    notify_on_error = false,
     format_on_save = function(bufnr)
       -- Disable "format_on_save lsp_fallback" for languages that don't
       -- have a well standardized coding style. You can add additional
@@ -13,11 +31,7 @@ return { -- Autoformat
         lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
       }
     end,
-    formatters = {
-      taplo = {
-        args = { 'format', '--option', 'indent_entries=true', '-o', 'indent_tables=true', '-' },
-      },
-    },
+
     formatters_by_ft = {
       lua = { 'stylua' },
       javascript = { 'prettierd', 'prettier' },
@@ -29,6 +43,13 @@ return { -- Autoformat
       css = { 'prettierd', 'prettier' },
       toml = { 'taplo' },
       markdown = { 'prettierd' },
+    },
+
+    formatters = {
+      injected = { options = { ignore_errors = true } },
+      taplo = {
+        args = { 'format', '--option', 'indent_entries=true', '-o', 'indent_tables=true', '-' },
+      },
     },
 
     vim.api.nvim_create_user_command('Format', function(args)
@@ -43,4 +64,7 @@ return { -- Autoformat
       require('conform').format { async = true, lsp_fallback = true, range = range }
     end, { range = true }),
   },
+  init = function()
+    vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
+  end,
 }

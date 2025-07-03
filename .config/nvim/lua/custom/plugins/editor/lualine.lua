@@ -1,5 +1,6 @@
 return {
   'nvim-lualine/lualine.nvim',
+  event = 'VeryLazy',
   dependencies = { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font, { 'AndreM222/copilot-lualine' } },
   config = function()
     require('lualine').setup {
@@ -36,8 +37,8 @@ return {
           {
             function()
               local msg = 'No Active Lsp'
-              local buf_ft = vim.api.nvim_buf_get_option(0, 'filetype')
-              local clients = vim.lsp.get_active_clients()
+              local buf_ft = vim.api.nvim_buf_get_option_value(0, 'filetype')
+              local clients = vim.lsp.get_clients()
               if next(clients) == nil then
                 return msg
               end

@@ -1,22 +1,22 @@
--- "gc" to comment visual regions/lines
 return {
-  'numToStr/Comment.nvim',
-  config = function()
-    require('Comment').setup {
-      pre_hook = function()
-        return vim.bo.commentstring
-      end,
-    }
-  end,
-  lazy = false,
-  dependencies = {
-    'nvim-treesitter/nvim-treesitter',
-    'JoosepAlviste/nvim-ts-context-commentstring',
+  {
+    'echasnovski/mini.comment',
+    event = 'VeryLazy',
+    opts = {
+      options = {
+        custom_commentstring = function()
+          return require('ts_context_commentstring.internal').calculate_commentstring() or vim.bo.commentstring
+        end,
+      },
+    },
     {
-      'folke/ts-comments.nvim',
-      opts = {},
-      event = 'VeryLazy',
-      enabled = vim.fn.has 'nvim-0.10.0' == 1,
+      {
+        'JoosepAlviste/nvim-ts-context-commentstring',
+        lazy = true,
+        opts = {
+          enable_autocmd = false,
+        },
+      },
     },
   },
 }
