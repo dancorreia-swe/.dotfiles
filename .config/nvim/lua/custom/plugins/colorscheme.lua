@@ -182,6 +182,11 @@ return {
             ['@keyword.return'] = { fg = cp.pink, style = clear },
             ['@error.c'] = { fg = cp.none, style = clear },
             ['@error.cpp'] = { fg = cp.none, style = clear },
+
+            -- For blink pairs
+            BlinkPairsOrange = { fg = cp.yellow, bg = transparent_background and cp.none or cp.base },
+            BlinkPairsPurple = { fg = cp.pink, bg = transparent_background and cp.none or cp.base },
+            BlinkPairsBlue = { fg = cp.sapphire, bg = transparent_background and cp.none or cp.base },
           }
         end,
       },
