@@ -12,7 +12,11 @@ return {
 
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
+    version = false,
+    lazy = vim.fn.argc(-1) == 0, -- load treesitter early when opening a file from the cmdline
+    event = { 'BufReadPost', 'BufWritePost', 'BufNewFile', 'VeryLazy' },
     build = ':TSUpdate',
+    cmd = { 'TSUpdateSync', 'TSUpdate', 'TSInstall' },
     opts = {
       ensure_installed = {
         'typescript',
@@ -108,5 +112,11 @@ return {
         require('treesitter-context').go_to_context(vim.v.count1)
       end, { silent = true })
     end,
+  },
+
+  {
+    'windwp/nvim-ts-autotag',
+    event = { 'BufReadPost', 'BufWritePost', 'BufNewFile' },
+    opts = {},
   },
 }

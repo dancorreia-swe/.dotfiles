@@ -6,7 +6,7 @@ return {
     'mikavilpas/blink-ripgrep.nvim',
     'folke/snacks.nvim',
   },
-
+  event = 'InsertEnter',
   -- use a release tag to download pre-built binaries
   version = '1.*',
   -- AND/OR build from source, requires nightly: https://rust-lang.github.io/rustup/concepts/channels.html#working-with-nightly-rust
@@ -29,7 +29,9 @@ return {
     -- C-k: Toggle signature help (if signature.enabled = true)
     --
     -- See :h blink-cmp-config-keymap for defining your own keymap
-    keymap = { preset = 'enter' },
+    keymap = {
+      preset = 'enter',
+    },
 
     appearance = {
       -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
@@ -176,14 +178,6 @@ return {
               }
             end
             return items
-          end,
-        },
-      },
-      keymap = {
-        -- 👇🏻👇🏻 (optional) add a keymap to invoke the search manually
-        ['<c-g>'] = {
-          function()
-            require('blink-cmp').show { providers = { 'ripgrep' } }
           end,
         },
       },
