@@ -107,3 +107,5 @@ vim.opt.scrolloff = 10
 
 -- Enable line wrapping
 vim.opt.laststatus = 3
+
+vim.diagnostic.config { jump = { float = true } }
