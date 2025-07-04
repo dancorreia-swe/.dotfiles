@@ -50,7 +50,7 @@ final_space = true
   [[blocks.segments]]
     type = 'git'
     style = 'powerline'
-    template = '<#FFFFFF>{{ url .UpstreamIcon .UpstreamURL }}</> {{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }}  <#91d7e3> ★{{.Working.Untracked}}</> {{ .Working.Modified }}{{ if .Working.Deleted }}<#ed8796>  {{.Working.Deleted}}</>{{ end }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} <#f5bde6>✓</> {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }}<#94e2d5>  {{ .StashCount }}</>{{ end }}'
+    template = '<#FFFFFF>{{ url .UpstreamIcon .UpstreamURL }}</> {{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }}  <#91d7e3> ★ {{.Working.Untracked}}</> {{ .Working.Modified }}{{ if .Working.Deleted }}<#ed8796>  {{.Working.Deleted}}</>{{ end }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} <#f5bde6>✓</> {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }}<#94e2d5>  {{ .StashCount }}</>{{ end }}'
     foreground = '#a6e3a1'
     background = 'transparent'
     foreground_templates = [
