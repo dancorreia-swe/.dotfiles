@@ -7,7 +7,8 @@ sbar.add("item", { position = "right", width = settings.group_paddings })
 local cal = sbar.add("item", {
   icon = {
     color = colors.white,
-    padding_left = 8,
+    padding_left = 4,
+    padding_right = 8,
     font = {
       style = settings.font.style_map["Black"],
       size = 12.0,
@@ -25,9 +26,9 @@ local cal = sbar.add("item", {
   padding_left = 1,
   padding_right = 1,
   background = {
-    color = colors.surface_zero,
+    color = colors.transparent,
     border_color = colors.black,
-    border_width = 1
+    border_width = 0
   },
   click_script = "open -a 'Calendar'"
 })
@@ -45,5 +46,5 @@ local cal = sbar.add("item", {
 sbar.add("item", { position = "right", width = settings.group_paddings })
 
 cal:subscribe({ "forced", "routine", "system_woke" }, function(env)
-  cal:set({ icon = os.date("%a. %d %b."), label = os.date("%H:%M") })
+  cal:set({ icon = os.date("%a. %d %b"), label = os.date("%H:%M") })
 end)
