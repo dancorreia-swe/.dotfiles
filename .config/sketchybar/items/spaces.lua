@@ -141,7 +141,7 @@ end
 yabay_layout:subscribe({ "space_change", "front_app_switched" }, update_yabai_layout)
 
 local spaces_indicator = sbar.add("item", {
-	padding_left = -3,
+	padding_left = 0,
 	padding_right = 0,
 	icon = {
 		padding_left = 8,
