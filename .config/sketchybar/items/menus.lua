@@ -65,10 +65,12 @@ space_menu_swap:subscribe("swap_menus_and_spaces", function(env)
     sbar.set("/menu\\..*/", { drawing = false })
     sbar.set("/space\\..*/", { drawing = true })
     -- sbar.set("front_app", { drawing = true })
+    sbar.set("yabai_mode", { drawing = true })
   else
     menu_watcher:set( { updates = true })
     sbar.set("/space\\..*/", { drawing = false })
     -- sbar.set("front_app", { drawing = false })
+    sbar.set("yabai_mode", { drawing = false })
     update_menus()
   end
 end)

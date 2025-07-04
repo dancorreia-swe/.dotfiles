@@ -100,9 +100,9 @@ local space_window_observer = sbar.add("item", {
 	updates = true,
 })
 
-local yabay_layout = sbar.add("item", {
-	padding_left = 5,
-	padding_right = 0,
+local yabay_layout = sbar.add("item", "yabai_mode", {
+	padding_left = 6,
+	padding_right = 3,
 	icon = {
 		font = {
 			style = settings.font.style_map["Regular"],
@@ -110,7 +110,6 @@ local yabay_layout = sbar.add("item", {
 		},
 	},
 	update_freq = 3,
-	script = "update_yabai_layout",
 })
 
 local function update_yabai_layout()
@@ -135,7 +134,7 @@ local function update_yabai_layout()
 	end)
 end
 
-yabay_layout:subscribe({ "space_change", "routine" }, update_yabai_layout)
+yabay_layout:subscribe({ "space_change", "front_app_switched" }, update_yabai_layout)
 
 local spaces_indicator = sbar.add("item", {
 	padding_left = -3,
