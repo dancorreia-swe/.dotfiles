@@ -36,6 +36,7 @@ local icons = {
       _0 = "􀛪",
       charging = "􀢋"
     },
+
     wifi = {
       upload = "􀄨",
       download = "􀄩",
@@ -43,10 +44,20 @@ local icons = {
       disconnected = "􀙈",
       router = "􁓤",
     },
+
     media = {
       back = "􀊊",
       forward = "􀊌",
       play_pause = "􀊈",
+    },
+  
+    spaces = {
+      web = "􀵲",
+      code = "􀤙",
+      tracking = "􀃳",
+      media = "􁁒 ",
+      social = "􂄼 ",
+      other = "􁂭",
     },
   },
 
@@ -94,6 +105,15 @@ local icons = {
       back = "",
       forward = "",
       play_pause = "",
+    },
+    
+    spaces = {
+      web = "",
+      code = "",
+      tracking = "",
+      media = "",
+      social = "",
+      other = "",
     },
   },
 }
