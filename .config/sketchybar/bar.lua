@@ -6,7 +6,7 @@ sbar.bar({
 	color = colors.bar.bg,
 	margin = 8,
 	height = 40,
-	y_offset = 0,
+	y_offset = 8,
 	blur_radius = 40,
 	corner_radius = 16,
 	padding_right = 2,
