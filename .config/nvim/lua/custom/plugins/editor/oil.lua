@@ -4,7 +4,7 @@ return {
   ---@type oil.SetupOpts
   opts = {},
   keys = {
-    { '<leader>O', '<CMD>Oil --float<CR>', desc = 'Open parent directory on window' },
+    { '<leader>_', '<CMD>Oil --float<CR>', desc = 'Open parent directory on window' },
   },
   -- Optional dependencies
   dependencies = { 'nvim-tree/nvim-web-devicons' }, -- use if you prefer nvim-web-devicons
