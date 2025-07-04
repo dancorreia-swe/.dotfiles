@@ -15,9 +15,9 @@ local icons = {
     },
 
     yabai = {
-      bsp = "",
-      stack = "﯅",
-      float = ""
+      bsp = "􀏝 ",
+      stack = "􀐋 ",
+      float = "􀯇 "
     },
 
     volume = {
@@ -27,6 +27,7 @@ local icons = {
       _10="􀊡",
       _0="􀊣",
     },
+
     battery = {
       _100 = "􀛨",
       _75 = "􀺸",

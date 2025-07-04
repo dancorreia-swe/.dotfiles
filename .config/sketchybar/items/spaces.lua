@@ -26,7 +26,7 @@ for i = 1, 10, 1 do
 		padding_right = 1,
 		padding_left = 1,
 		background = {
-			color = colors.surface_zero,
+			color = colors.transparent,
 			border_width = 1,
 			height = 26,
 			border_color = colors.base,
@@ -72,7 +72,10 @@ for i = 1, 10, 1 do
 		space:set({
 			icon = { highlight = selected },
 			label = { highlight = selected },
-			background = { border_color = selected and colors.grey or colors.base },
+			background = {
+				color = selected and colors.base,
+				border_color = selected and colors.grey or colors.base,
+			},
 		})
 
 		-- space_bracket:set({
@@ -101,12 +104,12 @@ local space_window_observer = sbar.add("item", {
 })
 
 local yabay_layout = sbar.add("item", "yabai_mode", {
-	padding_left = 6,
+	padding_left = 2,
 	padding_right = 3,
 	icon = {
 		font = {
 			style = settings.font.style_map["Regular"],
-			size = 19.0,
+			size = 16.0,
 		},
 	},
 	update_freq = 3,
@@ -118,16 +121,17 @@ local function update_yabai_layout()
 		local mode_map = {
 			bsp = {
 				icon = { string = icons.yabai.bsp, color = colors.purple },
-				label = { string = "BSP", color = colors.purple },
+				label = { string = "BSP", color = colors.purple, drawing = false },
 			},
 			stack = {
 				icon = { string = icons.yabai.stack, color = colors.yellow },
 				label = { string = "Stacked", color = colors.yellow, drawing = false },
 			},
 		}
+
 		local default_mode = {
 			icon = { string = icons.yabai.float, color = colors.green },
-			label = { string = "Float", color = colors.green },
+			label = { string = "Float", color = colors.green, drawing = false },
 		}
 
 		yabay_layout:set(mode_map[yabai_mode_treated] or default_mode)
