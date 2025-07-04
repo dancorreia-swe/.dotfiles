@@ -13,6 +13,13 @@ local icons = {
       on = "􁏮",
       off = "􁏯",
     },
+
+    yabai = {
+      bsp = "",
+      stack = "﯅",
+      float = ""
+    },
+
     volume = {
       _100="􀊩",
       _66="􀊧",
@@ -51,6 +58,11 @@ local icons = {
     cpu = "",
     clipboard = "Missing Icon",
 
+    yabai = {
+      bsp = "",
+      stack = "﯅",
+      float = ""
+    },
     switch = {
       on = "󱨥",
       off = "󱨦",

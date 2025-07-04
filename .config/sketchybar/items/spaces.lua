@@ -100,6 +100,43 @@ local space_window_observer = sbar.add("item", {
 	updates = true,
 })
 
+local yabay_layout = sbar.add("item", {
+	padding_left = 5,
+	padding_right = 0,
+	icon = {
+		font = {
+			style = settings.font.style_map["Regular"],
+			size = 19.0,
+		},
+	},
+	update_freq = 3,
+	script = "update_yabai_layout",
+})
+
+local function update_yabai_layout()
+	sbar.exec("yabai -m query --spaces --space | jq -r .type", function(yabai_mode)
+		local yabai_mode_treated = yabai_mode:gsub("%s+", "")
+		local mode_map = {
+			bsp = {
+				icon = { string = icons.yabai.bsp, color = colors.purple },
+				label = { string = "BSP", color = colors.purple },
+			},
+			stack = {
+				icon = { string = icons.yabai.stack, color = colors.yellow },
+				label = { string = "Stacked", color = colors.yellow, drawing = false },
+			},
+		}
+		local default_mode = {
+			icon = { string = icons.yabai.float, color = colors.green },
+			label = { string = "Float", color = colors.green },
+		}
+
+		yabay_layout:set(mode_map[yabai_mode_treated] or default_mode)
+	end)
+end
+
+yabay_layout:subscribe({ "space_change", "routine" }, update_yabai_layout)
+
 local spaces_indicator = sbar.add("item", {
 	padding_left = -3,
 	padding_right = 0,
