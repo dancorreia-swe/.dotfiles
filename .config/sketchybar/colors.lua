@@ -9,7 +9,10 @@ return {
   purple = 0xffcba6f7,
   magenta = 0xffb39df3,
   grey = 0xff7f8490,
+  base = 0xff1e1e2e,
   transparent = 0x00000000,
+  surface = 0xff45475a,
+  surface_zero = 0xff313244,
 
   bar = {
     bg = 0xcf181825,

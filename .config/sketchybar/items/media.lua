@@ -5,7 +5,7 @@ local whitelist = { ["Spotify"] = true,
                     ["Music"] = true    };
 
 local media_cover = sbar.add("item", {
-  position = "right",
+  position = "center",
   background = {
     image = {
       string = "media.artwork",
