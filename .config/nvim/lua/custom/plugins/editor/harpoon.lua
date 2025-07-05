@@ -1,6 +1,7 @@
 return {
   'ThePrimeagen/harpoon',
   branch = 'harpoon2',
+  event = 'VeryLazy',
   dependencies = { 'nvim-lua/plenary.nvim' },
   opts = {
     menu = {
@@ -18,35 +19,75 @@ return {
       end,
       desc = '[M]ark file',
     },
-    { '<leader>M', function()
+    {
+      '<leader>M',
+      function()
         require('harpoon').ui:toggle_quick_menu(require('harpoon'):list())
-      end, desc = '[S]earch [M]arked Files' },
-    { '<leader>j', function()
+      end,
+      desc = '[S]earch [M]arked Files',
+    },
+    {
+      '<leader>j',
+      function()
         require('harpoon'):list():select(1)
-      end, desc = '[j] Harpoon Buffer [1]' },
-    { '<leader>k', function()
+      end,
+      desc = '[j] Harpoon Buffer [1]',
+    },
+    {
+      '<leader>k',
+      function()
         require('harpoon'):list():select(2)
-      end, desc = '[k] Harpoon Buffer [2]' },
-    { '<leader>p', function()
+      end,
+      desc = '[k] Harpoon Buffer [2]',
+    },
+    {
+      '<leader>p',
+      function()
         require('harpoon'):list():select(3)
-      end, desc = '[o] Harpoon Buffer [3]' },
-    { '<leader>n', function()
+      end,
+      desc = '[o] Harpoon Buffer [3]',
+    },
+    {
+      '<leader>n',
+      function()
         require('harpoon'):list():select(4)
-      end, desc = '[m] Harpoon Buffer [4]' },
-    { '<C-p>', function()
+      end,
+      desc = '[m] Harpoon Buffer [4]',
+    },
+    {
+      '<C-p>',
+      function()
         require('harpoon'):list():prev()
-      end, desc = 'Select [P]revious Harpoon Buffer' },
-    { '<C-n>', function()
+      end,
+      desc = 'Select [P]revious Harpoon Buffer',
+    },
+    {
+      '<C-n>',
+      function()
         require('harpoon'):list():next()
-      end, desc = 'Select [N]ext Harpoon Buffer' },
-    { '<C-v>', function()
+      end,
+      desc = 'Select [N]ext Harpoon Buffer',
+    },
+    {
+      '<C-v>',
+      function()
         require('harpoon').ui:select_menu_item { vsplit = true }
-      end, buffer = true },
-    { '<C-x>', function()
+      end,
+      buffer = true,
+    },
+    {
+      '<C-x>',
+      function()
         require('harpoon').ui:select_menu_item { split = true }
-      end, buffer = true },
-    { '<C-t>', function()
+      end,
+      buffer = true,
+    },
+    {
+      '<C-t>',
+      function()
         require('harpoon').ui:select_menu_item { tabedit = true }
-      end, buffer = true },
+      end,
+      buffer = true,
+    },
   },
 }
