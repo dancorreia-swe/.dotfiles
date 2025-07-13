@@ -50,14 +50,15 @@ local icons = {
       forward = "􀊌",
       play_pause = "􀊈",
     },
-  
+
     spaces = {
       web = "􀵲",
       code = "􀤙",
       tracking = "􀃳",
-      media = "􁁒 ",
+      media = "􂙩 ",
       social = "􂄼 ",
-      other = "􁂭",
+      other = "􂊭",
+      unknown = "􁎄",
     },
   },
 
@@ -106,7 +107,7 @@ local icons = {
       forward = "",
       play_pause = "",
     },
-    
+
     spaces = {
       web = "",
       code = "",

@@ -21,7 +21,7 @@ local space_icon = sbar.add("item", "space_icon", {
 local function update_space_icon()
   sbar.exec("yabai -m query --spaces --space | jq -r .label", function(space_name)
     local space_label = space_name:gsub("%s+", "")
-    local icon_string = icons.spaces[space_label] or icons.spaces.other
+    local icon_string = icons.spaces[space_label] or icons.spaces.unknown
     space_icon:set({ icon = { string = icon_string } })
   end)
 end
