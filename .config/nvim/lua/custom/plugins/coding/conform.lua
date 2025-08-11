@@ -34,6 +34,7 @@ return {
 
     formatters_by_ft = {
       lua = { 'stylua' },
+      php = { 'pint', 'php-cs-fixer' },
       javascript = { 'prettierd', 'prettier' },
       typescript = { 'prettierd', 'prettier' },
       typescriptreact = { 'prettierd', 'prettier' },

@@ -2,7 +2,18 @@ return {
   'saghen/blink.cmp',
   -- optional: provides snippets for the snippet source
   dependencies = {
-    'rafamadriz/friendly-snippets',
+    {
+      'L3MON4D3/LuaSnip',
+      dependencies = {
+        {
+          'rafamadriz/friendly-snippets',
+          config = function()
+            require('luasnip.loaders.from_vscode').lazy_load()
+            require('luasnip.loaders.from_vscode').lazy_load { paths = { vim.fn.stdpath 'config' .. '/snippets' } }
+          end,
+        },
+      },
+    },
     'mikavilpas/blink-ripgrep.nvim',
     'folke/snacks.nvim',
   },
@@ -54,6 +65,7 @@ return {
       },
     },
 
+    snippets = { preset = 'luasnip' },
     -- Default list of enabled providers defined so that you can extend it
     -- elsewhere in your config, without redefining it, due to `opts_extend`
     sources = {

@@ -5,7 +5,6 @@ return {
     events = { 'BufWritePost', 'BufReadPost', 'InsertLeave' },
     linters_by_ft = {
       fish = { 'fish' },
-      elixir = { 'credo' },
       typescript = { 'eslint_d' },
       typescriptreact = { 'eslint_d' },
       -- Use the "*" filetype to run linters on all filetypes.
