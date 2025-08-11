@@ -1,6 +1,6 @@
 # start automatically
-sudo yabai --load-sa
 yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
+sudo yabai --load-sa
 
 # default layout (can be bsp, stack or float)
 yabai -m config layout bsp
@@ -38,6 +38,7 @@ yabai -m signal --add event=application_terminated action="yabai -m query --wind
 # Disable specific apps
 yabai -m rule --add app="^System Settings$" manage=off
 yabai -m rule --add app="^System Preferences$" manage=off
+yabai -m rule --add app="ClearVPN" manage=off
 yabai -m rule --add app="^Calculator$" manage=off
 yabai -m rule --add app="^CleanShot X$" manage=off
 yabai -m rule --add app="^Simulator" manage=off
