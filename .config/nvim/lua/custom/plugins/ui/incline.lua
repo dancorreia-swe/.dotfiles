@@ -12,6 +12,7 @@ return {
     local helpers = require 'incline.helpers'
     local navic = require 'nvim-navic'
     local devicons = require 'nvim-web-devicons'
+
     require('incline').setup {
       hide = {
         cursorline = true,
