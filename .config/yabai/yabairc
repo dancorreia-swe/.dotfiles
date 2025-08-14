@@ -38,7 +38,7 @@ yabai -m signal --add event=application_terminated action="yabai -m query --wind
 # Disable specific apps
 yabai -m rule --add app="^System Settings$" manage=off
 yabai -m rule --add app="^System Preferences$" manage=off
-yabai -m rule --add app="ClearVPN" manage=off
+yabai -m rule --add app="ClearVPN*" manage=off
 yabai -m rule --add app="^Calculator$" manage=off
 yabai -m rule --add app="^CleanShot X$" manage=off
 yabai -m rule --add app="^Simulator" manage=off
@@ -61,13 +61,13 @@ function setup_space {
 
 setup_space 1 web
 setup_space 2 code
-setup_space 3 tracking
+setup_space 3 planning
 setup_space 4 media
-setup_space 5 social
-setup_space 6 other
+setup_space 5 comms
 
 yabai -m rule --add app="^Arc$" space=^1
 yabai -m rule --add app="^Wezterm$" space=^2
 yabai -m rule --add app="^TickTick$" space=3
 yabai -m rule --add app="^Spotify$" space=4
 yabai -m rule --add app="WhatsApp" space=5
+yabai -m rule --add app="^Discord$" space=5

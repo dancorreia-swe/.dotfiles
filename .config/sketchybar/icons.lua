@@ -54,11 +54,12 @@ local icons = {
     spaces = {
       web = "􀵲",
       code = "􀤙",
-      tracking = "􀃳",
+      planning = "􀃳",
       media = "􂙩 ",
-      social = "􂄼 ",
-      other = "􂊭",
-      unknown = "􁎄",
+      comms = "􂄼 ",
+      unknown = "􂊭",
+      -- other = "􂊭",
+      -- unknown = "􁎄",
     },
   },
 
