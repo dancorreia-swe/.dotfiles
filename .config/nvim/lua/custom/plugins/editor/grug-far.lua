@@ -29,6 +29,7 @@ return {
   },
   config = function()
     require('grug-far').setup {
+      engine = 'astgrep',
       -- options, see Configuration section below
       -- there are no required options atm
       -- engine = 'ripgrep' is default, but 'astgrep' can be specified
