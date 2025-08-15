@@ -5,7 +5,7 @@ return {
   keys = {
     { '<leader>lee', '<cmd>GrugFar<cr>', desc = 'GrugFar' },
     {
-      '<leader>lei',
+      '<leader>lef',
       function()
         require('grug-far').open { prefills = { paths = vim.fn.expand '%' } }
       end,
