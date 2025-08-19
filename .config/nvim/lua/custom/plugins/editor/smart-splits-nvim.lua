@@ -1,6 +1,6 @@
 return {
   'mrjones2014/smart-splits.nvim',
-	-- stylua: ignore
+   -- stylua: ignore
    keys = {
     { '<C-h>', function() require('smart-splits').move_cursor_left() end },
     { '<C-j>', function() require('smart-splits').move_cursor_down() end },
