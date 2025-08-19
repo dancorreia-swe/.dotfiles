@@ -11,6 +11,7 @@ return { -- LSP Configuration & Plugins
     -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
     { 'j-hui/fidget.nvim', opts = {} },
     { 'folke/neoconf.nvim', opts = {} },
+    { 'saghen/blink.cmp' },
     {
       'b0o/SchemaStore.nvim',
       lazy = true,
@@ -64,24 +65,6 @@ return { -- LSP Configuration & Plugins
         local map = function(keys, func, desc)
           vim.keymap.set('n', keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
         end
-
-        -- -- Jump to the definition of the word under your cursor.
-        -- --  This is where a variable was first declared, or where a function is defined, etc.
-        -- --  To jump back, press <C-t>.
-        -- map('gd', '<cmd>FzfLua lsp_definitions jump_to_single_result=true ignore_current_line=true<cr>', '[G]oto [D]efinition')
-        --
-        -- -- Find references for the word under your cursor.
-        -- map('gr', '<cmd>FzfLua lsp_references jump_to_single_result=true ignore_current_line=true<cr>', '[G]oto [R]eferences')
-        --
-        -- -- Jump to the implementation of the word under your cursor.
-        -- --  Useful when your language has ways of declaring types without an actual implementation.
-        -- map('gI', '<cmd>FzfLua lsp_implementations jump_to_single_result=true ignore_current_line=true<cr>', '[G]oto [I]mplementation')
-        --
-        -- -- Jump to the type of the word under your cursor.
-        -- --  Useful when you're not sure what type a variable is and you want to see
-        -- --  the definition of its *type*, not where it was *defined*.
-        -- map('<leader>D', '<cmd>FzfLua lsp_typedefs jump_to_single_result=true ignore_current_line=true<cr>', 'Type [D]efinition')
-        --
 
         -- Rename the variable under your cursor.
         --  Most Language Servers support renaming across files, etc.
@@ -142,7 +125,7 @@ return { -- LSP Configuration & Plugins
     --  By default, Neovim doesn't support everything that is in the LSP specification.
     --  When you add nvim-cmp, luasnip, etc. Neovim now has *more* capabilities.
     --  So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
-    local capabilities = vim.lsp.protocol.make_client_capabilities()
+    local capabilities = require('blink.cmp').get_lsp_capabilities()
     capabilities.textDocument.completion.completionItem.snippetSupport = true
     -- capabilities.textDocument.completion.completionItem.resolveSupport = {
     --   properties = {
@@ -174,107 +157,49 @@ return { -- LSP Configuration & Plugins
       --    https://github.com/pmizio/typescript-tools.nvim
       --
       -- But for many setups, the LSP (`tsserver`) will work just fine
-
-      tailwindcss = {
-        filetypes = {
-          'css',
-          'scss',
-          'sass',
-          'html',
-          'htmldjango',
-          'heex',
-          'elixir',
-          'eruby',
-          'javascript',
-          'javascriptreact',
-          'typescript',
-          'typescriptreact',
-          'rust',
-          'svelte',
-        },
+      tsserver = {
         init_options = {
-          userLanguages = {
-            elixir = 'html-eex',
-            eelixir = 'html-eex',
-            heex = 'html-eex',
+          plugins = {
+            {
+              name = '@vue/typescript-plugin',
+              location = '/Users/danielmac/.nvm/versions/node/v21.6.0/lib/node_modules/@vue/typescript-plugin',
+              languages = { 'vue' },
+            },
           },
         },
+        filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
+      },
+      prettier = {
+        filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue' },
+      },
+      eslint_d = {
+        filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue' },
+      },
+      jsonls = {
+        on_new_config = function(new_config)
+          new_config.settings.json.schemas = new_config.settings.json.schemas or {}
+          vim.list_extend(new_config.settings.json.schemas, require('schemastore').json.schemas())
+        end,
         settings = {
-          tailwindCSS = {
-            lint = {
-              cssConflict = 'warning',
-              invalidApply = 'error',
-              invalidConfigPath = 'error',
-              invalidScreen = 'error',
-              invalidTailwindDirective = 'error',
-              invalidVariant = 'error',
-              recommendedVariantOrder = 'warning',
+          json = {
+            format = {
+              enable = true,
             },
-            experimental = {
-              classRegex = {
-                [[class= "([^"]*)]],
-                [[class: "([^"]*)]],
-                '~H""".*class="([^"]*)".*"""',
-                '~F""".*class="([^"]*)".*"""',
-                '"([^"]*)"',
-              },
-            },
-            validate = true,
+            validate = { enable = true },
           },
         },
-        tsserver = {
-          init_options = {
-            plugins = {
-              {
-                name = '@vue/typescript-plugin',
-                location = '/Users/danielmac/.nvm/versions/node/v21.6.0/lib/node_modules/@vue/typescript-plugin',
-                languages = { 'vue' },
-              },
+      },
+      lua_ls = {
+        -- cmd = {...},
+        -- filetypes = { ...},
+        -- capabilities = {},
+        settings = {
+          Lua = {
+            completion = {
+              callSnippet = 'Replace',
             },
-          },
-          filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
-        },
-        intelephense = {
-          -- init_options = {
-          -- licenceKey = '~/intelephense/licence.txt',
-          -- },
-        },
-        emmet_language_server = {
-          filetypes = { 'html', 'css', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue', 'blade', 'heex', 'elixir', 'eex' },
-        },
-        prettier = {
-          filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue' },
-        },
-        eslint_d = {
-          filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue' },
-        },
-        jsonls = {
-          on_new_config = function(new_config)
-            new_config.settings.json.schemas = new_config.settings.json.schemas or {}
-            vim.list_extend(new_config.settings.json.schemas, require('schemastore').json.schemas())
-          end,
-          settings = {
-            json = {
-              format = {
-                enable = true,
-              },
-              validate = { enable = true },
-            },
-          },
-        },
-        lua_ls = {
-          -- cmd = {...},
-          -- filetypes = { ...},
-          -- capabilities = {},
-
-          settings = {
-            Lua = {
-              completion = {
-                callSnippet = 'Replace',
-              },
-              -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-              -- diagnostics = { disable = { 'missing-fields' } },
-            },
+            -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
+            -- diagnostics = { disable = { 'missing-fields' } },
           },
         },
       },
