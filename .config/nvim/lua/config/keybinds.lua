@@ -43,4 +43,4 @@ vim.keymap.set('v', '<leader>p', '"_dP', { desc = 'Paste without yanking' })
 vim.keymap.set('n', '<leader>d', '"_d', { desc = 'Delete without yanking' })
 vim.keymap.set('v', '<leader>d', '"_d', { desc = 'Delete without yanking' })
 
-vim.keymap.set('n', '<leader>.', '<c-6>', { desc = 'Switch to the last used buffer' })
+vim.keymap.set('n', '<BS>', '<c-6>', { desc = 'Switch to the last used buffer' })
