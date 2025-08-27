@@ -40,6 +40,7 @@ return {
       typescriptreact = { 'prettierd', 'prettier' },
       javascriptreact = { 'prettierd', 'prettier' },
       json = { 'prettierd', 'prettier' },
+      jsonc = { 'prettierd', 'prettier' },
       html = { 'prettierd', 'prettier' },
       css = { 'prettierd', 'prettier' },
       toml = { 'taplo' },
