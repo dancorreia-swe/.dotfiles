@@ -144,7 +144,7 @@ automatically-unhide-macos-hidden-apps = false
   alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
 
   # See: https://nikitabobko.github.io/AeroSpace/commands#mode
-  alt-shift-semicolon = 'mode service'
+  ctrl-alt-shift-cmd-semicolon = 'mode service'
 
 # 'service' binding mode declaration.
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
@@ -180,3 +180,23 @@ automatically-unhide-macos-hidden-apps = false
 [[on-window-detected]]
   if.app-id = 'com.spotify.client'
   run = 'move-node-to-workspace M' # mnemonics M - Music
+
+[[on-window-detected]]
+  if.app-id = 'md.obsidian'
+  run = 'move-node-to-workspace N' # mnemonics N - Notes
+
+[[on-window-detected]]
+  if.app-id = 'com.TickTick.task.mac'
+  run = 'move-node-to-workspace A'    # mnemonics A - Actions
+
+[[on-window-detected]]
+  if.app-id = 'com.apple.finder'
+  run = 'move-node-to-workspace F' # mnemonics F - Files
+
+[[on-window-detected]]
+  if.app-id = 'net.whatsapp.WhatsApp'
+  run = 'move-node-to-workspace C'    # mnemonics C - Chat
+
+[[on-window-detected]]
+  if.app-id = 'com.hnc.Discord'
+  run = 'move-node-to-workspace C' # mnemonics C - Chat
