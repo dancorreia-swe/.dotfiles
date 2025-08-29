@@ -130,6 +130,11 @@ return {
     },
     -- stylua: ignore
     keys = {
+      -- Terminal 
+      { "<C-/>", function() Snacks.terminal(nil, { win = { position = "float" }}) end, desc = "Quick View Terminal" },
+      { "<leader>tt", function() Snacks.terminal.toggle() end, desc = "Toggle Terminal" },
+      { "<leader>tn", function() Snacks.terminal.open() end, desc = "Terminal New" },
+
       -- Top Pickers & Explorer
       { "<leader><cr>", function() Snacks.picker.smart() end, desc = "Smart Find Files" },
       -- { "<leader><space>", function() Snacks.picker.smart() end, desc = "Smart Find Files" },
@@ -275,5 +280,26 @@ return {
         })
       end,
     },
+  },
+  {
+    'folke/edgy.nvim',
+    ---@module 'edgy'
+    ---@param opts Edgy.Config
+    opts = function(_, opts)
+      for _, pos in ipairs { 'top', 'bottom', 'left', 'right' } do
+        opts[pos] = opts[pos] or {}
+        table.insert(opts[pos], {
+          ft = 'snacks_terminal',
+          size = { height = 0.4 },
+          title = '%{b:snacks_terminal.id}: %{b:term_title}',
+          filter = function(_buf, win)
+            return vim.w[win].snacks_win
+              and vim.w[win].snacks_win.position == pos
+              and vim.w[win].snacks_win.relative == 'editor'
+              and not vim.w[win].trouble_preview
+          end,
+        })
+      end
+    end,
   },
 }
