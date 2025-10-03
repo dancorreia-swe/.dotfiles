@@ -2,7 +2,13 @@ return {
   'stevearc/oil.nvim',
   ---@module 'oil'
   ---@type oil.SetupOpts
-  opts = {},
+  opts = {
+    keymaps = {
+      ['_'] = { 'actions.parent', mode = 'n' },
+      ['-'] = { 'actions.open_cwd', mode = 'n' },
+      ['q'] = { 'actions.close', mode = 'n' },
+    },
+  },
   keys = {
     { '<leader>_', '<CMD>Oil --float<CR>', desc = 'Open parent directory on window' },
   },
