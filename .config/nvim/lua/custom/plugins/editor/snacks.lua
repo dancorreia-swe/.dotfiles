@@ -91,6 +91,13 @@ return {
       input = { enabled = true },
       picker = {
         sources = {
+          explorer = {
+            layout = {
+              layout = {
+                position = 'right',
+              },
+            },
+          },
           todo_comments = {
             show_empty = true,
           },
