@@ -1,6 +1,8 @@
 if status is-interactive
   fish_add_path /Users/danielmac/.local/bin
+  fish_add_path /Users/danielmac/.local/share/bob/nvim-bin
   fish_add_path /opt/homebrew/bin
+  fish_add_path /opt/homebrew/opt/openjdk/bin
   fish_add_path "$HOME/.dotfiles/bin"
   fish_add_path "$HOME/.local/bin"
 

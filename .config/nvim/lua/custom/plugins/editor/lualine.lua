@@ -43,7 +43,7 @@ return {
         {
           function()
             local status = require('sidekick.status').get()
-            return status and vim.tbl_get(icons, status.kind, 1)
+            return status and 'LSP ' .. vim.tbl_get(icons, status.kind, 1)
           end,
           cond = function()
             return require('sidekick.status').get() ~= nil

@@ -49,5 +49,5 @@ SETUVAR fish_pager_color_selected_background:\x1d
 SETUVAR fish_pager_color_selected_completion:\x1d
 SETUVAR fish_pager_color_selected_description:\x1d
 SETUVAR fish_pager_color_selected_prefix:\x1d
-SETUVAR fish_user_paths:/opt/homebrew/opt/python\x403\x2e12/libexec/bin\x1e/sbin\x1e/usr/sbin\x1e/bin\x1e/usr/bin\x1e/opt/homebrew/bin\x1e/usr/local/bin\x1e/Users/danielmac/\x2edotfiles/bin\x1e/Users/danielmac/\x2elocal/bin\x1e/Users/danielmac/Library/pnpm\x1e/Users/danielmac/\x2ebun/bin\x1e/Users/danielmac/Library/Application\x20Support/Herd/bin
+SETUVAR fish_user_paths:/Users/danielmac/\x2elocal/share/bob/nvim\x2dbin\x1e/opt/homebrew/opt/openjdk/bin\x1e/opt/homebrew/opt/python\x403\x2e12/libexec/bin\x1e/sbin\x1e/usr/sbin\x1e/bin\x1e/usr/bin\x1e/opt/homebrew/bin\x1e/usr/local/bin\x1e/Users/danielmac/\x2edotfiles/bin\x1e/Users/danielmac/\x2elocal/bin\x1e/Users/danielmac/Library/pnpm\x1e/Users/danielmac/\x2ebun/bin\x1e/Users/danielmac/Library/Application\x20Support/Herd/bin
 SETUVAR --export fzf_preview_dir_cmd:eza\x1e\x2d\x2dcolor\x3dalways\x1e\x2d\x2dlong\x1e\x2d\x2dgit\x1e\x2d\x2dno\x2dfilesize\x1e\x2d\x2dicons\x3dalways\x1e\x2d\x2dno\x2dtime\x1e\x2d\x2dno\x2duser\x1e\x2d\x2dno\x2dpermissions\x1e\x2dG
