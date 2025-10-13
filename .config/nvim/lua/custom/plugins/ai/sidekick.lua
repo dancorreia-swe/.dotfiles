@@ -2,11 +2,11 @@ return {
   {
     'folke/sidekick.nvim',
     opts = {
-      -- add any options here
+      nes = { enabled = true },
       cli = {
         mux = {
           backend = 'zellij',
-          enabled = false,
+          enabled = true,
         },
       },
     },
@@ -65,7 +65,7 @@ return {
       {
         '<leader>ap',
         function()
-          require('sidekick.cli').select_prompt()
+          require('sidekick.cli').prompt()
         end,
         desc = 'Sidekick Ask Prompt',
         mode = { 'n', 'v' },
