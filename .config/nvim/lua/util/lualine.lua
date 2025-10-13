@@ -1,5 +1,6 @@
 local GvimIcons = require 'util.icons'
 local Util = require 'util'
+
 local M = {}
 
 ---@param icon string

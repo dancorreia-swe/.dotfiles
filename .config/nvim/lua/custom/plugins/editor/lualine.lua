@@ -39,8 +39,19 @@ return {
       sections = {
         lualine_a = { 'mode' },
         lualine_b = { 'branch' },
-
         lualine_c = {
+          vim.tbl_deep_extend(
+            'error',
+            { padding = { left = 1 } },
+            GvimLualine.status(GvimIcons.icons.kinds.Copilot, function()
+              local clients = package.loaded['copilot'] and vim.lsp.get_clients { name = 'copilot', bufnr = 0 } or {}
+
+              if #clients > 0 then
+                local status = require('copilot.status').data.status
+                return (status == 'InProgress' and 'pending') or (status == 'Warning' and 'error') or 'ok'
+              end
+            end)
+          ),
           GvimLualine.root_dir(),
           {
             'diagnostics',
@@ -100,13 +111,20 @@ return {
           },
         },
         lualine_y = {
-          { 'progress', separator = ' ', padding = { left = 1, right = 0 } },
-          { 'location', padding = { left = 0, right = 1 } },
+          {
+            'lsp_status',
+            icon = '',
+            symbols = {
+              spinner = { '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' },
+              done = '✓',
+              separator = ' ',
+            },
+            ignore_lsp = { 'copilot' },
+          },
+          { 'progress', separator = ' ', padding = { left = 1, right = 1 } },
         },
         lualine_z = {
-          function()
-            return ' ' .. os.date '%R'
-          end,
+          { 'location', padding = { left = 0, right = 1 } },
         },
       },
       extensions = { 'neo-tree', 'lazy', 'fzf' },
