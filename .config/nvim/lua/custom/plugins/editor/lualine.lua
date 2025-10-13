@@ -37,7 +37,9 @@ return {
         disabled_filetypes = { statusline = { 'dashboard', 'alpha', 'ministarter', 'snacks_dashboard' } },
       },
       sections = {
-        lualine_a = { 'mode' },
+        lualine_a = {
+          { 'mode', icon_enabled = true, icon = ' ' },
+        },
         lualine_b = { 'branch' },
         lualine_c = {
           vim.tbl_deep_extend(
