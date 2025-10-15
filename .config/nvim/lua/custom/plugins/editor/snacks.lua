@@ -210,6 +210,10 @@ return {
       { "<leader>sS", function() Snacks.picker.lsp_workspace_symbols() end, desc = "LSP Workspace Symbols" },
       -- Lazygit
       { "<leader>lg", function() Snacks.lazygit.open() end, desc = "[L]azy[g]it" },
+      -- Buffer
+      { "<leader>.",  function() Snacks.scratch() end, desc = "Toggle Scratch Buffer" },
+      { "<leader>S",  function() Snacks.scratch.select() end, desc = "Select Scratch Buffer" },
+      { "<leader>dps", function() Snacks.profiler.scratch() end, desc = "Profiler Scratch Buffer" },
     },
     init = function()
       vim.api.nvim_create_autocmd('User', {
