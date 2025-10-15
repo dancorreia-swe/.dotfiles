@@ -44,7 +44,10 @@ return {
         lualine_c = {
           vim.tbl_deep_extend(
             'error',
-            { padding = { left = 1 } },
+            {
+              padding = { left = 1 },
+              separator = { right = '' },
+            },
             GvimLualine.status(GvimIcons.icons.kinds.Copilot, function()
               local clients = package.loaded['copilot'] and vim.lsp.get_clients { name = 'copilot', bufnr = 0 } or {}
 

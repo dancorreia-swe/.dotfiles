@@ -4,100 +4,53 @@ return {
   priority = 1000,
   config = function()
     local transparent_background = true
-    require('catppuccin').setup {
-      background = { light = 'latte', dark = 'mocha' }, -- latte, frappe, macchiato, mocha
-      dim_inactive = {
-        enabled = false,
-        -- Dim inactive splits/windows/buffers.
-        -- NOT recommended if you use old palette (a.k.a., mocha).
-        shade = 'dark',
-        percentage = 0.15,
-      },
+
+    local opts = {
       transparent_background = transparent_background,
-      show_end_of_buffer = false, -- show the '~' characters after the end of buffers
-      term_colors = true,
-      compile_path = vim.fn.stdpath 'cache' .. '/catppuccin',
-      styles = {
-        comments = { 'italic' },
-        functions = { 'bold' },
-        keywords = { 'italic' },
-        operators = { 'bold' },
-        conditionals = { 'bold' },
-        loops = { 'bold' },
-        booleans = { 'bold', 'italic' },
-        numbers = {},
-        types = {},
-        strings = {},
-        variables = {},
-        properties = {},
+      lsp_styles = {
+        underlines = {
+          errors = { 'undercurl' },
+          hints = { 'undercurl' },
+          warnings = { 'undercurl' },
+          information = { 'undercurl' },
+        },
       },
       integrations = {
-        treesitter = true,
-        native_lsp = {
-          enabled = true,
-          virtual_text = {
-            errors = { 'italic' },
-            hints = { 'italic' },
-            warnings = { 'italic' },
-            information = { 'italic' },
-          },
-          underlines = {
-            errors = { 'underline' },
-            hints = { 'underline' },
-            warnings = { 'underline' },
-            information = { 'underline' },
-          },
-        },
         aerial = true,
-        alpha = false,
-        barbar = false,
-        beacon = false,
-        blink_cmp = true,
-        fzf = true,
+        alpha = true,
+        blink_cmp = {
+          style = 'bordered',
+        },
         cmp = true,
-        coc_nvim = false,
         dap = true,
         dap_ui = true,
         dashboard = true,
-        dropbar = { enabled = true, color_mode = true },
-        fern = false,
-        fidget = true,
+        dropbar = {
+          enabled = true,
+          color_mode = true, -- enable color for kind's texts, not just kind's icons
+        },
         flash = true,
-        gitgutter = false,
+        fzf = true,
+        grug_far = true,
         gitsigns = true,
         harpoon = true,
-        headlines = false,
-        hop = true,
+        headlines = true,
         illuminate = true,
-        leap = false,
-        snacks = true,
-        lightspeed = false,
-        lsp_saga = true,
+        indent_blankline = { enabled = true },
+        leap = true,
         lsp_trouble = true,
         markdown = true,
         mason = true,
-        mini = false,
+        mini = true,
         navic = { enabled = true, custom_bg = 'NONE' },
-        neogit = false,
-        neotest = false,
+        neotest = true,
+        neotree = true,
         noice = true,
         notify = true,
-        nvimtree = true,
-        overseer = false,
-        pounce = false,
-        rainbow_delimiters = true,
-        sandwich = false,
-        semantic_tokens = true,
-        symbols_outline = false,
-        telekasten = false,
-        telescope = { enabled = true, style = 'nvchad' },
+        snacks = true,
         treesitter_context = true,
-        ts_rainbow = false,
-        vim_sneak = false,
-        vimwiki = false,
         which_key = true,
       },
-      color_overrides = {},
       highlight_overrides = {
         ---@param cp palette
         all = function(cp)
@@ -108,35 +61,9 @@ return {
               fg = transparent_background and cp.blue or cp.mantle,
               bg = transparent_background and cp.none or cp.mantle,
             },
-            CursorLineNr = { fg = cp.green },
 
-            -- For native lsp configs
-            DiagnosticVirtualTextError = { bg = cp.none },
-            DiagnosticVirtualTextWarn = { bg = cp.none },
-            DiagnosticVirtualTextInfo = { bg = cp.none },
-            DiagnosticVirtualTextHint = { bg = cp.none },
-            LspInfoBorder = { link = 'FloatBorder' },
-
-            GitSignsCurrentLineBlame = { fg = cp.overlay2 },
-
-            -- For mason.nvim
-            MasonNormal = { link = 'NormalFloat' },
-
-            -- For indent-blankline
-            IblIndent = { fg = cp.surface0 },
-            IblScope = { fg = cp.surface2, style = { 'bold' } },
-
-            -- For nvim-cmp and wilder.nvim
-            Pmenu = { fg = cp.overlay2, bg = transparent_background and cp.none or cp.base },
-            PmenuBorder = { fg = cp.surface1, bg = transparent_background and cp.none or cp.base },
-            PmenuSel = { bg = cp.green, fg = cp.base },
-            CmpItemAbbr = { fg = cp.overlay2 },
-            CmpItemAbbrMatch = { fg = cp.blue, style = { 'bold' } },
-            CmpDoc = { link = 'NormalFloat' },
-            CmpDocBorder = {
-              fg = transparent_background and cp.surface1 or cp.mantle,
-              bg = transparent_background and cp.none or cp.mantle,
-            },
+            -- Change color for cursorline
+            -- CursorLineNr = { fg = cp.green },
 
             -- For fidget
             FidgetTask = { bg = cp.none, fg = cp.surface2 },
@@ -145,44 +72,12 @@ return {
             -- For nvim-notify
             NotifyBackground = { bg = cp.base },
 
-            -- For nvim-tree
-            NvimTreeRootFolder = { fg = cp.pink },
-            NvimTreeIndentMarker = { fg = cp.surface2 },
-
             -- For trouble.nvim
             TroubleNormal = { bg = transparent_background and cp.none or cp.base },
 
             -- For Snacks (picker)
             SnacksPickerTitle = { fg = cp.blue, style = { 'bold' } },
             SnacksPickerDir = { fg = cp.overlay1 },
-
-            -- For telescope.nvim
-            TelescopeMatching = { fg = cp.lavender },
-            TelescopeResultsDiffAdd = { fg = cp.green },
-            TelescopeResultsDiffChange = { fg = cp.yellow },
-            TelescopeResultsDiffDelete = { fg = cp.red },
-
-            -- For glance.nvim
-            GlanceWinBarFilename = { fg = cp.subtext1, style = { 'bold' } },
-            GlanceWinBarFilepath = { fg = cp.subtext0, style = { 'italic' } },
-            GlanceWinBarTitle = { fg = cp.teal, style = { 'bold' } },
-            GlanceListCount = { fg = cp.lavender },
-            GlanceListFilepath = { link = 'Comment' },
-            GlanceListFilename = { fg = cp.blue },
-            GlanceListMatch = { fg = cp.lavender, style = { 'bold' } },
-            GlanceFoldIcon = { fg = cp.green },
-
-            -- For nvim-treehopper
-            TSNodeKey = {
-              fg = cp.peach,
-              bg = transparent_background and cp.none or cp.base,
-              style = { 'bold', 'underline' },
-            },
-
-            -- For treesitter
-            ['@keyword.return'] = { fg = cp.pink, style = clear },
-            ['@error.c'] = { fg = cp.none, style = clear },
-            ['@error.cpp'] = { fg = cp.none, style = clear },
 
             -- For blink pairs
             BlinkPairsOrange = { fg = cp.yellow, bg = transparent_background and cp.none or cp.base },
@@ -192,6 +87,9 @@ return {
         end,
       },
     }
+
+    require('catppuccin').setup(opts)
+
     vim.cmd 'colorscheme catppuccin'
   end,
 }
