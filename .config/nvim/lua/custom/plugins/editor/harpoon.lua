@@ -41,14 +41,14 @@ return {
       desc = '[k] Harpoon Buffer [2]',
     },
     {
-      '<leader>p',
+      '<leader>n',
       function()
         require('harpoon'):list():select(3)
       end,
-      desc = '[o] Harpoon Buffer [3]',
+      desc = '[n] Harpoon Buffer [3]',
     },
     {
-      '<leader>n',
+      '<leader>p',
       function()
         require('harpoon'):list():select(4)
       end,

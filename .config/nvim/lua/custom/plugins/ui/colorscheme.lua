@@ -52,6 +52,7 @@ return {
         alpha = false,
         barbar = false,
         beacon = false,
+        blink_cmp = true,
         fzf = true,
         cmp = true,
         coc_nvim = false,

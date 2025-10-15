@@ -121,7 +121,7 @@ return {
               done = '✓',
               separator = ' ',
             },
-            ignore_lsp = { 'copilot' },
+            ignore_lsp = { 'copilot', 'tailwindcss' },
           },
           { 'progress', separator = ' ', padding = { left = 1, right = 1 } },
         },

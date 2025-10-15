@@ -1,38 +1,22 @@
 return {
   'MagicDuck/grug-far.nvim',
-  lazy = true,
-  cmd = { 'GrugFar' },
+  opts = { headerMaxWidth = 80 },
+  cmd = { 'GrugFar', 'GrugFarWithin' },
   keys = {
-    { '<leader>lee', '<cmd>GrugFar<cr>', desc = 'GrugFar' },
     {
-      '<leader>lef',
+      '<leader>sr',
       function()
-        require('grug-far').open { prefills = { paths = vim.fn.expand '%' } }
+        local grug = require 'grug-far'
+        local ext = vim.bo.buftype == '' and vim.fn.expand '%:e'
+        grug.open {
+          transient = true,
+          prefills = {
+            filesFilter = ext and ext ~= '' and '*.' .. ext or nil,
+          },
+        }
       end,
-      desc = 'GrugFar Current File',
-    },
-    {
-      '<leader>lev',
-      mode = 'v',
-      function()
-        require('grug-far').with_visual_selection { prefills = { paths = vim.fn.expand '%' } }
-      end,
-      desc = 'GrugFar Visual Selection',
-    },
-    {
-      '<leader>lew',
-      function()
-        require('grug-far').open { prefills = { search = vim.fn.expand '<cword>' } }
-      end,
-      desc = 'GrugFar Current Word',
+      mode = { 'n', 'v' },
+      desc = 'Search and Replace',
     },
   },
-  config = function()
-    require('grug-far').setup {
-      -- engine = 'astgrep',
-      -- options, see Configuration section below
-      -- there are no required options atm
-      -- engine = 'ripgrep' is default, but 'astgrep' can be specified
-    }
-  end,
 }
