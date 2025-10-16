@@ -49,8 +49,11 @@ return {
         },
       },
       menu = {
+        border = 'rounded', -- 'none', 'single', 'double', 'rounded', 'solid', 'shadow'
         draw = {
           treesitter = { 'lsp' },
+
+          columns = { { 'kind_icon' }, { 'label', 'label_description', gap = 1 } },
         },
       },
       documentation = {
@@ -63,7 +66,7 @@ return {
     },
 
     -- experimental signature help support
-    -- signature = { enabled = true },
+    signature = { enabled = true },
 
     sources = {
       -- adding any nvim-cmp sources here will enable them
