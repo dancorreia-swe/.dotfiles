@@ -49,16 +49,17 @@ return {
         },
       },
       menu = {
-        border = 'rounded', -- 'none', 'single', 'double', 'rounded', 'solid', 'shadow'
+        border = 'rounded',
         draw = {
           treesitter = { 'lsp' },
-
-          columns = { { 'kind_icon' }, { 'label', 'label_description', gap = 1 } },
         },
       },
       documentation = {
         auto_show = true,
         auto_show_delay_ms = 200,
+        window = {
+          border = 'rounded',
+        },
       },
       ghost_text = {
         enabled = vim.g.ai_cmp,
