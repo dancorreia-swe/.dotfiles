@@ -81,12 +81,5 @@ return {
       end,
       buffer = true,
     },
-    {
-      '<C-t>',
-      function()
-        require('harpoon').ui:select_menu_item { tabedit = true }
-      end,
-      buffer = true,
-    },
   },
 }
