@@ -17,11 +17,14 @@ return { -- LSP Configuration & Plugins
       lazy = true,
       version = false,
     },
-    { 'SmiteshP/nvim-navic', opts = {
-      lsp = {
-        auto_attach = true,
+    {
+      'SmiteshP/nvim-navic',
+      opts = {
+        lsp = {
+          auto_attach = true,
+        },
       },
-    } },
+    },
   },
 
   config = function()
@@ -199,6 +202,7 @@ return { -- LSP Configuration & Plugins
       'prettierd',
       'tailwindcss-language-server',
     })
+
     require('mason-tool-installer').setup { ensure_installed = ensure_installed }
     require('mason-lspconfig').setup {
       handlers = {
