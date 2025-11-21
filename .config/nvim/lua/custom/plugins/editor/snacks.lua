@@ -133,7 +133,7 @@ return {
     keys = {
       -- Terminal 
       { "<C-/>", function() Snacks.terminal(nil, { win = { position = "float" }}) end, desc = "Quick View Terminal" },
-      { "<leader>tt", function() Snacks.terminal.toggle() end, desc = "Toggle Terminal" },
+      { "<leader>t.", function() Snacks.terminal.toggle() end, desc = "Toggle Terminal" },
       { "<leader>tn", function() Snacks.terminal.open() end, desc = "Terminal New" },
 
       -- Top Pickers & Explorer
