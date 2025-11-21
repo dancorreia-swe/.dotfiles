@@ -110,12 +110,6 @@ return {
               ['<c-h>'] = { 'toggle_hidden', mode = { 'i', 'n' } },
             },
           },
-
-          list = {
-            keys = {
-              ['<c-h>'] = { 'toggle_hidden', mode = { 'i', 'n' } },
-            },
-          },
         },
       },
       notifier = {
