@@ -1,4 +1,5 @@
 local wezterm = require("wezterm")
+local act = wezterm.action
 
 local module = {}
 
@@ -38,7 +39,22 @@ function module.apply_to_config(config)
 		}
 	end
 
-	config.keys = {
+	local keybinds = {
+		{ key = "L", mods = "LEADER", action = wezterm.action.ShowDebugOverlay },
+		{
+			key = "n",
+			mods = "LEADER",
+			action = wezterm.action_callback(function(win, pane)
+				local tab, window = pane:move_to_new_tab()
+			end),
+		},
+		{
+			key = "N",
+			mods = "LEADER",
+			action = wezterm.action_callback(function(win, pane)
+				local tab, window = pane:move_to_new_window()
+			end),
+		},
 		{
 			mods = "LEADER",
 			key = "-",
@@ -55,16 +71,21 @@ function module.apply_to_config(config)
 			action = wezterm.action.TogglePaneZoomState,
 		},
 		{
+			key = "p",
 			mods = "LEADER",
-			key = "Space",
-			action = wezterm.action.RotatePanes("Clockwise"),
+			action = act.PaneSelect({}),
 		},
 		{
 			mods = "LEADER",
-			key = "0",
+			key = "P",
 			action = wezterm.action.PaneSelect({
 				mode = "SwapWithActive",
 			}),
+		},
+		{
+			mods = "LEADER",
+			key = "Space",
+			action = wezterm.action.RotatePanes("Clockwise"),
 		},
 		{ key = "{", mods = "SHIFT|ALT", action = wezterm.action.MoveTabRelative(-1) },
 		{ key = "}", mods = "SHIFT|ALT", action = wezterm.action.MoveTabRelative(1) },
@@ -106,14 +127,9 @@ function module.apply_to_config(config)
 				end),
 			}),
 		},
-		{
-			key = "y",
-			mods = "CTRL|CMD",
-			action = wezterm.action.SwitchToWorkspace({
-				name = "default",
-			}),
-		},
 	}
+
+	config.keys = keybinds
 end
 
 return module

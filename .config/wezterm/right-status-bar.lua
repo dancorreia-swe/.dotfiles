@@ -100,12 +100,9 @@ function module.apply_to_config(config)
 
 		local workspace_name = ""
 		local workspace_icon = ""
-		if window:active_workspace() == "default" then
-			workspace_icon = SATURN_ICON
-		else
-			workspace_icon = ROBOT_ICON
-			workspace_name = window:active_workspace()
-		end
+
+		workspace_icon = SATURN_ICON
+		workspace_name = window:active_workspace()
 
 		if workspace_name == "" then
 			table.insert(cells, workspace_icon .. "    ")
