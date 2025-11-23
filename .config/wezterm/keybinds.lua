@@ -40,6 +40,7 @@ function module.apply_to_config(config)
 	end
 
 	local keybinds = {
+		{ key = "Enter", mods = "SHIFT", action = wezterm.action({ SendString = "\x1b\r" }) },
 		{ key = "L", mods = "LEADER", action = wezterm.action.ShowDebugOverlay },
 		{
 			key = "n",
