@@ -142,13 +142,11 @@ return {
       { "<leader>,", function() Snacks.picker.buffers() end, desc = "Buffers" },
       { "<leader>/", function() Snacks.picker.grep() end, desc = "Grep" },
       { "<leader>:", function() Snacks.picker.command_history() end, desc = "Command History" },
-      { "<leader>N", function() Snacks.picker.notifications() end, desc = "Notification History" },
       { "<leader>E", function() Snacks.explorer() end, desc = "File Explorer" },
       { "<leader><space>", function() Snacks.picker.smart() end, desc = "Smart Find Files" },
       { "<leader>,", function() Snacks.picker.buffers() end, desc = "Buffers" },
       { "<leader>/", function() Snacks.picker.grep() end, desc = "Grep" },
       { "<leader>:", function() Snacks.picker.command_history() end, desc = "Command History" },
-      { "<leader>n", function() Snacks.picker.notifications() end, desc = "Notification History" },
       -- { "<leader>e", function() Snacks.explorer() end, desc = "File Explorer" },
       -- find
       { "<leader>fb", function() Snacks.picker.buffers() end, desc = "Buffers" },
@@ -198,6 +196,8 @@ return {
       { "gd", function() Snacks.picker.lsp_definitions() end, desc = "Goto Definition" },
       { "gD", function() Snacks.picker.lsp_declarations() end, desc = "Goto Declaration" },
       { "gr", function() Snacks.picker.lsp_references() end, nowait = true, desc = "References" },
+      { "gai", function() Snacks.picker.lsp_incoming_calls() end, desc = "C[a]lls Incoming" },
+      { "gao", function() Snacks.picker.lsp_outgoing_calls() end, desc = "C[a]lls Outgoing" },
       { "gI", function() Snacks.picker.lsp_implementations() end, desc = "Goto Implementation" },
       { "gy", function() Snacks.picker.lsp_type_definitions() end, desc = "Goto T[y]pe Definition" },
       { "<leader>ss", function() Snacks.picker.lsp_symbols() end, desc = "LSP Symbols" },
@@ -208,6 +208,15 @@ return {
       { "<leader>.",  function() Snacks.scratch() end, desc = "Toggle Scratch Buffer" },
       { "<leader>S",  function() Snacks.scratch.select() end, desc = "Select Scratch Buffer" },
       { "<leader>dps", function() Snacks.profiler.scratch() end, desc = "Profiler Scratch Buffer" },
+      -- Other
+      { "<leader>un", function() Snacks.notifier.hide() end, desc = "Dismiss All Notifications" },
+      { "<leader>N", function() Snacks.picker.notifications() end, desc = "Notification History" },
+      { "<leader>z",  function() Snacks.zen() end, desc = "Toggle Zen Mode" },
+      { "<leader>Z",  function() Snacks.zen.zoom() end, desc = "Toggle Zoom" },
+      { "<leader>cR", function() Snacks.rename.rename_file() end, desc = "Rename File" },
+      { "<leader>gB", function() Snacks.gitbrowse() end, desc = "Git Browse", mode = { "n", "v" } },
+      { "]]",         function() Snacks.words.jump(vim.v.count1) end, desc = "Next Reference", mode = { "n", "t" } },
+      { "[[",         function() Snacks.words.jump(-vim.v.count1) end, desc = "Prev Reference", mode = { "n", "t" } },
     },
     init = function()
       vim.api.nvim_create_autocmd('User', {
@@ -223,6 +232,7 @@ return {
           vim.print = _G.dd -- Override print to use snacks for `:=` command
 
           -- Create some toggle mappings
+          -- Create some toggle mappings
           Snacks.toggle.option('spell', { name = 'Spelling' }):map '<leader>us'
           Snacks.toggle.option('wrap', { name = 'Wrap' }):map '<leader>uw'
           Snacks.toggle.option('relativenumber', { name = 'Relative Number' }):map '<leader>uL'
@@ -234,9 +244,6 @@ return {
           Snacks.toggle.inlay_hints():map '<leader>uh'
           Snacks.toggle.indent():map '<leader>ug'
           Snacks.toggle.dim():map '<leader>uD'
-          -- windows
-          Snacks.toggle.zoom():map('<leader>wm'):map '<leader>uZ'
-          Snacks.toggle.zen():map '<leader>uz'
         end,
       })
     end,
