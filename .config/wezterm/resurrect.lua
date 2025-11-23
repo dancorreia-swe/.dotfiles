@@ -58,7 +58,7 @@ function module.apply_to_config(config)
 		},
 		{
 			key = "d",
-			mods = "CMD",
+			mods = "LEADER",
 			action = wezterm.action_callback(function(win, pane)
 				resurrect.fuzzy_loader.fuzzy_load(win, pane, function(id)
 					resurrect.state_manager.delete_state(id)
