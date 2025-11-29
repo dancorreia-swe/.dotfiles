@@ -33,7 +33,7 @@ Expert is the official language server implementation for the Elixir programming
   {
     'mason-org/mason.nvim',
     opts = function(_, opts)
-      vim.list_extend(opts.ensure_installed, {
+      vim.list_extend(opts.ensure_installed or {}, {
         'expert',
       })
     end,
