@@ -79,11 +79,12 @@ return {
           -- stylua: ignore
           keys = {
             { "<leader>cl", function() Snacks.picker.lsp_config() end, desc = "Lsp Info" },
-            { "gd", vim.lsp.buf.definition, desc = "Goto Definition", has = "definition" },
-            { "gr", vim.lsp.buf.references, desc = "References", nowait = true },
-            { "gI", vim.lsp.buf.implementation, desc = "Goto Implementation" },
-            { "gy", vim.lsp.buf.type_definition, desc = "Goto T[y]pe Definition" },
-            { "gD", vim.lsp.buf.declaration, desc = "Goto Declaration" },
+            -- Commenting in favor of Snacks. Check snacks.lua for these keymaps
+            -- { "gd", vim.lsp.buf.definition, desc = "Goto Definition", has = "definition" },
+            -- { "gr", vim.lsp.buf.references, desc = "References", nowait = true },
+            -- { "gI", vim.lsp.buf.implementation, desc = "Goto Implementation" },
+            -- { "gy", vim.lsp.buf.type_definition, desc = "Goto T[y]pe Definition" },
+            -- { "gD", vim.lsp.buf.declaration, desc = "Goto Declaration" },
             { "K", function() return vim.lsp.buf.hover() end, desc = "Hover" },
             { "gK", function() return vim.lsp.buf.signature_help() end, desc = "Signature Help", has = "signatureHelp" },
             { "<c-k>", function() return vim.lsp.buf.signature_help() end, mode = "i", desc = "Signature Help", has = "signatureHelp" },

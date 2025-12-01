@@ -61,9 +61,9 @@ require('lazy').setup({
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   --    For additional information, see `:help lazy.nvim-lazy.nvim-structuring-your-plugins`
   { import = 'plugins.ai' },
+  { import = 'plugins.editor' },
   { import = 'plugins.lsp' },
   { import = 'plugins.coding' },
-  { import = 'plugins.editor' },
   { import = 'plugins.dap' },
   { import = 'plugins.lang' },
   { import = 'plugins.ui' },
