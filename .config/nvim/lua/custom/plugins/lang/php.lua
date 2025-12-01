@@ -31,4 +31,14 @@ return {
     'nvim-treesitter/nvim-treesitter',
     opts = { ensure_installed = { 'php' } },
   },
+  {
+    'neovim/nvim-lspconfig',
+    opts = {
+      servers = {
+        intelephense = {
+          enabled = true,
+        },
+      },
+    },
+  },
 }
