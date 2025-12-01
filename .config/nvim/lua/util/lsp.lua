@@ -1,3 +1,5 @@
+local gUtil = require 'util'
+---
 ---@class gvim.util.lsp
 local M = {}
 
@@ -171,9 +173,11 @@ function M.execute(opts)
   end
 end
 
+---@alias lsp.Client.format {timeout_ms?: number, format_options?: table} | vim.lsp.get_clients.Filter
+
 ---@param opts? lsp.Client.format
 function M.format(opts)
-  opts = vim.tbl_deep_extend('force', {}, opts or {}, LazyVim.opts('nvim-lspconfig').format or {}, LazyVim.opts('conform.nvim').format or {})
+  opts = vim.tbl_deep_extend('force', {}, opts or {}, gUtil.opts('nvim-lspconfig').format or {}, gUtil.opts('conform.nvim').format or {})
   local ok, conform = pcall(require, 'conform')
   -- use conform for formatting with LSP when available,
   -- since it has better format diffing
