@@ -1,3 +1,21 @@
+---@param config {type?:string, args?:string[]|fun():string[]?}
+local function get_args(config)
+  local args = type(config.args) == 'function' and (config.args() or {}) or config.args or {} --[[@as string[] | string ]]
+  local args_str = type(args) == 'table' and table.concat(args, ' ') or args --[[@as string]]
+
+  config = vim.deepcopy(config)
+  ---@cast args string[]
+  config.args = function()
+    local new_args = vim.fn.expand(vim.fn.input('Run with args: ', args_str)) --[[@as string]]
+    if config.type and config.type == 'java' then
+      ---@diagnostic disable-next-line: return-type-mismatch
+      return new_args
+    end
+    return require('dap.utils').splitstr(new_args)
+  end
+  return config
+end
+
 return {
   {
     'mfussenegger/nvim-dap',
@@ -33,7 +51,6 @@ return {
     { "<leader>dt", function() require("dap").terminate() end, desc = "Terminate" },
     { "<leader>dw", function() require("dap.ui.widgets").hover() end, desc = "Widgets" },
   },
-
     config = function()
       local gUtils = require 'util'
 
@@ -61,6 +78,30 @@ return {
     end,
   },
   {
+    'rcarriga/nvim-dap-ui',
+    dependencies = { 'nvim-neotest/nvim-nio' },
+    -- stylua: ignore
+    keys = {
+      { "<leader>du", function() require("dapui").toggle({ }) end, desc = "Dap UI" },
+      { "<leader>de", function() require("dapui").eval() end, desc = "Eval", mode = {"n", "x"} },
+    },
+    opts = {},
+    config = function(_, opts)
+      local dap = require 'dap'
+      local dapui = require 'dapui'
+      dapui.setup(opts)
+      dap.listeners.after.event_initialized['dapui_config'] = function()
+        dapui.open {}
+      end
+      dap.listeners.before.event_terminated['dapui_config'] = function()
+        dapui.close {}
+      end
+      dap.listeners.before.event_exited['dapui_config'] = function()
+        dapui.close {}
+      end
+    end,
+  },
+  {
     'jay-babu/mason-nvim-dap.nvim',
     dependencies = 'mason.nvim',
     cmd = { 'DapInstall', 'DapUninstall' },
@@ -82,41 +123,4 @@ return {
     -- mason-nvim-dap is loaded when nvim-dap loads
     config = function() end,
   },
-  {
-    'rcarriga/nvim-dap-ui',
-    -- virtual text for the debugger
-    {
-      'theHamsta/nvim-dap-virtual-text',
-      opts = {},
-    },
-  },
-  {
-    'theHamsta/nvim-dap-virtual-text',
-    opts = {},
-  },
-  {
-    'rcarriga/nvim-dap-ui',
-    dependencies = { 'nvim-neotest/nvim-nio' },
-  -- stylua: ignore
-  keys = {
-    { "<leader>du", function() require("dapui").toggle({ }) end, desc = "Dap UI" },
-    { "<leader>de", function() require("dapui").eval() end, desc = "Eval", mode = {"n", "x"} },
-  },
-    opts = {},
-    config = function(_, opts)
-      local dap = require 'dap'
-      local dapui = require 'dapui'
-      dapui.setup(opts)
-      dap.listeners.after.event_initialized['dapui_config'] = function()
-        dapui.open {}
-      end
-      dap.listeners.before.event_terminated['dapui_config'] = function()
-        dapui.close {}
-      end
-      dap.listeners.before.event_exited['dapui_config'] = function()
-        dapui.close {}
-      end
-    end,
-  },
-  { 'nvim-neotest/nvim-nio' },
 }
