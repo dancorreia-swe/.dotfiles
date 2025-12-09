@@ -23,21 +23,15 @@ return {
     },
   },
   {
-    'saghen/blink.cmp',
-    optional = true,
-    dependencies = { 'fang2hou/blink-copilot' },
-    opts = {
-      sources = {
-        default = { 'copilot' },
-        providers = {
-          copilot = {
-            name = 'copilot',
-            module = 'blink-copilot',
-            score_offset = 100,
-            async = true,
-          },
-        },
-      },
-    },
+    'zbirenbaum/copilot.lua',
+    opts = function()
+      require('util.cmp').actions.ai_accept = function()
+        if require('copilot.suggestion').is_visible() then
+          require('util').create_undo()
+          require('copilot.suggestion').accept()
+          return true
+        end
+      end
+    end,
   },
 }

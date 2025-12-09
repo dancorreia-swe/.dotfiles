@@ -1,5 +1,16 @@
 return {
   {
+    'neovim/nvim-lspconfig',
+    opts = function(_, opts)
+      local sk = require('util').opts 'sidekick.nvim' ---@type sidekick.Config|{}
+
+      if vim.tbl_get(sk, 'nes', 'enabled') ~= false then
+        opts.servers = opts.servers or {}
+        opts.servers.copilot = opts.servers.copilot or {}
+      end
+    end,
+  },
+  {
     'folke/sidekick.nvim',
     opts = {
       nes = { enabled = true },
@@ -11,83 +22,69 @@ return {
       },
     },
     keys = {
-      {
-        '<tab>',
-        function()
-          -- if there is a next edit, jump to it, otherwise apply it if any
-          if not require('sidekick').nes_jump_or_apply() then
-            return '<Tab>' -- fallback to normal tab
-          end
-        end,
-        expr = true,
-        desc = 'Goto/Apply Next Edit Suggestion',
-      },
+      { '<tab>', require('util.cmp').map({ 'ai_nes' }, '<tab>'), mode = { 'n' }, expr = true },
+      { '<leader>a', '', desc = '+ai', mode = { 'n', 'v' } },
       {
         '<c-.>',
         function()
-          require('sidekick.cli').focus()
+          require('sidekick.cli').toggle()
         end,
-        mode = { 'n', 'x', 'i', 't' },
-        desc = 'Sidekick Switch Focus',
+        desc = 'Sidekick Toggle',
+        mode = { 'n', 't', 'i', 'x' },
       },
       {
         '<leader>aa',
         function()
-          require('sidekick.cli').toggle { focus = true }
+          require('sidekick.cli').toggle()
         end,
         desc = 'Sidekick Toggle CLI',
-        mode = { 'n', 'v' },
       },
       {
-        '<leader>ac',
+        '<leader>as',
         function()
-          require('sidekick.cli').toggle { name = 'codex', focus = true }
+          require('sidekick.cli').select()
         end,
-        desc = 'Sidekick Codex Toggle',
-        mode = { 'n', 'v' },
+        -- Or to select only installed tools:
+        -- require("sidekick.cli").select({ filter = { installed = true } })
+        desc = 'Select CLI',
       },
       {
-        '<leader>aC',
+        '<leader>ad',
         function()
-          require('sidekick.cli').toggle { name = 'claude', focus = true }
+          require('sidekick.cli').close()
         end,
-        desc = 'Sidekick Claude Toggle',
-        mode = { 'n', 'v' },
+        desc = 'Detach a CLI Session',
       },
       {
-        '<leader>ag',
+        '<leader>at',
         function()
-          require('sidekick.cli').toggle { name = 'grok', focus = true }
+          require('sidekick.cli').send { msg = '{this}' }
         end,
-        desc = 'Sidekick Grok Toggle',
-        mode = { 'n', 'v' },
+        mode = { 'x', 'n' },
+        desc = 'Send This',
+      },
+      {
+        '<leader>af',
+        function()
+          require('sidekick.cli').send { msg = '{file}' }
+        end,
+        desc = 'Send File',
+      },
+      {
+        '<leader>av',
+        function()
+          require('sidekick.cli').send { msg = '{selection}' }
+        end,
+        mode = { 'x' },
+        desc = 'Send Visual Selection',
       },
       {
         '<leader>ap',
         function()
           require('sidekick.cli').prompt()
         end,
-        desc = 'Sidekick Ask Prompt',
-        mode = { 'n', 'v' },
-      },
-    },
-  },
-  {
-    'saghen/blink.cmp',
-    ---@module 'blink.cmp'
-    ---@type blink.cmp.Config
-    opts = {
-      keymap = {
-        ['<Tab>'] = {
-          'snippet_forward',
-          function() -- sidekick next edit suggestion
-            return require('sidekick').nes_jump_or_apply()
-          end,
-          function()
-            return vim.lsp.inline_completion.get()
-          end,
-          'fallback',
-        },
+        mode = { 'n', 'x' },
+        desc = 'Sidekick Select Prompt',
       },
     },
   },
