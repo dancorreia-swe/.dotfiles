@@ -12,15 +12,34 @@ return {
   },
   {
     'folke/sidekick.nvim',
-    opts = {
-      nes = { enabled = true },
-      cli = {
-        mux = {
-          backend = 'zellij',
-          enabled = true,
+    opts = function()
+      -- Accept inline suggestions or next edits
+      require('util.cmp').actions.ai_nes = function()
+        local Nes = require 'sidekick.nes'
+        if Nes.have() and (Nes.jump() or Nes.apply()) then
+          return true
+        end
+      end
+
+      Snacks.toggle({
+        name = 'Sidekick NES',
+        get = function()
+          return require('sidekick.nes').enabled
+        end,
+        set = function(state)
+          require('sidekick.nes').enable(state)
+        end,
+      }):map '<leader>uN'
+
+      return {
+        cli = {
+          mux = {
+            backend = 'zellij',
+            enabled = true,
+          },
         },
-      },
-    },
+      }
+    end,
     keys = {
       { '<tab>', require('util.cmp').map({ 'ai_nes' }, '<tab>'), mode = { 'n' }, expr = true },
       { '<leader>a', '', desc = '+ai', mode = { 'n', 'v' } },

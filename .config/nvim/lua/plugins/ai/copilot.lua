@@ -29,6 +29,7 @@ return {
         if require('copilot.suggestion').is_visible() then
           require('util').create_undo()
           require('copilot.suggestion').accept()
+
           return true
         end
       end

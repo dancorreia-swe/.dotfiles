@@ -173,7 +173,6 @@ return {
       { '<leader>s"', function() Snacks.picker.registers() end, desc = "Registers" },
       { '<leader>s/', function() Snacks.picker.search_history() end, desc = "Search History" },
       { "<leader>sa", function() Snacks.picker.autocmds() end, desc = "Autocmds" },
-      { "<leader>sb", function() Snacks.picker.lines() end, desc = "Buffer Lines" },
       { "<leader>sc", function() Snacks.picker.command_history() end, desc = "Command History" },
       { "<leader>sC", function() Snacks.picker.commands() end, desc = "Commands" },
       { "<leader>sd", function() Snacks.picker.diagnostics() end, desc = "Diagnostics" },
@@ -228,6 +227,7 @@ return {
             Snacks.debug.backtrace()
           end
           vim.print = _G.dd -- Override print to use snacks for `:=` command
+          vim.g.snacks_copilot_enabled = true
 
           -- Create some toggle mappings
           -- Create some toggle mappings
@@ -242,6 +242,21 @@ return {
           Snacks.toggle.inlay_hints():map '<leader>uh'
           Snacks.toggle.indent():map '<leader>ug'
           Snacks.toggle.dim():map '<leader>uD'
+          Snacks.toggle({
+            name = 'Copilot Suggestions',
+            get = function()
+              return vim.g.snacks_copilot_enabled
+            end,
+            set = function(state)
+              if state then
+                vim.g.snacks_copilot_enabled = true
+                require('copilot.command').enable()
+              else
+                vim.g.snacks_copilot_enabled = false
+                require('copilot.command').disable()
+              end
+            end,
+          }):map '<leader>ua' -- ai
         end,
       })
     end,
