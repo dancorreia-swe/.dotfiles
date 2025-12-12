@@ -1,5 +1,3 @@
-local LspUtil = require 'util.lsp'
-
 return {
   {
     'neovim/nvim-lspconfig',
@@ -58,7 +56,7 @@ return {
                 local win = vim.api.nvim_get_current_win()
                 local params = vim.lsp.util.make_position_params(win, 'utf-16')
 
-                LspUtil.execute {
+                GaVim.lsp.execute {
                   command = 'typescript.goToSourceDefinition',
                   arguments = { params.textDocument.uri, params.position },
                   open = true,
@@ -69,7 +67,7 @@ return {
             {
               'gR',
               function()
-                LspUtil.execute {
+                GaVim.lsp.execute {
                   command = 'typescript.findAllFileReferences',
                   arguments = { vim.uri_from_bufnr(0) },
                   open = true,
@@ -79,28 +77,28 @@ return {
             },
             {
               '<leader>co',
-              LspUtil.action['source.organizeImports'],
+              GaVim.lsp.action['source.organizeImports'],
               desc = 'Organize Imports',
             },
             {
               '<leader>cM',
-              LspUtil.action['source.addMissingImports.ts'],
+              GaVim.lsp.action['source.addMissingImports.ts'],
               desc = 'Add missing imports',
             },
             {
               '<leader>cu',
-              LspUtil.action['source.removeUnused.ts'],
+              GaVim.lsp.action['source.removeUnused.ts'],
               desc = 'Remove unused imports',
             },
             {
               '<leader>cD',
-              LspUtil.action['source.fixAll.ts'],
+              GaVim.lsp.action['source.fixAll.ts'],
               desc = 'Fix all diagnostics',
             },
             {
               '<leader>cV',
               function()
-                LspUtil.execute { command = 'typescript.selectTypeScriptVersion' }
+                GaVim.lsp.execute { command = 'typescript.selectTypeScriptVersion' }
               end,
               desc = 'Select TS workspace version',
             },
@@ -119,7 +117,7 @@ return {
           return true
         end,
         vtsls = function(_, opts)
-          LspUtil.on_attach(function(client, buffer)
+          GaVim.lsp.on_attach(function(client, buffer)
             client.commands['_typescript.moveToFileRefactoring'] = function(command, ctx)
               ---@type string, string, lsp.Range
               local action, uri, range = unpack(command.arguments)

@@ -52,16 +52,14 @@ return {
     { "<leader>dw", function() require("dap.ui.widgets").hover() end, desc = "Widgets" },
   },
     config = function()
-      local gUtils = require 'util'
-
       -- load mason-nvim-dap here, after all adapters have been setup
-      if gUtils.has 'mason-nvim-dap.nvim' then
-        require('mason-nvim-dap').setup(gUtils.opts 'mason-nvim-dap.nvim')
+      if GaVim.has 'mason-nvim-dap.nvim' then
+        require('mason-nvim-dap').setup(GaVim.opts 'mason-nvim-dap.nvim')
       end
 
       vim.api.nvim_set_hl(0, 'DapStoppedLine', { default = true, link = 'Visual' })
 
-      local dapIcons = require('util.icons').icons.dap
+      local dapIcons = GaVim.icons.icons.dap
 
       for name, sign in pairs(dapIcons) do
         sign = type(sign) == 'table' and sign or { sign }

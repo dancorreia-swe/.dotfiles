@@ -1,6 +1,3 @@
-local Gcmp = require 'util.cmp'
-local Gicons = require 'util.icons'
-
 return {
   'saghen/blink.cmp',
   version = not vim.g.lazyvim_blink_main and '*',
@@ -27,7 +24,7 @@ return {
   opts = {
     snippets = {
       expand = function(snippet)
-        return Gcmp.expand(snippet)
+        return GaVim.cmp.expand(snippet)
       end,
     },
 
@@ -115,12 +112,12 @@ return {
       if opts.keymap.preset == 'super-tab' then -- super-tab
         opts.keymap['<Tab>'] = {
           require('blink.cmp.keymap.presets').get('super-tab')['<Tab>'][1],
-          Gcmp.map { 'snippet_forward', 'ai_nes', 'ai_accept' },
+          GaVim.cmp.map { 'snippet_forward', 'ai_nes', 'ai_accept' },
           'fallback',
         }
       else -- other presets
         opts.keymap['<Tab>'] = {
-          Gcmp.map { 'snippet_forward', 'ai_nes', 'ai_accept' },
+          GaVim.cmp.map { 'snippet_forward', 'ai_nes', 'ai_accept' },
           'fallback',
         }
       end
@@ -148,7 +145,7 @@ return {
           items = transform_items and transform_items(ctx, items) or items
           for _, item in ipairs(items) do
             item.kind = kind_idx or item.kind
-            item.kind_icon = Gicons.icons.kinds[item.kind_name] or item.kind_icon or nil
+            item.kind_icon = GaVim.icons.icons.kinds[item.kind_name] or item.kind_icon or nil
           end
           return items
         end

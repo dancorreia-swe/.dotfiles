@@ -38,12 +38,21 @@ return {
             pane = 1,
             {
               section = 'terminal',
-              cmd = 'chafa -f symbols --symbols sextant -c full --speed=0.9 --clear --stretch --probe off "$HOME/.config/nvim/lua/plugins/dashboard-pics/silf-wolf.gif"; sleep .1',
+              cmd = (function()
+                local gif = vim.fn.stdpath('config') .. '/lua/plugins/dashboard-pics/silf-wolf.gif'
+                if vim.fn.executable('chafa') == 1 and vim.fn.filereadable(gif) == 1 then
+                  return string.format(
+                    'chafa -f symbols --symbols sextant -c full --speed=0.9 --clear --stretch --probe off %q; sleep .1',
+                    gif
+                  )
+                end
+                return 'echo ""' -- fallback: show nothing
+              end)(),
               height = 32,
               width = 72,
               padding = 1,
               enabled = function()
-                return vim.o.columns > 135
+                return vim.o.columns > 135 and vim.fn.executable('chafa') == 1
               end,
             },
             {
@@ -138,12 +147,11 @@ return {
 
       -- Top Pickers & Explorer
       { "<leader><cr>", function() Snacks.picker.smart() end, desc = "Smart Find Files" },
-      -- { "<leader><space>", function() Snacks.picker.smart() end, desc = "Smart Find Files" },
+      { "<leader><space>", function() Snacks.picker.smart() end, desc = "Smart Find Files" },
       { "<leader>,", function() Snacks.picker.buffers() end, desc = "Buffers" },
       { "<leader>/", function() Snacks.picker.grep() end, desc = "Grep" },
       { "<leader>:", function() Snacks.picker.command_history() end, desc = "Command History" },
       { "<leader>E", function() Snacks.explorer() end, desc = "File Explorer" },
-      { "<leader><space>", function() Snacks.picker.smart() end, desc = "Smart Find Files" },
       { "<leader>,", function() Snacks.picker.buffers() end, desc = "Buffers" },
       { "<leader>/", function() Snacks.picker.grep() end, desc = "Grep" },
       { "<leader>:", function() Snacks.picker.command_history() end, desc = "Command History" },
@@ -229,7 +237,6 @@ return {
           vim.print = _G.dd -- Override print to use snacks for `:=` command
           vim.g.snacks_copilot_enabled = true
 
-          -- Create some toggle mappings
           -- Create some toggle mappings
           Snacks.toggle.option('spell', { name = 'Spelling' }):map '<leader>us'
           Snacks.toggle.option('wrap', { name = 'Wrap' }):map '<leader>uw'

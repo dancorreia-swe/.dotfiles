@@ -1,6 +1,3 @@
-local GUtil = require 'util'
-local GLsp = require 'util.lsp'
-local GIcons = require 'util.icons'
 
 return {
   'neovim/nvim-lspconfig',
@@ -28,10 +25,10 @@ return {
         severity_sort = true,
         signs = {
           text = {
-            [vim.diagnostic.severity.ERROR] = GIcons.icons.diagnostics.Error,
-            [vim.diagnostic.severity.WARN] = GIcons.icons.diagnostics.Warn,
-            [vim.diagnostic.severity.HINT] = GIcons.icons.diagnostics.Hint,
-            [vim.diagnostic.severity.INFO] = GIcons.icons.diagnostics.Info,
+            [vim.diagnostic.severity.ERROR] = GaVim.icons.icons.diagnostics.Error,
+            [vim.diagnostic.severity.WARN] = GaVim.icons.icons.diagnostics.Warn,
+            [vim.diagnostic.severity.HINT] = GaVim.icons.icons.diagnostics.Hint,
+            [vim.diagnostic.severity.INFO] = GaVim.icons.icons.diagnostics.Info,
           },
         },
       },
@@ -93,7 +90,7 @@ return {
             { "<leader>cC", vim.lsp.codelens.refresh, desc = "Refresh & Display Codelens", mode = { "n" }, has = "codeLens" },
             { "<leader>cR", function() Snacks.rename.rename_file() end, desc = "Rename File", mode ={"n"}, has = { "workspace/didRenameFiles", "workspace/willRenameFiles" } },
             { "<leader>cr", vim.lsp.buf.rename, desc = "Rename", has = "rename" },
-            { "<leader>cA", GLsp.action.source, desc = "Source Action", has = "codeAction" },
+            { "<leader>cA", GaVim.lsp.action.source, desc = "Source Action", has = "codeAction" },
             { "]]", function() Snacks.words.jump(vim.v.count1) end, has = "documentHighlight",
               desc = "Next Reference", enabled = function() return Snacks.words.is_enabled() end },
             { "[[", function() Snacks.words.jump(-vim.v.count1) end, has = "documentHighlight",
@@ -174,8 +171,8 @@ return {
     -- folds
     if opts.folds.enabled then
       Snacks.util.lsp.on({ method = 'textDocument/foldingRange' }, function()
-        if GUtil.set_default('foldmethod', 'expr') then
-          GUtil.set_default('foldexpr', 'v:lua.vim.lsp.foldexpr()')
+        if GaVim.set_default('foldmethod', 'expr') then
+          GaVim.set_default('foldexpr', 'v:lua.vim.lsp.foldexpr()')
         end
       end)
     end
@@ -194,7 +191,7 @@ return {
     -- diagnostics
     if type(opts.diagnostics.virtual_text) == 'table' and opts.diagnostics.virtual_text.prefix == 'icons' then
       opts.diagnostics.virtual_text.prefix = function(diagnostic)
-        local icons = GIcons.icons.diagnostics
+        local icons = GaVim.icons.icons.diagnostics
         for d, icon in pairs(icons) do
           if diagnostic.severity == vim.diagnostic.severity[d:upper()] then
             return icon
@@ -217,7 +214,7 @@ return {
     end
 
     -- get all the servers that are available through mason-lspconfig
-    local have_mason = GUtil.has 'mason-lspconfig.nvim'
+    local have_mason = GaVim.has 'mason-lspconfig.nvim'
     local mason_all = have_mason and vim.tbl_keys(require('mason-lspconfig.mappings').get_mason_map().lspconfig_to_package) or {} --[[ @as string[] ]]
     local mason_exclude = {} ---@type string[]
 
@@ -250,7 +247,7 @@ return {
     local install = vim.tbl_filter(configure, vim.tbl_keys(opts.servers))
     if have_mason then
       require('mason-lspconfig').setup {
-        ensure_installed = vim.list_extend(install, GUtil.opts('mason-lspconfig.nvim').ensure_installed or {}),
+        ensure_installed = vim.list_extend(install, GaVim.opts('mason-lspconfig.nvim').ensure_installed or {}),
         automatic_enable = { exclude = mason_exclude },
       }
     end

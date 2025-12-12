@@ -1,6 +1,3 @@
-local GvimIcons = require 'util.icons'
-local GvimLualine = require 'util.lualine'
-
 local copilot_icons = {
   Error = { ' ', 'DiagnosticError' },
   Inactive = { ' ', 'MsgArea' },
@@ -26,7 +23,7 @@ return {
     local lualine_require = require 'lualine_require'
     lualine_require.require = require
 
-    local icons = GvimIcons.icons
+    local icons = GaVim.icons.icons
 
     vim.o.laststatus = vim.g.lualine_laststatus
 
@@ -48,7 +45,7 @@ return {
               padding = { left = 1 },
               separator = { right = '' },
             },
-            GvimLualine.status(GvimIcons.icons.kinds.Copilot, function()
+            GaVim.lualine.status(GaVim.icons.icons.kinds.Copilot, function()
               local clients = package.loaded['copilot'] and vim.lsp.get_clients { name = 'copilot', bufnr = 0 } or {}
 
               if #clients > 0 then
@@ -57,7 +54,7 @@ return {
               end
             end)
           ),
-          GvimLualine.root_dir(),
+          GaVim.lualine.root_dir(),
           {
             'diagnostics',
             symbols = {
@@ -68,7 +65,7 @@ return {
             },
           },
           { 'filetype', icon_only = true, separator = '', padding = { left = 1, right = 0 } },
-          { GvimLualine.pretty_path() },
+          { GaVim.lualine.pretty_path() },
         },
         lualine_x = {
           Snacks.profiler.status(),
