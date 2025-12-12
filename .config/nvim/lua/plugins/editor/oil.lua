@@ -16,4 +16,17 @@ return {
   dependencies = { 'nvim-tree/nvim-web-devicons' }, -- use if you prefer nvim-web-devicons
   -- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
   lazy = false,
+  config = function(_, opts)
+    require('oil').setup(opts)
+
+    -- Sync file renames with Snacks for LSP updates
+    vim.api.nvim_create_autocmd('User', {
+      pattern = 'OilActionsPost',
+      callback = function(event)
+        if event.data.actions[1].type == 'move' then
+          Snacks.rename.on_rename_file(event.data.actions[1].src_url, event.data.actions[1].dest_url)
+        end
+      end,
+    })
+  end,
 }
