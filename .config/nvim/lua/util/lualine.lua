@@ -1,3 +1,4 @@
+---@class gavim.util.lualine
 local M = {}
 
 ---@param icon string

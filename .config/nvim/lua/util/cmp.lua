@@ -1,3 +1,4 @@
+---@class gavim.util.cmp
 local M = {}
 
 M.actions = {

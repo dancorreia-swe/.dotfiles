@@ -1,3 +1,4 @@
+---@class gavim.util.lsp-keymaps
 local M = {}
 
 M._keys = {}

@@ -1,3 +1,4 @@
+---@class gavim.util.icons
 local M = {}
 
 M.icons = {
