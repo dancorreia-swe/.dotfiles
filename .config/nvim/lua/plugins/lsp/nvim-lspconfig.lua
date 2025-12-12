@@ -5,6 +5,7 @@ return {
   dependencies = {
     'mason.nvim',
     { 'mason-org/mason-lspconfig.nvim', config = function() end },
+    { 'smjonas/inc-rename.nvim', opts = {} },
   },
   opts_extend = { 'servers.*.keys' },
   opts = function()
@@ -89,7 +90,7 @@ return {
             { "<leader>cc", vim.lsp.codelens.run, desc = "Run Codelens", mode = { "n", "x" }, has = "codeLens" },
             { "<leader>cC", vim.lsp.codelens.refresh, desc = "Refresh & Display Codelens", mode = { "n" }, has = "codeLens" },
             { "<leader>cR", function() Snacks.rename.rename_file() end, desc = "Rename File", mode ={"n"}, has = { "workspace/didRenameFiles", "workspace/willRenameFiles" } },
-            { "<leader>cr", vim.lsp.buf.rename, desc = "Rename", has = "rename" },
+            { "<leader>cr", function() return ':IncRename ' .. vim.fn.expand('<cword>') end, expr = true, desc = "Rename (inc-rename)", has = "rename" },
             { "<leader>cA", GaVim.lsp.action.source, desc = "Source Action", has = "codeAction" },
             { "]]", function() Snacks.words.jump(vim.v.count1) end, has = "documentHighlight",
               desc = "Next Reference", enabled = function() return Snacks.words.is_enabled() end },
