@@ -1,42 +1,71 @@
--- NOTE: Plugins can also be configured to run Lua code when they are loaded.
---
--- This is often very useful to both group configuration, as well as handle
--- lazy loading plugins that don't need to be loaded immediately at startup.
---
--- For example, in the following configuration, we use:
---  event = 'VimEnter'
---
--- which loads which-key before all the UI elements are loaded. Events can be
--- normal autocommands events (`:help autocmd-events`).
---
--- Then, because we use the `config` key, the configuration only runs
--- after the plugin has been loaded:
---  config = function() ... end
-
-return { -- Useful plugin to show you pending keybinds.
+return {
   'folke/which-key.nvim',
-  event = 'VimEnter', -- Sets the loading event to 'VimEnter'
-  config = function() -- This is the function that runs, AFTER loading
-    require('which-key').setup()
-
-    -- Document existing key chains
-    require('which-key').add {
-      { '<leader>c', group = '[C]ode' },
-      { '<leader>c_', hidden = true },
-      { '<leader>d', group = '[D]ocument' },
-      { '<leader>d_', hidden = true },
-      { '<leader>f', group = '[F]ind' },
-      { '<leader>f_', hidden = true },
-      { '<leader>h', group = '[H]over Git Actions', icon = { name = 'git', cat = 'filetype' } },
-      { '<leader>h_', hidden = true },
-      { '<leader>g', group = '[G]it', icon = { name = 'git', cat = 'filetype' } },
-      { '<leader>g_', hidden = true },
-      { '<leader>r', group = '[R]ename' },
-      { '<leader>r_', hidden = true },
-      { '<leader>s', group = '[S]earch' },
-      { '<leader>s_', hidden = true },
-      { '<leader>w', group = '[W]orkspace' },
-      { '<leader>w_', hidden = true },
-    }
+  event = 'VeryLazy',
+  opts_extend = { 'spec' },
+  opts = {
+    preset = 'helix',
+    defaults = {},
+    spec = {
+      {
+        mode = { 'n', 'x' },
+        { '<leader><tab>', group = 'tabs' },
+        { '<leader>c', group = 'code' },
+        { '<leader>d', group = 'debug' },
+        { '<leader>dp', group = 'profiler' },
+        { '<leader>f', group = 'file/find' },
+        { '<leader>g', group = 'git' },
+        { '<leader>gh', group = 'hunks' },
+        { '<leader>q', group = 'quit/session' },
+        { '<leader>s', group = 'search' },
+        { '<leader>u', group = 'ui' },
+        { '<leader>x', group = 'diagnostics/quickfix' },
+        { '[', group = 'prev' },
+        { ']', group = 'next' },
+        { 'g', group = 'goto' },
+        { 'gs', group = 'surround' },
+        { 'z', group = 'fold' },
+        {
+          '<leader>b',
+          group = 'buffer',
+          expand = function()
+            return require('which-key.extras').expand.buf()
+          end,
+        },
+        {
+          '<leader>w',
+          group = 'windows',
+          proxy = '<c-w>',
+          expand = function()
+            return require('which-key.extras').expand.win()
+          end,
+        },
+        -- better descriptions
+        { 'gx', desc = 'Open with system app' },
+      },
+    },
+  },
+  keys = {
+    {
+      '<leader>?',
+      function()
+        require('which-key').show { global = false }
+      end,
+      desc = 'Buffer Keymaps (which-key)',
+    },
+    {
+      '<c-w><space>',
+      function()
+        require('which-key').show { keys = '<c-w>', loop = true }
+      end,
+      desc = 'Window Hydra Mode (which-key)',
+    },
+  },
+  config = function(_, opts)
+    local wk = require 'which-key'
+    wk.setup(opts)
+    if not vim.tbl_isempty(opts.defaults) then
+      vim.notify('which-key: opts.defaults is deprecated. Please use opts.spec instead.', vim.log.levels.WARN, opts)
+      wk.add(opts.defaults)
+    end
   end,
 }
