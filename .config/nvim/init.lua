@@ -14,7 +14,6 @@ vim.opt.rtp:prepend(lazypath)
 GaVim.plugin.setup()
 
 require('lazy').setup({
-  { import = 'kickstart.plugins' },
   { import = 'plugins.ai' },
   { import = 'plugins.editor' },
   { import = 'plugins.lsp' },
