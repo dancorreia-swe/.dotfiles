@@ -38,19 +38,37 @@ To get started, follow these simple steps:
     stow <directory_name>
     ```
 
-    Replace `<directory_name>` with the name of the directory containing the configurations you want to use. For example, if you want to symlink the `vim` configurations:
+    Replace `<directory_name>` with the name of the directory containing the configurations you want to use. For example, if you want to symlink the `nvim` configurations:
 
     ```bash
-    stow vim
+    stow nvim
     ```
 
-    Or if you wanna stow all configurations from this repository just do:
+    Or if you want to stow all configurations from this repository, you can use the provided bootstrap script:
 
     ```bash
-    stow .
+    ./bootstrap.sh
+    ```
+
+    Alternatively, you can manually stow all directories:
+
+    ```bash
+    stow */
     ```
 
 5. **Enjoy your Configurations**: That's it! Your configuration files should now be symlinked to your home directory, and you can start using your preferred settings for various programs.
+
+### Directory Structure
+
+This repository uses a modular structure compatible with GNU Stow. Each top-level directory represents a package:
+
+- `nvim/`: Neovim configuration
+- `fish/`: Fish shell configuration
+- `aerospace/`: Aerospace window manager config
+- `scripts/`: Custom scripts (formerly `bin/`)
+- ...and so on.
+
+Each package directory mimics the structure relative to your home directory (e.g., `nvim/.config/nvim/init.lua`).
 
 ### Contributing
 

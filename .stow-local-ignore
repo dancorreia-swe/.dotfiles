@@ -1,7 +1,0 @@
-\.git
-\.gitignore
-^/README.*
-^/LICENSE.*
-^/bootstrap.*
-bin
-misc

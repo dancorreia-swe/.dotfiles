@@ -13,7 +13,7 @@ set -gx BUN_INSTALL "$HOME/.bun"
 fish_add_path "$BUN_INSTALL/bin"
 
 # PNPM setup
-set -gx PNPM_HOME "/Users/danielmac/Library/pnpm"
+set -gx PNPM_HOME /Users/danielmac/Library/pnpm
 fish_add_path "$PNPM_HOME"
 
 # Now we can use brew command

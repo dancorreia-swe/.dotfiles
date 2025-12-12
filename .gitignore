@@ -1,1 +1,2 @@
-.config/config.jsonc
+.DS_Store
+fish/.config/fish/conf.d/secrets.fish
