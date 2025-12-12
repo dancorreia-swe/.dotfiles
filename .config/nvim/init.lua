@@ -5,16 +5,16 @@ require 'config.keybinds'
 _G.GaVim = require 'util'
 
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
-if not vim.loop.fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
   local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
   vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
-end ---@diagnostic disable-next-line: undefined-field
+end
 vim.opt.rtp:prepend(lazypath)
 
 GaVim.plugin.setup()
 
 require('lazy').setup({
-  require 'kickstart.plugins.lint',
+  { import = 'kickstart.plugins' },
   { import = 'plugins.ai' },
   { import = 'plugins.editor' },
   { import = 'plugins.lsp' },
@@ -24,6 +24,22 @@ require('lazy').setup({
   { import = 'plugins.ui' },
   { import = 'plugins.test' },
 }, {
+  defaults = { lazy = true },
+  checker = { enabled = true, notify = false },
+  performance = {
+    rtp = {
+      disabled_plugins = {
+        'gzip',
+        'matchit',
+        'matchparen',
+        'netrwPlugin',
+        'tarPlugin',
+        'tohtml',
+        'tutor',
+        'zipPlugin',
+      },
+    },
+  },
   ui = {
     icons = vim.g.have_nerd_font and {} or {
       cmd = '⌘',
