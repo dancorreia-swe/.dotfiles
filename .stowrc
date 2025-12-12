@@ -1,0 +1,10 @@
+--target=$HOME
+--restow
+--verbose=1
+--ignore='^\.DS_Store'
+--ignore='^\.git$'
+--ignore='^\.gitignore$'
+--ignore='README\.md'
+--ignore='LICENSE.*'
+--ignore='Brewfile'
+--ignore='packages\.txt'

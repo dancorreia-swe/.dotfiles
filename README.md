@@ -1,79 +1,87 @@
 # G.dotfiles
 
-Welcome to the repository for my dotfiles! This repository contains configuration files for various programs and tools that I use on a daily basis. By using a tool like `stow`, you can easily symlink these configuration files to your home directory, allowing you to quickly set up your development environment on any system.
+Personal dotfiles managed with GNU Stow. Works on **macOS** and **Arch Linux (WSL)**.
 
-### Getting Started
+## Quick Start
 
-To get started, follow these simple steps:
+```bash
+git clone https://github.com/danielcorreia-dev/.dotfiles.git ~/.dotfiles
+cd ~/.dotfiles
+./bootstrap.sh
+```
 
-1. **Clone the Repository**: Clone this repository to your local machine.
+The bootstrap script will:
+- Install Homebrew (macOS) or yay (Arch)
+- Install stow and dependencies
+- Setup neovim via bob
+- Symlink all packages
 
-    ```bash
-    git clone https://github.com/danielcorreia-dev/.dotfiles.git
-    ```
+## Usage
 
-2. **Install `stow`**: Ensure that `stow` is installed on your system. If not, you can typically install it through your package manager.
+### Make Commands
 
-    - **On Debian/Ubuntu**:
+```bash
+make help           # Show all available commands
+make install        # Stow all packages
+make install-nvim   # Stow specific package
+make uninstall-fish # Unstow specific package
+make deps           # Install dependencies (Brewfile/packages.txt)
+make bob            # Install bob + neovim nightly
+make core           # Install core packages (fish, nvim, scripts, wezterm)
+make tools          # Install tool packages (yazi, fastfetch, ohmyposh, claude)
+make wm             # Install window manager packages (macOS only)
+make all            # Full setup: deps + bob + all packages
+make list           # List available packages
+```
 
-        ```bash
-        sudo apt-get install stow
-        ```
+### Manual Stow
 
-    - **On macOS** (using Homebrew):
+```bash
+stow nvim           # Symlink nvim config
+stow -D nvim        # Remove nvim symlinks
+stow */             # Symlink all packages
+```
 
-        ```bash
-        brew install stow
-        ```
+## Packages
 
-3. **Navigate to the Repository**: Move into the cloned repository directory.
+| Package | Description | Platform |
+|---------|-------------|----------|
+| `nvim` | Neovim config (lazy.nvim) | All |
+| `fish` | Fish shell + functions | All |
+| `wezterm` | Terminal emulator | All |
+| `yazi` | File manager | All |
+| `fastfetch` | System info | All |
+| `ohmyposh` | Prompt theme | All |
+| `claude` | Claude CLI settings | All |
+| `scripts` | Custom scripts | All |
+| `aerospace` | Tiling window manager | macOS |
+| `sketchybar` | Status bar | macOS |
+| `yabai` | Window manager | macOS |
+| `skhd` | Hotkey daemon | macOS |
 
-    ```bash
-    cd .dotfiles
-    ```
+## Dependencies
 
-4. **Use `stow` to Manage Configurations**: Use `stow` to symlink the desired configurations to your home directory.
+Dependencies are managed per-platform:
 
-    ```bash
-    stow <directory_name>
-    ```
+- **macOS**: `Brewfile` → `brew bundle`
+- **Arch Linux**: `packages.txt` → `yay -S`
 
-    Replace `<directory_name>` with the name of the directory containing the configurations you want to use. For example, if you want to symlink the `nvim` configurations:
+Neovim is installed via [bob](https://github.com/MordechaiHadad/bob) (not package managers) for easy version switching.
 
-    ```bash
-    stow nvim
-    ```
+## Structure
 
-    Or if you want to stow all configurations from this repository, you can use the provided bootstrap script:
+```
+~/.dotfiles/
+├── bootstrap.sh      # Cross-platform setup script
+├── Makefile          # Make targets for common operations
+├── .stowrc           # Default stow options
+├── Brewfile          # macOS dependencies
+├── packages.txt      # Arch Linux dependencies
+└── <package>/        # Each package mirrors $HOME structure
+    └── .config/
+        └── <app>/
+```
 
-    ```bash
-    ./bootstrap.sh
-    ```
+## License
 
-    Alternatively, you can manually stow all directories:
-
-    ```bash
-    stow */
-    ```
-
-5. **Enjoy your Configurations**: That's it! Your configuration files should now be symlinked to your home directory, and you can start using your preferred settings for various programs.
-
-### Directory Structure
-
-This repository uses a modular structure compatible with GNU Stow. Each top-level directory represents a package:
-
-- `nvim/`: Neovim configuration
-- `fish/`: Fish shell configuration
-- `aerospace/`: Aerospace window manager config
-- `scripts/`: Custom scripts (formerly `bin/`)
-- ...and so on.
-
-Each package directory mimics the structure relative to your home directory (e.g., `nvim/.config/nvim/init.lua`).
-
-### Contributing
-
-If you have any improvements or suggestions for my dotfiles, feel free to open an issue or submit a pull request. I'm always open to new ideas and optimizations
-
-### License
-
-This repository is licensed under the [MIT License](LICENSE), so feel free to fork, modify, and distribute the code as you see fit.
+[MIT License](LICENSE)
