@@ -1,6 +1,18 @@
-local M = setmetatable({}, {
+---@class gavim.util: gavim.util.lsp
+---@field icons gavim.util.icons
+---@field lsp gavim.util.lsp
+---@field cmp gavim.util.cmp
+---@field lualine gavim.util.lualine
+local M = {}
+
+setmetatable(M, {
   __call = function(m, ...)
     return m.get(...)
+  end,
+  __index = function(t, k)
+    ---@diagnostic disable-next-line: no-unknown
+    t[k] = require('util.' .. k)
+    return t[k]
   end,
 })
 

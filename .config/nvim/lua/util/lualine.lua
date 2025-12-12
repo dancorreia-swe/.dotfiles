@@ -1,6 +1,3 @@
-local GvimIcons = require 'util.icons'
-local Util = require 'util'
-
 local M = {}
 
 ---@param icon string
@@ -27,7 +24,7 @@ end
 ---@param name string
 ---@param icon? string
 function M.cmp_source(name, icon)
-  icon = icon or GvimIcons.icons.kinds[name:sub(1, 1):upper() .. name:sub(2)]
+  icon = icon or GaVim.icons.icons.kinds[name:sub(1, 1):upper() .. name:sub(2)]
   local started = false
   return M.status(icon, function()
     if not package.loaded['cmp'] then
@@ -100,14 +97,14 @@ function M.pretty_path(opts)
     end
 
     path = vim.fs.normalize(path)
-    local root = Util.getRootDir { normalize = true }
-    local cwd = Util.cwd()
+    local root = GaVim.getRootDir { normalize = true }
+    local cwd = GaVim.cwd()
 
     -- original path is preserved to provide user with expected result of pretty_path, not a normalized one,
     -- which might be confusing
     local norm_path = path
 
-    if Util.is_win() then
+    if GaVim.is_win() then
       -- in case any of the provided paths involved mixed case, an additional normalization step for windows
       norm_path = norm_path:lower()
       root = root:lower()
@@ -164,8 +161,8 @@ function M.root_dir(opts)
   }, opts or {})
 
   local function get()
-    local cwd = Util.cwd()
-    local root = Util.getRootDir { normalize = true }
+    local cwd = GaVim.cwd()
+    local root = GaVim.getRootDir { normalize = true }
     local name = vim.fs.basename(root)
 
     if root == cwd then
