@@ -3,7 +3,6 @@ require 'config.autocmds'
 require 'config.keybinds'
 
 _G.GaVim = require 'util'
-GaVim.plugin.setup()
 
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
@@ -11,6 +10,8 @@ if not vim.loop.fs_stat(lazypath) then
   vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
+
+GaVim.plugin.setup()
 
 require('lazy').setup({
   require 'kickstart.plugins.lint',
