@@ -53,7 +53,6 @@ stow */             # Symlink all packages
 | `fastfetch` | System info | All |
 | `ohmyposh` | Prompt theme | All |
 | `claude` | Claude CLI settings | All |
-| `scripts` | Custom scripts | All |
 | `aerospace` | Tiling window manager | macOS |
 | `sketchybar` | Status bar | macOS |
 | `yabai` | Window manager | macOS |

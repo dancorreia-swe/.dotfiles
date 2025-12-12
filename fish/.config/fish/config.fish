@@ -1,7 +1,6 @@
 if status is-interactive
     # Cross-platform paths
     fish_add_path "$HOME/.local/share/bob/nvim-bin"
-    fish_add_path "$HOME/.dotfiles/bin"
     fish_add_path "$HOME/.local/bin"
 
     # macOS-specific paths

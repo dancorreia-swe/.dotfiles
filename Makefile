@@ -19,7 +19,7 @@ else
 endif
 
 # Package groups
-CORE := fish nvim scripts wezterm
+CORE := fish nvim wezterm
 WM_MAC := aerospace aerospace-swipe sketchybar yabai skhd
 TOOLS := yazi fastfetch ohmyposh claude
 
