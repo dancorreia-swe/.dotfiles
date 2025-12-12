@@ -1,7 +1,6 @@
 return {
   'obsidian-nvim/obsidian.nvim',
   version = '*', -- recommended, use latest release instead of latest commit
-  lazy = true,
   ft = 'markdown',
   -- Replace the above line with this if you only want to load obsidian.nvim for markdown files in your vault:
   -- event = {
@@ -106,31 +105,6 @@ return {
         -- Insert a tag at the current location.
         insert_tag = '<C-l>',
       },
-    },
-
-    ---@class obsidian.config.AttachmentsOpts
-    ---
-    ---Default folder to save images to, relative to the vault root.
-    ---@field img_folder? string
-    ---
-    ---Default name for pasted images
-    ---@field img_name_func? fun(): string
-    ---
-    ---Default text to insert for pasted images
-    ---@field img_text_func? fun(client: obsidian.Client, path: obsidian.Path): string
-    ---
-    ---Whether to confirm the paste or not. Defaults to true.
-    ---@field confirm_img_paste? boolean
-    attachments = {
-      img_folder = 'assets/imgs',
-      img_text_func = function(client, path)
-        local encoded_path = require('obsidian.util').urlencode(path:vault_relative_path() or tostring(path))
-        return string.format('![%s](%s)', path.name, encoded_path)
-      end,
-      img_name_func = function()
-        return string.format('Pasted image %s', os.date '%Y%m%d%H%M%S')
-      end,
-      confirm_img_paste = true,
     },
   },
 }
