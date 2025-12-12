@@ -1,6 +1,7 @@
 ---@class gavim.util: gavim.util.lsp
 ---@field icons gavim.util.icons
 ---@field lsp gavim.util.lsp
+---@field plugin gavim.util.plugin
 ---@field cmp gavim.util.cmp
 ---@field lualine gavim.util.lualine
 local M = {}

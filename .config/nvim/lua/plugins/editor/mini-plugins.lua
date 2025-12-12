@@ -24,7 +24,7 @@ return {
   -- Auto-detect indentation
   {
     'nmac427/guess-indent.nvim',
-    event = { 'BufReadPost', 'BufNewFile', 'BufReadPre' },
+    event = 'LazyFile',
     cmd = 'GuessIndent',
     opts = {},
   },

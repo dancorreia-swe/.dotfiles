@@ -55,7 +55,7 @@ return {
     'nvim-treesitter/nvim-treesitter',
     version = false,
     lazy = vim.fn.argc(-1) == 0, -- load treesitter early when opening a file from the cmdline
-    event = { 'BufReadPost', 'BufWritePost', 'BufNewFile', 'VeryLazy' },
+    event = { 'LazyFile', 'VeryLazy' },
     build = ':TSUpdate',
     cmd = { 'TSUpdateSync', 'TSUpdate', 'TSInstall' },
     opts = {
@@ -147,13 +147,13 @@ return {
 
   {
     'windwp/nvim-ts-autotag',
-    event = { 'BufReadPost', 'BufWritePost', 'BufNewFile' },
+    event = 'LazyFile',
     opts = {},
   },
 
   {
     'nvim-treesitter/nvim-treesitter-context',
-    event = { 'BufReadPost', 'BufWritePost', 'BufNewFile' },
+    event = 'LazyFile',
     opts = function()
       local tsc = require 'treesitter-context'
 

@@ -3,6 +3,7 @@ require 'config.autocmds'
 require 'config.keybinds'
 
 _G.GaVim = require 'util'
+GaVim.plugin.setup()
 
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
