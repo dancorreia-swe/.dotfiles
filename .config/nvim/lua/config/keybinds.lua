@@ -16,6 +16,14 @@ vim.keymap.set({ 'n', 'x' }, '<Down>', "v:count == 0 ? 'gj' : 'j'", { desc = 'Do
 vim.keymap.set({ 'n', 'x' }, 'k', "v:count == 0 ? 'gk' : 'k'", { desc = 'Up', expr = true, silent = true })
 vim.keymap.set({ 'n', 'x' }, '<Up>', "v:count == 0 ? 'gk' : 'k'", { desc = 'Up', expr = true, silent = true })
 
+-- move lines up and down
+vim.keymap.set('n', '<A-Down>', "<cmd>execute 'move .+' . v:count1<cr>==", { desc = 'Move Down' })
+vim.keymap.set('n', '<A-Up>', "<cmd>execute 'move .-' . (v:count1 + 1)<cr>==", { desc = 'Move Up' })
+vim.keymap.set('i', '<A-Down>', '<esc><cmd>m .+1<cr>==gi', { desc = 'Move Down' })
+vim.keymap.set('i', '<A-Up>', '<esc><cmd>m .-2<cr>==gi', { desc = 'Move Up' })
+vim.keymap.set('v', '<A-Down>', ":<C-u>execute \"'<,'>move '>+\" . v:count1<cr>gv=gv", { desc = 'Move Down' })
+vim.keymap.set('v', '<A-Up>', ":<C-u>execute \"'<,'>move '<-\" . (v:count1 + 1)<cr>gv=gv", { desc = 'Move Up' })
+
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
@@ -46,8 +54,8 @@ vim.keymap.set('n', '[q', '<cmd>cprev<CR>', { desc = 'Move to the previous quick
 vim.keymap.set('n', '<leader>p', '"_dP', { desc = 'Paste without' })
 vim.keymap.set('v', '<leader>p', '"_dP', { desc = 'Paste without yanking' })
 
-vim.keymap.set('n', '<leader>d', '"_d', { desc = 'Delete without yanking' })
-vim.keymap.set('v', '<leader>d', '"_d', { desc = 'Delete without yanking' })
+vim.keymap.set('n', '<leader>D', '"_d', { desc = 'Delete without yanking' })
+vim.keymap.set('v', '<leader>D', '"_d', { desc = 'Delete without yanking' })
 
 -- Buffer management
 vim.keymap.set('n', '<BS>', '<c-6>', { desc = 'Switch to the last used buffer' })
