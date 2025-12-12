@@ -120,6 +120,27 @@ setup_neovim() {
     fi
 }
 
+# Setup fisher and fish plugins
+setup_fisher() {
+    if ! command -v fish &>/dev/null; then
+        warn "Fish not installed, skipping fisher setup"
+        return 0
+    fi
+
+    read -p "Install fish plugins via fisher? (y/N) " -n 1 -r choice
+    echo
+    case "$choice" in
+        y|Y)
+            if ! fish -c "type -q fisher" 2>/dev/null; then
+                info "Installing fisher..."
+                fish -c "curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher"
+            fi
+            info "Installing fish plugins..."
+            fish -c "fisher update"
+            ;;
+    esac
+}
+
 # Stow all packages
 stow_packages() {
     info "Ensuring ~/.config exists..."
@@ -165,6 +186,7 @@ main() {
     install_deps
     setup_neovim
     stow_packages
+    setup_fisher
 
     echo
     info "Dotfiles setup complete!"

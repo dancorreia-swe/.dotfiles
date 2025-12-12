@@ -23,7 +23,7 @@ CORE := fish nvim scripts wezterm
 WM_MAC := aerospace aerospace-swipe sketchybar yabai skhd
 TOOLS := yazi fastfetch ohmyposh claude
 
-.PHONY: help install uninstall list deps bob core tools wm all
+.PHONY: help install uninstall list deps bob fisher core tools wm all
 
 help: ## Show this help
 	@echo "Dotfiles Management ($(OS))"
@@ -81,6 +81,12 @@ endif
 	@bob use nightly
 	@echo "Done! Neovim nightly installed via bob."
 
+fisher: ## Install fisher and fish plugins
+	@echo "Installing fisher and plugins..."
+	@fish -c "curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher" 2>/dev/null || true
+	@fish -c "fisher update"
+	@echo "Done!"
+
 core: ## Install core packages (fish, nvim, scripts, wezterm)
 	@echo "Installing core packages..."
 	@cd $(DOTFILES_DIR) && stow $(CORE)
@@ -97,5 +103,5 @@ else
 	@echo "Window manager packages are macOS only, skipping..."
 endif
 
-all: deps bob install ## Full setup: deps + bob + all packages
+all: deps bob install fisher ## Full setup: deps + bob + stow + fisher
 	@echo "Full installation complete!"

@@ -1,9 +1,14 @@
 if status is-interactive
-    fish_add_path /Users/danielmac/.local/share/bob/nvim-bin
-    fish_add_path /opt/homebrew/sbin
-    fish_add_path /opt/homebrew/bin
+    # Cross-platform paths
+    fish_add_path "$HOME/.local/share/bob/nvim-bin"
     fish_add_path "$HOME/.dotfiles/bin"
     fish_add_path "$HOME/.local/bin"
+
+    # macOS-specific paths
+    if test (uname) = "Darwin"
+        fish_add_path /opt/homebrew/sbin
+        fish_add_path /opt/homebrew/bin
+    end
 
     oh-my-posh init fish --config $HOME/.config/ohmyposh/zen.toml | source
 
@@ -22,6 +27,11 @@ if status is-interactive
         set -gx --prepend PATH $_asdf_shims
     end
     set --erase _asdf_shims
+
+    # Machine-specific config (not tracked in git)
+    if test -f ~/.config/fish/conf.d/local.fish
+        source ~/.config/fish/conf.d/local.fish
+    end
 end
 
 # Added by OrbStack: command-line tools and integration
