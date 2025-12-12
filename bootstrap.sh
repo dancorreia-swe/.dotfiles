@@ -94,11 +94,13 @@ install_deps() {
                 brew bundle --file="$DOTFILES_DIR/Brewfile"
             else
                 info "Installing from packages.txt..."
+                # Read packages into array, one per line
+                mapfile -t packages < "$DOTFILES_DIR/packages.txt"
                 if command -v yay &>/dev/null; then
-                    yay -S --needed --noconfirm - < "$DOTFILES_DIR/packages.txt"
+                    yay -S --needed --noconfirm "${packages[@]}"
                 else
-                    warn "yay not available, using pacman (AUR packages will be skipped)"
-                    grep -v '#' "$DOTFILES_DIR/packages.txt" | grep -v 'AUR' | sudo pacman -S --needed --noconfirm -
+                    warn "yay not available, using pacman (AUR packages may fail)"
+                    sudo pacman -S --needed --noconfirm "${packages[@]}"
                 fi
             fi
             ;;

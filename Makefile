@@ -15,7 +15,6 @@ else
     OS := linux
     # Prefer yay for AUR support, fallback to pacman
     PKG_INSTALL := $(shell command -v yay >/dev/null 2>&1 && echo "yay -S --needed --noconfirm" || echo "sudo pacman -S --needed --noconfirm")
-    PKG_BUNDLE := $(PKG_INSTALL) - < $(DOTFILES_DIR)/packages.txt
 endif
 
 # Package groups
@@ -62,10 +61,10 @@ list: ## List available packages
 deps: ## Install system dependencies (Brewfile on mac, packages.txt on arch)
 ifeq ($(OS),macos)
 	@echo "Installing dependencies from Brewfile..."
-	@$(PKG_BUNDLE)
+	@brew bundle --file=$(DOTFILES_DIR)/Brewfile
 else
 	@echo "Installing dependencies from packages.txt..."
-	@$(PKG_BUNDLE)
+	@$(PKG_INSTALL) $$(cat $(DOTFILES_DIR)/packages.txt | tr '\n' ' ')
 endif
 	@echo "Done!"
 

@@ -1,44 +1,21 @@
-# Dotfiles dependencies for Arch Linux
-# Install with: yay -S --needed - < packages.txt
-# Or: sudo pacman -S --needed - < packages.txt (for official repos only)
-# Note: Neovim is managed via bob, not pacman
-
-# Core tools
 stow
 fish
-bob               # AUR: neovim version manager
-
-# Shell enhancements
-oh-my-posh-bin    # AUR
+bob
+oh-my-posh-bin
 zoxide
 fzf
-vivid             # AUR: LS_COLORS generator
-
-# CLI tools
+vivid
 yazi
 fastfetch
 lazygit
-lazydocker        # AUR
+lazydocker
 fd
 ripgrep
 bat
 eza
-
-# Version managers
-asdf-vm           # AUR
-
-# Languages & runtimes
+asdf-vm
 python
 nodejs
 npm
-
-# Development
 docker
 docker-compose
-
-# Terminal (optional, uncomment if needed)
-# wezterm
-
-# Optional: Uncomment if you use these
-# bun-bin         # AUR
-# pnpm
