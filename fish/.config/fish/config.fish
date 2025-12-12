@@ -1,5 +1,4 @@
 if status is-interactive
-    fish_add_path /Users/danielmac/.local/bin
     fish_add_path /Users/danielmac/.local/share/bob/nvim-bin
     fish_add_path /opt/homebrew/sbin
     fish_add_path /opt/homebrew/bin
@@ -11,7 +10,7 @@ if status is-interactive
     zoxide init fish | source
 
     # ASDF configuration code
-    if test -z $ASDF_DATA_DIR
+    if test -z "$ASDF_DATA_DIR"
         set _asdf_shims "$HOME/.asdf/shims"
     else
         set _asdf_shims "$ASDF_DATA_DIR/shims"
