@@ -52,7 +52,6 @@ return {
       which_key = true,
     },
     highlight_overrides = {
-      ---@param cp palette
       all = function(cp)
         return {
           -- For base configs
@@ -83,6 +82,15 @@ return {
           BlinkPairsOrange = { fg = cp.yellow, bg = transparent_background and cp.none or cp.base },
           BlinkPairsPurple = { fg = cp.pink, bg = transparent_background and cp.none or cp.base },
           BlinkPairsBlue = { fg = cp.sapphire, bg = transparent_background and cp.none or cp.base },
+
+          YankyPut = {
+            fg = cp.mantle,
+            bg = cp.yellow,
+          },
+          YankyYanked = {
+            fg = cp.mantle,
+            bg = cp.yellow,
+          },
         }
       end,
     },
