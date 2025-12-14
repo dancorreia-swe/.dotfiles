@@ -1,5 +1,6 @@
 local wezterm = require("wezterm")
 local act = wezterm.action
+local ssh = require("ssh")
 
 local module = {}
 
@@ -38,6 +39,9 @@ function module.apply_to_config(config)
 			end),
 		}
 	end
+
+	-- Get SSH keybinds from ssh module
+	local ssh_keybinds = ssh.get_keybinds()
 
 	local keybinds = {
 		{ key = "Enter", mods = "SHIFT", action = wezterm.action({ SendString = "\x1b\r" }) },
@@ -129,6 +133,11 @@ function module.apply_to_config(config)
 			}),
 		},
 	}
+
+	-- Merge SSH keybinds
+	for _, kb in ipairs(ssh_keybinds) do
+		table.insert(keybinds, kb)
+	end
 
 	config.keys = keybinds
 end

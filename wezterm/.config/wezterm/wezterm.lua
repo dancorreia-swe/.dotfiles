@@ -9,6 +9,7 @@ local tab_bar_config = require("tab-bar")
 local keybinds_config = require("keybinds")
 local right_status_bar_config = require("right-status-bar")
 local resurrect_config = require("resurrect")
+local ssh_config = require("ssh")
 
 local config = wezterm.config_builder()
 
@@ -20,6 +21,7 @@ right_status_bar_config.apply_to_config(config)
 keybinds_config.apply_to_config(config)
 colors_config.apply_to_config(config)
 resurrect_config.apply_to_config(config)
+ssh_config.apply_to_config(config)
 workspace_switcher.apply_to_config(config)
 
 local resurrect = wezterm.plugin.require("https://github.com/MLFlexer/resurrect.wezterm")
