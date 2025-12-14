@@ -70,6 +70,28 @@ function module.get_keybinds()
 				end),
 			}),
 		},
+		-- SSH + tmux control mode (Leader + T)
+		{
+			key = "T",
+			mods = "LEADER",
+			action = act.InputSelector({
+				title = " SSH + tmux",
+				choices = ssh_choices,
+				fuzzy = true,
+				action = wezterm.action_callback(function(window, pane, id, label)
+					if id then
+						-- Extract host from domain name (e.g., "SSH:hetzner" -> "hetzner")
+						local host = id:gsub("^SSH:", "")
+						window:perform_action(
+							act.SpawnCommandInNewTab({
+								args = { "ssh", host, "-t", "tmux", "-CC", "new", "-A", "-s", "main" },
+							}),
+							pane
+						)
+					end
+				end),
+			}),
+		},
 		-- SSH in current pane's domain - new tab (Leader + H)
 		{
 			key = "H",
@@ -78,10 +100,6 @@ function module.get_keybinds()
 				domain = "CurrentPaneDomain",
 			}),
 		},
-		-- Split vertical in same domain (Leader + -)
-		-- Already exists, but ensure it uses CurrentPaneDomain
-		-- Split horizontal in same domain (Leader + \)
-		-- Already exists, but ensure it uses CurrentPaneDomain
 	}
 end
 

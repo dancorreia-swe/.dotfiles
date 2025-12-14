@@ -10,7 +10,8 @@ local process_icons = {
 	["python"] = { icon = wezterm.nerdfonts.dev_python, color = "#f9e2af" },
 	["python3"] = { icon = wezterm.nerdfonts.dev_python, color = "#f9e2af" },
 	["git"] = { icon = wezterm.nerdfonts.dev_git, color = "#fab387" },
-	["ssh"] = { icon = wezterm.nerdfonts.md_ssh, color = "#94e2d5" },
+	["ssh"] = { icon = wezterm.nerdfonts.md_server_network, color = "#94e2d5" },
+	["tmux"] = { icon = wezterm.nerdfonts.md_server_network, color = "#94e2d5" },
 	["zsh"] = { icon = wezterm.nerdfonts.dev_terminal, color = "#b4befe" },
 	["fish"] = { icon = wezterm.nerdfonts.md_fish, color = "#b4befe" },
 	["elixir"] = { icon = wezterm.nerdfonts.dev_elixir, color = "#cba6f7" },
@@ -21,6 +22,9 @@ local process_icons = {
 	["bash"] = { icon = wezterm.nerdfonts.dev_terminal, color = "#b4befe" },
 }
 
+-- SSH icon for remote connections
+local ssh_icon = { icon = wezterm.nerdfonts.md_server_network, color = "#94e2d5" }
+
 -- Fallback ghost icons
 local fallback_icon = {
 	active = { icon = wezterm.nerdfonts.md_ghost, color = "#cdd6f4" },
@@ -28,9 +32,22 @@ local fallback_icon = {
 }
 
 local function get_process_icon(tab)
-	local process_name = tab.active_pane.foreground_process_name
+	local pane = tab.active_pane
+	local process_name = pane.foreground_process_name
 	-- Extract just the process name (remove path)
 	process_name = process_name:gsub(".*[/\\]", "")
+
+	-- Check if we're in an SSH domain (domain name starts with "SSH:")
+	local domain = pane.domain_name or ""
+	local is_ssh = domain:find("^SSH:") ~= nil
+
+	-- If SSH domain, check for remote process first, then fall back to SSH icon
+	if is_ssh then
+		if process_icons[process_name] then
+			return process_icons[process_name]
+		end
+		return ssh_icon
+	end
 
 	if process_icons[process_name] then
 		return process_icons[process_name]
