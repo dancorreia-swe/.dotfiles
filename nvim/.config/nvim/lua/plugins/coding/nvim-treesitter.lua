@@ -15,7 +15,7 @@ return {
         return
       end
       -- make sure we're using the latest treesitter util
-      package.loaded['lazyvim.util.treesitter'] = nil
+      package.loaded['gavim.util.treesitter'] = nil
       GaVim.treesitter.build(function()
         TS.update(nil, { summary = true })
       end)
@@ -100,7 +100,7 @@ return {
       end
 
       vim.api.nvim_create_autocmd('FileType', {
-        group = vim.api.nvim_create_augroup('lazyvim_treesitter', { clear = true }),
+        group = vim.api.nvim_create_augroup('gavim_treesitter', { clear = true }),
         callback = function(ev)
           local ft, lang = ev.match, vim.treesitter.language.get_lang(ev.match)
           if not GaVim.treesitter.have(ft) then
@@ -140,15 +140,53 @@ return {
     branch = 'main',
     event = 'VeryLazy',
     opts = {
+      select = {
+        enable = true,
+        lookahead = true,
+        keys = {
+          ['if'] = '@function.inner',
+          ['af'] = '@function.outer',
+          ['ic'] = '@class.inner',
+          ['ac'] = '@class.outer',
+          ['id'] = '@conditional.inner',
+          ['ad'] = '@conditional.outer',
+          ['ao'] = '@loop.outer',
+          ['io'] = '@loop.inner',
+        },
+      },
       move = {
         enable = true,
         set_jumps = true, -- whether to set jumps in the jumplist
         -- GaVim extention to create buffer-local keymaps
         keys = {
-          goto_next_start = { [']f'] = '@function.outer', [']c'] = '@class.outer', [']a'] = '@parameter.inner' },
-          goto_next_end = { [']F'] = '@function.outer', [']C'] = '@class.outer', [']A'] = '@parameter.inner' },
-          goto_previous_start = { ['[f'] = '@function.outer', ['[c'] = '@class.outer', ['[a'] = '@parameter.inner' },
-          goto_previous_end = { ['[F'] = '@function.outer', ['[C'] = '@class.outer', ['[A'] = '@parameter.inner' },
+          goto_next_start = {
+            [']f'] = '@function.outer',
+            [']c'] = '@class.outer',
+            [']a'] = '@parameter.inner',
+            [']d'] = '@conditional.outer',
+            [']o'] = '@loop.outer',
+          },
+          goto_next_end = {
+            [']F'] = '@function.outer',
+            [']C'] = '@class.outer',
+            [']A'] = '@parameter.inner',
+            [']D'] = '@conditional.outer',
+            [']O'] = '@loop.outer',
+          },
+          goto_previous_start = {
+            ['[f'] = '@function.outer',
+            ['[c'] = '@class.outer',
+            ['[a'] = '@parameter.inner',
+            ['[d'] = '@conditional.inner',
+            ['[o'] = '@loop.inner',
+          },
+          goto_previous_end = {
+            ['[F'] = '@function.outer',
+            ['[C'] = '@class.outer',
+            ['[A'] = '@parameter.inner',
+            ['[D'] = '@conditional.inner',
+            ['[O'] = '@loop.inner',
+          },
         },
       },
     },
@@ -191,6 +229,27 @@ return {
             end
           end
         end
+
+        if not (vim.tbl_get(opts, 'select', 'enable')) then
+          return
+        end
+
+        local selections = vim.tbl_get(opts, 'select', 'keys') or {}
+
+        ---@type table<string, string>
+        for key, query in pairs(selections) do
+          -- @function.inner → "Select Inner Function"
+          local obj, scope = query:match '@(%w+)%.(%w+)'
+          local desc = ('Select %s %s'):format(scope and scope:sub(1, 1):upper() .. scope:sub(2) or '', obj and obj:sub(1, 1):upper() .. obj:sub(2) or '')
+
+          vim.keymap.set({ 'x', 'o' }, key, function()
+            require('nvim-treesitter-textobjects.select').select_textobject(query, 'textobjects')
+          end, {
+            buffer = buf,
+            desc = desc,
+            silent = true,
+          })
+        end
       end
 
       vim.api.nvim_create_autocmd('FileType', {
@@ -208,5 +267,26 @@ return {
     'windwp/nvim-ts-autotag',
     event = 'LazyFile',
     opts = {},
+  },
+
+  {
+    'nvim-treesitter/nvim-treesitter-context',
+    event = 'LazyFile',
+    opts = function()
+      local tsc = require 'treesitter-context'
+      Snacks.toggle({
+        name = 'Treesitter Context',
+        get = tsc.enabled,
+        set = function(state)
+          if state then
+            tsc.enable()
+          else
+            tsc.disable()
+          end
+        end,
+      }):map '<leader>ut'
+
+      return { mode = 'cursor', max_lines = 3, enable = false }
+    end,
   },
 }
