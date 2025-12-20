@@ -1,179 +1,212 @@
+---@alias gavim.TSFeat { enable?: boolean, disable?: string[] }
+
 return {
+  -- Treesitter is a new parser generator tool that we can
+  -- use in Neovim to power faster and more accurate
+  -- syntax highlighting.
   {
-    'nvim-treesitter/nvim-treesitter-textobjects',
-    event = 'VeryLazy',
-    config = function()
-      local Config = require 'lazy.core.config'
-
-      local function is_loaded(name)
-        return Config.plugins[name] and Config.plugins[name].loaded
+    'nvim-treesitter/nvim-treesitter',
+    branch = 'main',
+    version = false, -- last release is way too old and doesn't work on Windows
+    build = function()
+      local TS = require 'nvim-treesitter'
+      if not TS.get_installed then
+        GaVim.error 'Please restart Neovim and run `:TSUpdate` to use the `nvim-treesitter` **main** branch.'
+        return
       end
+      -- make sure we're using the latest treesitter util
+      package.loaded['lazyvim.util.treesitter'] = nil
+      GaVim.treesitter.build(function()
+        TS.update(nil, { summary = true })
+      end)
+    end,
+    event = { 'LazyFile', 'VeryLazy' },
+    cmd = { 'TSUpdate', 'TSInstall', 'TSLog', 'TSUninstall' },
+    opts_extend = { 'ensure_installed' },
+    opts = {
+      -- GaVim config for treesitter
+      indent = { enable = true },
+      highlight = { enable = true },
+      folds = { enable = true },
+      ensure_installed = {
+        'bash',
+        'c',
+        'diff',
+        'docker',
+        'elixir',
+        'eex',
+        'html',
+        'javascript',
+        'jsdoc',
+        'json',
+        'jsonc',
+        'lua',
+        'luadoc',
+        'luap',
+        'markdown',
+        'markdown_inline',
+        'printf',
+        'python',
+        'query',
+        'regex',
+        'toml',
+        'tsx',
+        'typescript',
+        'vim',
+        'vimdoc',
+        'xml',
+        'yaml',
+      },
+    },
+    config = function(_, opts)
+      local TS = require 'nvim-treesitter'
 
-      local function get_lazyvim_plugin(name)
-        return Config.spec.plugins[name]
-      end
-
-      local function get_lazyvim_opts(name)
-        local plugin = get_lazyvim_plugin(name)
-        if not plugin then
-          return {}
-        end
-        local Plugin = require 'lazy.core.plugin'
-        return Plugin.values(plugin, 'opts', false)
-      end
-
-      -- If treesitter is already loaded, we need to run config again for textobjects
-      if is_loaded 'nvim-treesitter' then
-        local opts = get_lazyvim_opts 'nvim-treesitter'
-        require('nvim-treesitter.configs').setup { textobjects = opts.textobjects }
-      end
-
-      -- When in diff mode, we want to use the default
-      -- vim text objects c & C instead of the treesitter ones.
-      local move = require 'nvim-treesitter.textobjects.move' ---@type table<string,fun(...)>
-      local configs = require 'nvim-treesitter.configs'
-      for name, fn in pairs(move) do
-        if name:find 'goto' == 1 then
-          move[name] = function(q, ...)
-            if vim.wo.diff then
-              local config = configs.get_module('textobjects.move')[name] ---@type table<string,string>
-              for key, query in pairs(config or {}) do
-                if q == query and key:find '[%]%[][cC]' then
-                  vim.cmd('normal! ' .. key)
-                  return
-                end
-              end
-            end
-            return fn(q, ...)
+      setmetatable(require 'nvim-treesitter.install', {
+        __newindex = function(_, k)
+          if k == 'compilers' then
+            vim.schedule(function()
+              GaVim.error {
+                'Setting custom compilers for `nvim-treesitter` is no longer supported.',
+                '',
+                'For more info, see:',
+                '- [compilers](https://docs.rs/cc/latest/cc/#compile-time-requirements)',
+              }
+            end)
           end
-        end
+        end,
+      })
+
+      -- some quick sanity checks
+      if not TS.get_installed then
+        return GaVim.error 'Please use `:Lazy` and update `nvim-treesitter`'
+      elseif type(opts.ensure_installed) ~= 'table' then
+        return GaVim.error '`nvim-treesitter` opts.ensure_installed must be a table'
       end
+
+      -- setup treesitter
+      TS.setup(opts)
+      GaVim.treesitter.get_installed(true) -- initialize the installed langs
+
+      -- install missing parsers
+      local install = vim.tbl_filter(function(lang)
+        return not GaVim.treesitter.have(lang)
+      end, opts.ensure_installed or {})
+      if #install > 0 then
+        GaVim.treesitter.build(function()
+          TS.install(install, { summary = true }):await(function()
+            GaVim.treesitter.get_installed(true) -- refresh the installed langs
+          end)
+        end)
+      end
+
+      vim.api.nvim_create_autocmd('FileType', {
+        group = vim.api.nvim_create_augroup('lazyvim_treesitter', { clear = true }),
+        callback = function(ev)
+          local ft, lang = ev.match, vim.treesitter.language.get_lang(ev.match)
+          if not GaVim.treesitter.have(ft) then
+            return
+          end
+
+          ---@param feat string
+          ---@param query string
+          local function enabled(feat, query)
+            local f = opts[feat] or {} ---@type gavim.TSFeat
+            return f.enable ~= false and not (type(f.disable) == 'table' and vim.tbl_contains(f.disable, lang)) and GaVim.treesitter.have(ft, query)
+          end
+
+          -- highlighting
+          if enabled('highlight', 'highlights') then
+            pcall(vim.treesitter.start, ev.buf)
+          end
+
+          -- indents
+          if enabled('indent', 'indents') then
+            GaVim.set_default('indentexpr', 'v:lua.GaVim.treesitter.indentexpr()')
+          end
+
+          -- folds
+          if enabled('folds', 'folds') then
+            if GaVim.set_default('foldmethod', 'expr') then
+              GaVim.set_default('foldexpr', 'v:lua.GaVim.treesitter.foldexpr()')
+            end
+          end
+        end,
+      })
     end,
   },
 
-  { -- Highlight, edit, and navigate code
-    'nvim-treesitter/nvim-treesitter',
-    version = false,
-    lazy = vim.fn.argc(-1) == 0, -- load treesitter early when opening a file from the cmdline
-    event = { 'LazyFile', 'VeryLazy' },
-    build = ':TSUpdate',
-    cmd = { 'TSUpdateSync', 'TSUpdate', 'TSInstall' },
+  {
+    'nvim-treesitter/nvim-treesitter-textobjects',
+    branch = 'main',
+    event = 'VeryLazy',
     opts = {
-      ensure_installed = {
-        'typescript',
-        'tsx',
-        'bash',
-        'c',
-        'html',
-        'lua',
-        'markdown',
-        'vim',
-        'vimdoc',
-        'elixir',
-        'heex',
-        'eex',
-        'javascript',
-        'json5',
-        'php',
-        'php_only',
-        'markdown_inline',
-        'norg',
-      },
-      -- Autoinstall languages that are not installed
-      auto_install = true,
-      highlight = {
+      move = {
         enable = true,
-        -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
-        --  If you are experiencing weird indenting issues, add the language to
-        --  the list of additional_vim_regex_highlighting and disabled languages for indent.
-        additional_vim_regex_highlighting = { 'ruby' },
-      },
-      indent = { enable = true, disable = { 'ruby' } },
-      endwise = {
-        enable = true,
-      },
-      textobjects = {
-        select = {
-          enable = true,
-          lookahead = true,
-          keymaps = {
-            ['af'] = '@function.outer',
-            ['if'] = '@function.inner',
-            ['ac'] = '@class.outer',
-            ['ic'] = '@class.inner',
-            ['ad'] = '@conditional.outer',
-            ['id'] = '@conditional.inner',
-          },
-          selection_modes = {
-            ['@parameter.outer'] = 'v', -- charwise
-            ['@function.outer'] = 'V', -- linewise
-            ['@class.outer'] = '<c-v>', -- blockwise
-          },
-        },
-        move = {
-          enable = true,
-          set_jumps = true,
+        set_jumps = true, -- whether to set jumps in the jumplist
+        -- GaVim extention to create buffer-local keymaps
+        keys = {
+          goto_next_start = { [']f'] = '@function.outer', [']c'] = '@class.outer', [']a'] = '@parameter.inner' },
+          goto_next_end = { [']F'] = '@function.outer', [']C'] = '@class.outer', [']A'] = '@parameter.inner' },
+          goto_previous_start = { ['[f'] = '@function.outer', ['[c'] = '@class.outer', ['[a'] = '@parameter.inner' },
+          goto_previous_end = { ['[F'] = '@function.outer', ['[C'] = '@class.outer', ['[A'] = '@parameter.inner' },
         },
       },
     },
     config = function(_, opts)
-      -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
+      local TS = require 'nvim-treesitter-textobjects'
+      if not TS.setup then
+        GaVim.error 'Please use `:Lazy` and update `nvim-treesitter`'
+        return
+      end
+      TS.setup(opts)
 
-      local parser_config = require('nvim-treesitter.parsers').get_parser_configs()
-      parser_config.blade = {
-        install_info = {
-          url = 'https://github.com/EmranMR/tree-sitter-blade',
-          files = { 'src/parser.c' },
-          branch = 'main',
-        },
-        filetype = 'blade',
-      }
+      local function attach(buf)
+        local ft = vim.bo[buf].filetype
+        if not (vim.tbl_get(opts, 'move', 'enable') and GaVim.treesitter.have(ft, 'textobjects')) then
+          return
+        end
+        ---@type table<string, table<string, string>>
+        local moves = vim.tbl_get(opts, 'move', 'keys') or {}
 
-      vim.filetype.add {
-        pattern = {
-          ['.*%.blade%.php'] = 'blade',
-        },
-      }
+        for method, keymaps in pairs(moves) do
+          for key, query in pairs(keymaps) do
+            local queries = type(query) == 'table' and query or { query }
+            local parts = {}
+            for _, q in ipairs(queries) do
+              local part = q:gsub('@', ''):gsub('%..*', '')
+              part = part:sub(1, 1):upper() .. part:sub(2)
+              table.insert(parts, part)
+            end
+            local desc = table.concat(parts, ' or ')
+            desc = (key:sub(1, 1) == '[' and 'Prev ' or 'Next ') .. desc
+            desc = desc .. (key:sub(2, 2) == key:sub(2, 2):upper() and ' End' or ' Start')
+            if not (vim.wo.diff and key:find '[cC]') then
+              vim.keymap.set({ 'n', 'x', 'o' }, key, function()
+                require('nvim-treesitter-textobjects.move')[method](query, 'textobjects')
+              end, {
+                buffer = buf,
+                desc = desc,
+                silent = true,
+              })
+            end
+          end
+        end
+      end
 
-      ---@diagnostic disable-next-line: missing-fields
-      require('nvim-treesitter.configs').setup(opts)
-      -- There are additional nvim-treesitter modules that you can use to interact
-      -- with nvim-treesitter. You should go explore a few and see what interests you:
-      --
-      --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
-      --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
+      vim.api.nvim_create_autocmd('FileType', {
+        group = vim.api.nvim_create_augroup('lazyvim_treesitter_textobjects', { clear = true }),
+        callback = function(ev)
+          attach(ev.buf)
+        end,
+      })
+      vim.tbl_map(attach, vim.api.nvim_list_bufs())
     end,
   },
 
+  -- Automatically add closing tags for HTML and JSX
   {
     'windwp/nvim-ts-autotag',
     event = 'LazyFile',
     opts = {},
-  },
-
-  {
-    'nvim-treesitter/nvim-treesitter-context',
-    event = 'LazyFile',
-    opts = function()
-      local tsc = require 'treesitter-context'
-
-      Snacks.toggle({
-        name = 'Treesitter Context',
-        get = tsc.enabled,
-        set = function(state)
-          if state then
-            tsc.enable()
-          else
-            tsc.disable()
-          end
-        end,
-      }):map '<leader>ut'
-
-      return {
-        enable = false,
-        mode = 'cursor',
-        max_lines = 3,
-      }
-    end,
   },
 }
