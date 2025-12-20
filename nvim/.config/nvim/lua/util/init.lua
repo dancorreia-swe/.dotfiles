@@ -1,9 +1,10 @@
----@class gavim.util: gavim.util.lsp
+---@class gavim.util: LazyUtilCore
 ---@field icons gavim.util.icons
 ---@field lsp gavim.util.lsp
 ---@field plugin gavim.util.plugin
 ---@field cmp gavim.util.cmp
 ---@field lualine gavim.util.lualine
+---@field treesitter gavim.util.treesitter
 local M = {}
 
 setmetatable(M, {
@@ -174,6 +175,14 @@ function M.opts(name)
 
   local Plugin = require 'lazy.core.plugin'
   return Plugin.values(plugin, 'opts', false)
+end
+
+for _, level in ipairs { 'info', 'warn', 'error' } do
+  M[level] = function(msg, opts)
+    opts = opts or {}
+    opts.title = opts.title or 'GaVim'
+    return require('lazy.core.util')[level](msg, opts)
+  end
 end
 
 local _defaults = {} ---@type table<string, boolean>
