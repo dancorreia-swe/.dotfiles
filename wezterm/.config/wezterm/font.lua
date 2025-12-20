@@ -8,7 +8,7 @@ function module.apply_to_config(config)
 		"SF Mono",
 		"SF Pro",
 	})
-	config.font_size = 14
+	config.font_size = 16
 	config.cell_width = 0.9
 	config.freetype_load_flags = "NO_HINTING"
 	config.front_end = "OpenGL"
