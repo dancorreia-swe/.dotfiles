@@ -5,6 +5,7 @@ M.lazy_file_events = { 'BufReadPost', 'BufNewFile', 'BufWritePre' }
 
 function M.setup()
   M.lazy_file()
+  GaVim.root.setup()
 end
 
 function M.lazy_file()

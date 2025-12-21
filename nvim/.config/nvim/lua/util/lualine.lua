@@ -98,8 +98,8 @@ function M.pretty_path(opts)
     end
 
     path = vim.fs.normalize(path)
-    local root = GaVim.getRootDir { normalize = true }
-    local cwd = GaVim.cwd()
+    local root = GaVim.root { normalize = true }
+    local cwd = GaVim.root.cwd()
 
     -- original path is preserved to provide user with expected result of pretty_path, not a normalized one,
     -- which might be confusing
@@ -162,8 +162,8 @@ function M.root_dir(opts)
   }, opts or {})
 
   local function get()
-    local cwd = GaVim.cwd()
-    local root = GaVim.getRootDir { normalize = true }
+    local cwd = GaVim.root.cwd()
+    local root = GaVim.root { normalize = true }
     local name = vim.fs.basename(root)
 
     if root == cwd then
