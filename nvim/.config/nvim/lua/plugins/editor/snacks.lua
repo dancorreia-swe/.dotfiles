@@ -160,7 +160,7 @@ return {
       { "<leader>fT", function() Snacks.terminal() end, desc = "Terminal (cwd)" },
       { "<leader>ft", function() Snacks.terminal(nil, {GaVim.root()}) end, desc = "Terminal (Root Dir)"},
       { "<c-/>", function() Snacks.terminal(nil, {GaVim.root()}) end, desc = "Terminal (Root Dir)", mode = {"n", "t"}},
-      { "c-_", function() Snacks.terminal(nil, { cwd = LazyVim.root() }) end, desc = "which_key_ignore"},
+      { "c-_", function() Snacks.terminal(nil, { cwd = GaVim.root() }) end, desc = "which_key_ignore"},
 
       -- Top Pickers & Explorer
       { "<leader><cr>", function() Snacks.picker.smart() end, desc = "Smart Find Files" },
@@ -170,8 +170,9 @@ return {
       { "<leader>,", function() Snacks.picker.buffers() end, desc = "Buffers" },
 
       -- find
-      { "<leader>fb", function() Snacks.picker.buffers() end, desc = "Buffers" },
+
       ---@diagnostic disable-next-line: assign-type-mismatch
+      { "<leader>fb", function() Snacks.picker.buffers() end, desc = "Buffers" },
       { "<leader>fc", function() Snacks.picker.files({ cwd = vim.fn.stdpath("config") }) end, desc = "Find Config File" },
       { "<leader>ff", function() Snacks.picker.files() end, desc = "Find Files" },
       { "<leader>fg", function() Snacks.picker.git_files() end, desc = "Find Git Files" },
