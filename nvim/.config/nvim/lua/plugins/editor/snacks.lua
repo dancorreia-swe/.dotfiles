@@ -1,3 +1,12 @@
+local function term_nav(dir)
+  ---@param self snacks.terminal
+  return function(self)
+    return self:is_floating() and '<c-' .. dir .. '>' or vim.schedule(function()
+      vim.cmd.wincmd(dir)
+    end)
+  end
+end
+
 return {
   {
     'folke/snacks.nvim',
@@ -9,6 +18,16 @@ return {
       -- or leave it empty to use the default settings
       -- refer to the configuration section below
       bigfile = { enabled = true },
+      terminal = {
+        win = {
+          keys = {
+            nav_h = { '<C-h>', term_nav 'h', desc = 'Go to Left Window', expr = true, mode = 't' },
+            nav_j = { '<C-j>', term_nav 'j', desc = 'Go to Lower Window', expr = true, mode = 't' },
+            nav_k = { '<C-k>', term_nav 'k', desc = 'Go to Upper Window', expr = true, mode = 't' },
+            nav_l = { '<C-l>', term_nav 'l', desc = 'Go to Right Window', expr = true, mode = 't' },
+          },
+        },
+      },
       dashboard = {
         preset = {
           keys = {
@@ -138,9 +157,10 @@ return {
     -- stylua: ignore
     keys = {
       -- Terminal 
-      { "<C-/>", function() Snacks.terminal(nil, { win = { position = "float" }}) end, desc = "Quick View Terminal" },
-      { "<leader>t.", function() Snacks.terminal.toggle() end, desc = "Toggle Terminal" },
-      { "<leader>tn", function() Snacks.terminal.open() end, desc = "Terminal New" },
+      { "<leader>fT", function() Snacks.terminal() end, desc = "Terminal (cwd)" },
+      { "<leader>ft", function() Snacks.terminal(nil, {GaVim.root()}) end, desc = "Terminal (Root Dir)"},
+      { "<c-/>", function() Snacks.terminal(nil, {GaVim.root()}) end, desc = "Terminal (Root Dir)", mode = {"n", "t"}},
+      { "c-_", function() Snacks.terminal(nil, { cwd = LazyVim.root() }) end, desc = "which_key_ignore"},
 
       -- Top Pickers & Explorer
       { "<leader><cr>", function() Snacks.picker.smart() end, desc = "Smart Find Files" },
