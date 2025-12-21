@@ -1,6 +1,6 @@
 require 'config.options'
 require 'config.autocmds'
-require 'config.keybinds'
+require 'config.keymaps'
 
 _G.GaVim = require 'util'
 
