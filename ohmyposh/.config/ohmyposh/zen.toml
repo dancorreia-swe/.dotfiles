@@ -66,6 +66,7 @@ final_space = true
       fetch_status = true
       fetch_upstream_icon = true
       truncate_symbol = '…'
+      disable_with_jj = true
 
       [blocks.segments.properties.mapped_branches]
         "feat/*" = "🚀 "
@@ -78,6 +79,18 @@ final_space = true
         "Untracked" = "★%d"
         "Added" = "✓%d"
         "Unmerged" = "%d"
+
+  [[blocks.segments]]
+    type = "jujutsu"
+    style = "plain"
+    powerline_symbol = ""
+    foreground = "#ffeb3b"
+    background = "transparent"
+    template = "\uf1fa {{.ChangeID}} {{if .Working.Changed}} \uf044 {{ .Working.String }}{{ end }}"
+
+    [blocks.segments.options]
+      fetch_status = true
+      ignore_working_copy = false
 
 [[blocks]]
   type = 'prompt'
