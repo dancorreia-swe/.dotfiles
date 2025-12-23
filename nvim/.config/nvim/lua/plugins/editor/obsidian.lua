@@ -83,6 +83,35 @@ return {
       folder = 'templates',
       date_format = '%Y-%m-%d',
       time_format = '%H:%M',
+      substitutions = {
+        -- Title Case: "my cool note" -> "My Cool Note"
+        titlecase = function(ctx)
+          local title = ctx.spec.title or ''
+          return title:gsub('(%a)([%w]*)', function(first, rest)
+            return first:upper() .. rest:lower()
+          end)
+        end,
+      },
     },
+
+    ---@param title string|nil
+    ---@return string
+    note_id_func = function(title)
+      local timestamp = tostring(os.time())
+      local suffix
+
+      if title and title:match '%S' then
+        -- kebab-case: "My Cool Note" -> "my-cool-note"
+        suffix = title:lower():gsub('%s+', '-'):gsub('[^%w%-]', '')
+      else
+        -- Random 4 uppercase letters
+        suffix = ''
+        for _ = 1, 4 do
+          suffix = suffix .. string.char(math.random(65, 90))
+        end
+      end
+
+      return timestamp .. '-' .. suffix
+    end,
   },
 }
