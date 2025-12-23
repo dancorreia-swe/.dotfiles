@@ -1,10 +1,3 @@
-local copilot_icons = {
-  Error = { ' ', 'DiagnosticError' },
-  Inactive = { ' ', 'MsgArea' },
-  Warning = { ' ', 'DiagnosticWarn' },
-  Normal = { '', 'Special' },
-}
-
 return {
   'nvim-lualine/lualine.nvim',
   event = 'VeryLazy',
