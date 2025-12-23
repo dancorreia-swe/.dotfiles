@@ -45,6 +45,27 @@ return {
     },
 
     legacy_commands = false,
+    frontmatter = {
+      ---@param note obsidian.Note
+      func = function(note)
+        local out = { id = note.id, aliases = {}, tags = note.tags }
+
+        for _, alias in ipairs(note.aliases or {}) do
+          local titlecase = alias:gsub('(%a)([%w]*)', function(first, rest)
+            return first:upper() .. rest:lower()
+          end)
+          table.insert(out.aliases, titlecase)
+        end
+
+        if note.metadata ~= nil and not vim.tbl_isempty(note.metadata) then
+          for k, v in pairs(note.metadata) do
+            out[k] = v
+          end
+        end
+
+        return out
+      end,
+    },
 
     new_notes_location = 'notes_subdir',
     daily_notes = {
@@ -84,7 +105,6 @@ return {
       date_format = '%Y-%m-%d',
       time_format = '%H:%M',
       substitutions = {
-        -- Title Case: "my cool note" -> "My Cool Note"
         titlecase = function(ctx)
           local title = ctx.partial_note and ctx.partial_note:display_name() or ''
           return title:gsub('(%a)([%w]*)', function(first, rest)
