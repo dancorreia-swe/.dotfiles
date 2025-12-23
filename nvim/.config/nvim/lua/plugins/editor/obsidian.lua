@@ -11,7 +11,6 @@ return {
   --   "BufNewFile path/to/my-vault/*.md",
   -- },
   dependencies = {
-    -- Required.
     'nvim-lua/plenary.nvim',
     'ibhagwan/fzf-lua',
   },
@@ -68,47 +67,22 @@ return {
       create_new = true,
     },
 
-    -- Optional, customize how note IDs are generated given an optional title.
-    ---@param title string|?
-    ---@return string
-    note_id_func = function(title)
-      -- Create note IDs in a Zettelkasten format with a timestamp and a suffix.
-      -- In this case a note with the title 'My new note' will be given an ID that looks
-      -- like '1657296016-my-new-note', and therefore the file name '1657296016-my-new-note.md'.
-      -- You may have as many periods in the note ID as you'd like—the ".md" will be added automatically
-      local suffix = ''
-      if title ~= nil then
-        -- If title is given, transform it into valid file name.
-        suffix = title:gsub(' ', '-'):gsub('[^A-Za-z0-9-]', ''):lower()
-      else
-        -- If title is nil, just add 4 random uppercase letters to the suffix.
-        for _ = 1, 4 do
-          suffix = suffix .. string.char(math.random(65, 90))
-        end
-      end
-
-      return tostring(os.date '%Y%m%d') .. '-' .. suffix
-    end,
-
-    sort_by = 'modified',
-    sort_reversed = true,
-
     picker = {
       name = 'snacks.pick',
-      -- Optional, configure key mappings for the picker. These are the defaults.
-      -- Not all pickers support all mappings.
       note_mappings = {
-        -- Create a new note from your query.
         new = '<C-x>',
-        -- Insert a link to the selected note.
         insert_link = '<C-l>',
       },
       tag_mappings = {
-        -- Add tag(s) to current note.
         tag_note = '<C-x>',
-        -- Insert a tag at the current location.
         insert_tag = '<C-l>',
       },
+    },
+
+    templates = {
+      folder = 'templates',
+      date_format = '%Y-%m-%d',
+      time_format = '%H:%M',
     },
   },
 }
