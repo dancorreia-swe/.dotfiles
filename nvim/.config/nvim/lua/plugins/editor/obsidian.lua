@@ -24,7 +24,7 @@ return {
     { '<leader>ot', '<CMD>Obsidian tags<CR>', desc = 'Open Obsidian Tag Picker' },
     { '<leader>oT', '<CMD>Obsidian toc<CR>', desc = 'Obsidian TOC of current Note' },
     { '<leader>ob', '<CMD>Obsidian backlinks<CR>', desc = 'Open Obsidian Backlinks Picker' },
-    { '<leader>oN', '<CMD>Obsidian new<CR>', desc = 'Obsidian New Note' },
+    { '<leader>oN', '<CMD>Obsidian new_from_template<CR>', desc = 'Obsidian New Note' },
     { '<leader>on', '<CMD>Obsidian link_new<CR>', desc = 'Obsidian Link Note', mode = { 'n', 'v' } },
     { '<leader>or', '<CMD>Obsidian rename<CR>', desc = 'Obsidian Rename Note and Backlinks' },
     { '<leader>ow', '<CMD>Obsidian workspace<CR>', desc = 'Obsidian Switch Workspace (Vault)' },
@@ -86,7 +86,7 @@ return {
       substitutions = {
         -- Title Case: "my cool note" -> "My Cool Note"
         titlecase = function(ctx)
-          local title = ctx.spec.title or ''
+          local title = ctx.partial_note and ctx.partial_note:display_name() or ''
           return title:gsub('(%a)([%w]*)', function(first, rest)
             return first:upper() .. rest:lower()
           end)
