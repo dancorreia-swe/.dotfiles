@@ -1,5 +1,6 @@
 abbr -a C "z ~/Code"
 abbr -a lg lazygit
+abbr -a ly lazyjj
 abbr -a lzd lazydocker
 abbr -a ff fastfetch
 abbr -a nv nvim
