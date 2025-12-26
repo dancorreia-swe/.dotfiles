@@ -232,6 +232,7 @@ return {
 
       -- Lazygit
       { "<leader>lg", function() Snacks.lazygit.open() end, desc = "[L]azy[g]it" },
+      { "<leader>jj", function() Snacks.terminal("jjui") end, desc = "[Jj]ui" },
 
       -- Buffer
       { "<leader>.",  function() Snacks.scratch() end, desc = "Toggle Scratch Buffer" },

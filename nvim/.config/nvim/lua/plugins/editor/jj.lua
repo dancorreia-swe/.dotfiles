@@ -1,3 +1,8 @@
+-- check snacks config (<leader>jj)
+if true then
+  return {}
+end
+
 return {
   'nicolasgb/jj.nvim',
   opts = {
