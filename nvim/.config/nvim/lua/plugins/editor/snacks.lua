@@ -181,6 +181,8 @@ return {
 
       -- git
       { "<leader>gb", function() Snacks.picker.git_branches() end, desc = "Git Branches" },
+      { "<leader>gB", function() Snacks.gitbrowse() end, desc = "Git Browse", mode = { "n", "v" } },
+      { "<leader>gY", function() Snacks.gitbrowse({ open = function(url) vim.fn.setreg("+", url) end, notify = false }) end, desc = "Git Browse (copy)"  },
       { "<leader>gl", function() Snacks.picker.git_log() end, desc = "Git Log" },
       { "<leader>gL", function() Snacks.picker.git_log_line() end, desc = "Git Log Line" },
       { "<leader>gs", function() Snacks.picker.git_status() end, desc = "Git Status" },
@@ -242,7 +244,6 @@ return {
       { "<leader>z",  function() Snacks.zen() end, desc = "Toggle Zen Mode" },
       { "<leader>Z",  function() Snacks.zen.zoom() end, desc = "Toggle Zoom" },
       { "<leader>cR", function() Snacks.rename.rename_file() end, desc = "Rename File" },
-      { "<leader>gB", function() Snacks.gitbrowse() end, desc = "Git Browse", mode = { "n", "v" } },
 
       -- lua
       { "<localleader>r", function() Snacks.debug.run() end, desc = "Run Lua", ft = "lua", mode = { "n", "x" } },
