@@ -1,0 +1,167 @@
+#:schema https://docs.jj-vcs.dev/latest/config-schema.json
+
+[user]
+  name = "Daniel Correia"
+  email = "100008358+dancorreia-swe@users.noreply.github.com"
+
+[signing]
+  backend = "gpg"
+  behavior = "own"
+
+[ui]
+  editor = "nvim"
+  # default-command = ["util", "exec", "--", "jjui"]
+
+[revset-aliases]
+  'closest_bookmark(to)' = 'heads(::to & bookmarks())'
+
+[aliases]
+  info = ["log", "--no-graph"]
+
+  lg = ["log", "-T", "brief"]
+
+  lst = [
+    "info",
+    "-T",
+    "brief",
+    "-r",
+    "heads(ancestors(visible_heads() ~ immutable(), 2) ~ (empty() & description(exact:'')))",
+  ]
+
+  tug = [
+    "bookmark",
+    "move",
+    "--from",
+    "heads(::@- & bookmarks())",
+    "--to",
+    "@-",
+  ]
+
+  book = ["bookmark"]
+
+  drop = ["abandon"]
+
+  ls = ["util", "exec", "--", "bash", "-c", """
+    rev="${1:-@}"
+    jj log -r "ancestors(::$rev ~ immutable(), 2) | $rev:: | $rev" -Tbrief
+""", "jj-alias"]
+
+  "show-" = ["show", "-r", "@-"]
+
+  "desc-" = ["describe", "-r", "@-"]
+
+  # jj rebase -s <mergerev> -d all:<mergerev>- -d <newparent>
+  addparent = ["util", "exec", "--", "bash", "-c", '''
+    jj rebase -s $1 -d "all:$1-" -d $2
+''', "jj-addparent"]
+  # jj rebase -s <mergerev> -d "all:<mergerev>- ~ <oldparent>"
+
+  rmparent = ["util", "exec", "--", "bash", "-c", '''
+    jj rebase -s $1 -d "all:$1- ~ $2"
+''', "jj-rmparent"]
+  #bookmark.shove = ["bookmark", "move", "--allow-backwards"]
+  #shove = ["b", "--ignore-immutable", "shove", "--hard"]
+
+  # "Back" button for the working directory: go back to the last change that @ was
+  # editing.
+  back = [
+    "util",
+    "exec",
+    "--",
+    "bash",
+    "-c",
+    """
+    resolve () { jj log --no-graph -r@ -T'change_id.short() ++ "\\n"' "$@"; }
+    current=$(resolve)
+    jj op log --no-graph -T 'id.short() ++ "\\n"' | while read op; do
+        old=$(resolve --at-op $op)
+        if [[ $old != $current ]]; then
+            if ! jj edit $old 2>/dev/null; then
+                old_commit=$(jj evolog -r $old --at-op $op --no-graph -T 'commit_id.short()')
+                jj edit $old_commit
+            fi
+            exit 0
+        fi
+    done
+""",
+    "jj-back",
+  ]
+
+  # Massively overcomplicated? Does moz-phab already do all this?
+  #
+  # https://github.com/erichdongubler-mozilla/review/pull/1
+  #
+  # moz-phab will request confirmation before doing anything, so
+  # there is no need for a --dry-run flag.
+  #
+  # Use `jj yeet --debug` to see the input lines being processed.
+  #
+  # Extra command line options get passed to moz-phab. This only looks
+  # at a linear stack of patches ending in @-
+  #
+  yeet = [
+    "util",
+    "exec",
+    "--",
+    "python",
+    "-c",
+    '''
+if "indentation makes this more readable":
+    import re
+    import shlex
+    import sys
+    from subprocess import run, Popen, PIPE
+
+    # Skip -c and empty string, which probably should not be there.
+    args = sys.argv[1:]
+    debug = "--debug" in args
+    args = [a for a in args if a != "--debug"]
+
+    # Here is where it gets weird. If the first option does not start with a
+    # dash, interpret it to mean that we want to yeet the stack ending at the
+    # given change/commit. But note that all remaining args are still sent to
+    # moz-phab.
+    target = "latest((@ | @-) ~ empty())"
+    if args and not args[0].startswith("-"):
+        target = args.pop(0)
+
+    #run(["jj", "bookmark", "move", "-B", "moz-phab", "--to", target], check=True)
+
+    bug = False
+    upstream = None
+    cmd = ["jj", "log", "-r", f"::({target}) ~ immutable()", "-T", "commit_id.short()++' '++change_id.shortest()++' '++description.first_line()++'\n'", "--no-graph"]
+    process = Popen(cmd, stdout=PIPE, text=True)
+    keep = []
+    earliest = None
+    latest = None  # aka @-
+    for line in process.stdout:
+        line = line.rstrip("\r\n")
+        if debug:
+            print(f"line is <<{line}>>")
+        rev, change, desc = line.split(' ', 2)
+        latest = latest or change
+        upstream = rev
+        rev_bug = None
+        if m := re.match(r'[bB]ug (\d+)', desc):
+            rev_bug = m.group(1)
+
+        # If not grabbing the first rev, and either the bug number changed or
+        # we went from None (no bug) -> None, done.
+        if bug is not False and ((bug != rev_bug) or (rev_bug is None)):
+            break
+        bug = rev_bug
+        keep.append(line)
+        earliest = change
+
+    if bug is None:
+        print(f"submitting rev with no bug number with upstream {upstream}")
+    else:
+        print(f"submitting revs for bug {bug} with upstream {upstream}")
+    for line in keep:
+        print(f"  {line}")
+
+    cmd = ["moz-phab", "submit", "--upstream", upstream, earliest, latest] + args
+    print(shlex.join(["Running:"] + cmd))
+    run(cmd)
+''',
+  ]
