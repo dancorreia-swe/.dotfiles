@@ -156,7 +156,7 @@ return {
     -- setup keymaps
     for server, server_opts in pairs(opts.servers) do
       if type(server_opts) == 'table' and server_opts.keys then
-        require('util.lsp-keymaps').set({ name = server ~= '*' and server or nil }, server_opts.keys)
+        GaVim['lsp-keymaps'].set({ name = server ~= '*' and server or nil }, server_opts.keys)
       end
     end
 

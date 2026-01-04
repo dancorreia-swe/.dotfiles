@@ -1,8 +1,8 @@
-require 'config.options'
-require 'config.autocmds'
-require 'config.keymaps'
+require 'gavim.config.options'
+require 'gavim.config.autocmds'
+require 'gavim.config.keymaps'
 
-_G.GaVim = require 'util'
+_G.GaVim = require 'gavim.util'
 
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.uv.fs_stat(lazypath) then
@@ -14,14 +14,14 @@ vim.opt.rtp:prepend(lazypath)
 GaVim.plugin.setup()
 
 require('lazy').setup({
-  { import = 'plugins.ai' },
-  { import = 'plugins.editor' },
-  { import = 'plugins.lsp' },
-  { import = 'plugins.coding' },
-  { import = 'plugins.dap' },
-  { import = 'plugins.lang' },
-  { import = 'plugins.ui' },
-  { import = 'plugins.test' },
+  { import = 'gavim.plugins.ai' },
+  { import = 'gavim.plugins.editor' },
+  { import = 'gavim.plugins.lsp' },
+  { import = 'gavim.plugins.coding' },
+  { import = 'gavim.plugins.dap' },
+  { import = 'gavim.plugins.lang' },
+  { import = 'gavim.plugins.ui' },
+  { import = 'gavim.plugins.test' },
 }, {
   defaults = { lazy = true },
   checker = { enabled = true, notify = false },

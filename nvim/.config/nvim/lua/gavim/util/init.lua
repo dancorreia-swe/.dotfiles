@@ -11,7 +11,7 @@ local M = {}
 setmetatable(M, {
   __index = function(t, k)
     ---@diagnostic disable-next-line: no-unknown
-    t[k] = require('util.' .. k)
+    t[k] = require('gavim.util.' .. k)
     return t[k]
   end,
 })

@@ -2,7 +2,7 @@ return {
   {
     'neovim/nvim-lspconfig',
     opts = function(_, opts)
-      local sk = require('util').opts 'sidekick.nvim' ---@type sidekick.Config|{}
+      local sk = GaVim.opts 'sidekick.nvim' ---@type sidekick.Config|{}
 
       if vim.tbl_get(sk, 'nes', 'enabled') ~= false then
         opts.servers = opts.servers or {}
@@ -14,7 +14,7 @@ return {
     'folke/sidekick.nvim',
     opts = function()
       -- Accept inline suggestions or next edits
-      require('util.cmp').actions.ai_nes = function()
+      GaVim.cmp.actions.ai_nes = function()
         local Nes = require 'sidekick.nes'
         if Nes.have() and (Nes.jump() or Nes.apply()) then
           return true
@@ -41,7 +41,7 @@ return {
       }
     end,
     keys = {
-      { '<tab>', require('util.cmp').map({ 'ai_nes' }, '<tab>'), mode = { 'n' }, expr = true },
+      { '<tab>', GaVim.cmp.map({ 'ai_nes' }, '<tab>'), mode = { 'n' }, expr = true },
       { '<leader>a', '', desc = '+ai', mode = { 'n', 'v' } },
       {
         '<c-.>',

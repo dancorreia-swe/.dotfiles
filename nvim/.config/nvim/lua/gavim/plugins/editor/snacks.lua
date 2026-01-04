@@ -58,7 +58,7 @@ return {
             {
               section = 'terminal',
               cmd = (function()
-                local gif = vim.fn.stdpath 'config' .. '/lua/plugins/dashboard-pics/silf-wolf.gif'
+                local gif = vim.fn.stdpath 'config' .. '/lua/gavim/plugins/dashboard-pics/silf-wolf.gif'
                 if vim.fn.executable 'chafa' == 1 and vim.fn.filereadable(gif) == 1 then
                   return string.format('chafa -f symbols --symbols sextant -c full --speed=0.9 --clear --stretch --probe off %q; sleep .1', gif)
                 end

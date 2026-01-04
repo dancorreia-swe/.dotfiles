@@ -25,9 +25,9 @@ return {
   {
     'zbirenbaum/copilot.lua',
     opts = function()
-      require('util.cmp').actions.ai_accept = function()
+      GaVim.cmp.actions.ai_accept = function()
         if require('copilot.suggestion').is_visible() then
-          require('util').create_undo()
+          GaVim.create_undo()
           require('copilot.suggestion').accept()
 
           return true
