@@ -24,7 +24,7 @@ return {
     { '<leader>ot', '<CMD>Obsidian tags<CR>', desc = 'Open Obsidian Tag Picker' },
     { '<leader>oT', '<CMD>Obsidian toc<CR>', desc = 'Obsidian TOC of current Note' },
     { '<leader>ob', '<CMD>Obsidian backlinks<CR>', desc = 'Open Obsidian Backlinks Picker' },
-    { '<leader>oN', '<CMD>Obsidian new_from_template<CR>', desc = 'Obsidian New Note' },
+    { '<leader>oN', '<CMD>Obsidian new<CR>', desc = 'Obsidian New Note' },
     { '<leader>on', '<CMD>Obsidian link_new<CR>', desc = 'Obsidian Link Note', mode = { 'n', 'v' } },
     { '<leader>or', '<CMD>Obsidian rename<CR>', desc = 'Obsidian Rename Note and Backlinks' },
     { '<leader>ow', '<CMD>Obsidian workspace<CR>', desc = 'Obsidian Switch Workspace (Vault)' },
@@ -45,28 +45,6 @@ return {
     },
 
     legacy_commands = false,
-    frontmatter = {
-      ---@param note obsidian.Note
-      func = function(note)
-        local out = { id = note.id, aliases = {}, tags = note.tags }
-
-        for _, alias in ipairs(note.aliases or {}) do
-          local titlecase = alias:gsub('(%a)([%w]*)', function(first, rest)
-            return first:upper() .. rest:lower()
-          end)
-          table.insert(out.aliases, titlecase)
-        end
-
-        if note.metadata ~= nil and not vim.tbl_isempty(note.metadata) then
-          for k, v in pairs(note.metadata) do
-            out[k] = v
-          end
-        end
-
-        return out
-      end,
-    },
-
     new_notes_location = 'notes_subdir',
     daily_notes = {
       -- Optional, if you keep daily notes in a separate directory.
