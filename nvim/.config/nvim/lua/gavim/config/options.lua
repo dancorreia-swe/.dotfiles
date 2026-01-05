@@ -1,5 +1,5 @@
 vim.g.mapleader = ' '
-vim.g.maplocalleader = ','
+vim.g.maplocalleader = '\\'
 
 -- Disables netrw
 -- vim.g.loaded_netrw = 1
