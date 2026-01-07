@@ -1,5 +1,8 @@
 # Cross-platform paths
 
+# Base EDITOR
+set -gx EDITOR nvim
+
 # Bun setup
 set -gx BUN_INSTALL "$HOME/.bun"
 fish_add_path "$BUN_INSTALL/bin"
@@ -13,7 +16,7 @@ if command -q vivid
 end
 
 # macOS-specific paths
-if test (uname) = "Darwin"
+if test (uname) = Darwin
     # Homebrew
     set -gx PATH /opt/homebrew/bin $PATH
 
