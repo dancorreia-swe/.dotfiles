@@ -1,4 +1,4 @@
-local transparent_background = true
+local transparent_background = false
 
 return {
   'catppuccin/nvim',
@@ -55,11 +55,11 @@ return {
       all = function(cp)
         return {
           -- For base configs
-          NormalFloat = { fg = cp.text, bg = transparent_background and cp.none or cp.mantle },
-          FloatBorder = {
-            fg = transparent_background and cp.blue or cp.mantle,
-            bg = transparent_background and cp.none or cp.mantle,
-          },
+          -- NormalFloat = { fg = cp.text, bg = transparent_background and cp.none or cp.mantle },
+          -- FloatBorder = {
+          --   fg = transparent_background and cp.blue or cp.mantle,
+          --   bg = transparent_background and cp.none or cp.mantle,
+          -- },
 
           -- Change color for cursorline
           -- CursorLineNr = { fg = cp.green },
