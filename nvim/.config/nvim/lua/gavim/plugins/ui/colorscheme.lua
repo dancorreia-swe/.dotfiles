@@ -65,23 +65,23 @@ return {
           -- CursorLineNr = { fg = cp.green },
 
           -- For fidget
-          FidgetTask = { bg = cp.none, fg = cp.surface2 },
-          FidgetTitle = { fg = cp.blue, style = { 'bold' } },
+          -- FidgetTask = { bg = cp.none, fg = cp.surface2 },
+          -- FidgetTitle = { fg = cp.blue, style = { 'bold' } },
 
           -- For nvim-notify
-          NotifyBackground = { bg = cp.base },
+          -- NotifyBackground = { bg = cp.base },
 
           -- For trouble.nvim
-          TroubleNormal = { bg = transparent_background and cp.none or cp.base },
+          -- TroubleNormal = { bg = transparent_background and cp.none or cp.base },
 
           -- For Snacks (picker)
-          SnacksPickerTitle = { fg = cp.blue, style = { 'bold' } },
-          SnacksPickerDir = { fg = cp.overlay1 },
+          -- SnacksPickerTitle = { fg = cp.blue, style = { 'bold' } },
+          -- SnacksPickerDir = { fg = cp.overlay1 },
 
           -- For blink pairs
-          BlinkPairsOrange = { fg = cp.yellow, bg = transparent_background and cp.none or cp.base },
-          BlinkPairsPurple = { fg = cp.pink, bg = transparent_background and cp.none or cp.base },
-          BlinkPairsBlue = { fg = cp.sapphire, bg = transparent_background and cp.none or cp.base },
+          -- BlinkPairsOrange = { fg = cp.yellow, bg = transparent_background and cp.none or cp.base },
+          -- BlinkPairsPurple = { fg = cp.pink, bg = transparent_background and cp.none or cp.base },
+          -- BlinkPairsBlue = { fg = cp.sapphire, bg = transparent_background and cp.none or cp.base },
 
           YankyPut = {
             fg = cp.mantle,
