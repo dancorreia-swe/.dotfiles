@@ -13,7 +13,7 @@ return {
     { '<leader>_', '<CMD>Oil<CR>', desc = 'Open parent directory on window' },
   },
   -- Optional dependencies
-  dependencies = { 'nvim-tree/nvim-web-devicons' }, -- use if you prefer nvim-web-devicons
+  dependencies = { 'nvim-mini/mini.icons', opts = {} },
   -- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
   lazy = false,
   config = function(_, opts)
