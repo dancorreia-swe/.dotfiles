@@ -86,7 +86,7 @@ final_space = true
     powerline_symbol = ""
     foreground = "#ffeb3b"
     background = "transparent"
-    template = "\uf1fa {{.ChangeID}} {{if .Working.Changed}} \uf044 {{ .Working.String }}{{ end }}"
+    template = "\uf1fa {{.ChangeID}} {{if .Working.Changed}} \uf044 {{ .Working.String }}{{ end }} {{.ClosestBookmarks}}"
 
     [blocks.segments.options]
       fetch_status = true
