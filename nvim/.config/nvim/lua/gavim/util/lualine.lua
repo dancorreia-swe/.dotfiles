@@ -1,6 +1,140 @@
 ---@class gavim.util.lualine
 local M = {}
 
+-- Cache for VCS info - invalidated by autocmds, not time-based
+---@type { type: "git"|"jj"|nil, revision: string?, bookmarks: string?, branch: string?, valid: boolean }
+local vcs_cache = { valid = false }
+
+---@return boolean
+local function is_jj_repo()
+  local cwd = vim.fn.getcwd()
+  local jj_dir = vim.fs.find('.jj', { upward = true, path = cwd, type = 'directory' })
+  return #jj_dir > 0
+end
+
+---@return string?
+local function get_jj_revision()
+  local result = vim.fn.systemlist 'jj log -r @ --no-graph -T "change_id.shortest()"'
+  if vim.v.shell_error == 0 and result[1] then
+    return result[1]
+  end
+  return nil
+end
+
+---@return string?
+local function get_jj_bookmarks()
+  local result = vim.fn.systemlist 'jj log -r "closest_bookmark(@)" --no-graph -T "bookmarks.join(\\", \\")"'
+  if vim.v.shell_error == 0 and result[1] and result[1] ~= '' then
+    return result[1]
+  end
+  return nil
+end
+
+---@return string?
+local function get_git_branch()
+  local result = vim.fn.systemlist 'git branch --show-current'
+  if vim.v.shell_error == 0 and result[1] then
+    return result[1]
+  end
+  return nil
+end
+
+local function refresh_vcs_cache()
+  if is_jj_repo() then
+    vcs_cache.type = 'jj'
+    vcs_cache.revision = get_jj_revision()
+    vcs_cache.bookmarks = get_jj_bookmarks()
+    vcs_cache.branch = nil
+  else
+    vcs_cache.type = 'git'
+    vcs_cache.branch = get_git_branch()
+    vcs_cache.revision = nil
+    vcs_cache.bookmarks = nil
+  end
+  vcs_cache.valid = true
+end
+
+--- Invalidate cache (called by autocmds)
+function M.invalidate_vcs_cache()
+  vcs_cache.valid = false
+end
+
+-- Setup autocmds to invalidate cache on relevant events
+local function setup_vcs_autocmds()
+  local group = vim.api.nvim_create_augroup('GaVimVcsCache', { clear = true })
+
+  vim.api.nvim_create_autocmd({ 'DirChanged', 'FocusGained', 'TermLeave', 'ShellCmdPost' }, {
+    group = group,
+    callback = M.invalidate_vcs_cache,
+  })
+
+  -- Also refresh when entering a buffer in a different directory
+  vim.api.nvim_create_autocmd('BufEnter', {
+    group = group,
+    callback = function()
+      -- Only invalidate if buffer is in a different directory
+      local buf_dir = vim.fn.expand '%:p:h'
+      if buf_dir ~= '' and vim.fn.isdirectory(buf_dir) == 1 then
+        M.invalidate_vcs_cache()
+      end
+    end,
+  })
+end
+
+-- Initialize autocmds once
+local autocmds_initialized = false
+
+---Creates a lualine component that shows jujutsu revision/bookmarks or git branch
+---@param opts? { jj_icon?: string, git_icon?: string, bookmark_icon?: string }
+function M.vcs(opts)
+  opts = vim.tbl_extend('force', {
+    jj_icon = '', -- nf-fa-code_fork (same as ohmyposh \uf1fa)
+    git_icon = '', -- git branch icon
+    bookmark_icon = '󰃀', -- bookmark icon
+  }, opts or {})
+
+  -- Setup autocmds on first use
+  if not autocmds_initialized then
+    setup_vcs_autocmds()
+    autocmds_initialized = true
+  end
+
+  return {
+    function()
+      if not vcs_cache.valid then
+        refresh_vcs_cache()
+      end
+
+      if vcs_cache.type == 'jj' then
+        local parts = {}
+        if vcs_cache.revision then
+          table.insert(parts, opts.jj_icon .. ' ' .. vcs_cache.revision)
+        end
+        if vcs_cache.bookmarks then
+          table.insert(parts, opts.bookmark_icon .. ' ' .. vcs_cache.bookmarks)
+        end
+        return table.concat(parts, ' ')
+      elseif vcs_cache.type == 'git' and vcs_cache.branch then
+        return opts.git_icon .. ' ' .. vcs_cache.branch
+      end
+
+      return ''
+    end,
+    cond = function()
+      if not vcs_cache.valid then
+        refresh_vcs_cache()
+      end
+      return vcs_cache.type ~= nil
+    end,
+    color = function()
+      if vcs_cache.type == 'jj' then
+        return { fg = Snacks.util.color 'String' } -- yellowish for jj
+      end
+      return nil -- use default for git
+    end,
+  }
+end
+
 ---@param icon string
 ---@param status fun(): nil|"ok"|"error"|"pending"
 function M.status(icon, status)
