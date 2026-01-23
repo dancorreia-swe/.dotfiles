@@ -89,7 +89,7 @@ local autocmds_initialized = false
 function M.vcs(opts)
   opts = vim.tbl_extend('force', {
     jj_icon = '', -- nf-fa-code_fork (same as ohmyposh \uf1fa)
-    git_icon = '', -- git branch icon
+    git_icon = '', -- git branch icon
     bookmark_icon = '󰃀', -- bookmark icon
   }, opts or {})
 
