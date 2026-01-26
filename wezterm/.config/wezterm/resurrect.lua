@@ -1,9 +1,22 @@
 local wezterm = require("wezterm")
-local resurrect = wezterm.plugin.require("https://github.com/MLFlexer/resurrect.wezterm")
+local utils = require("utils")
 
-local module = {}
+local M = {}
 
-function module.apply_to_config(config)
+-- Cache the resurrect plugin reference (passed from main config or loaded once)
+local resurrect = nil
+
+local function get_resurrect()
+	if not resurrect then
+		resurrect = wezterm.plugin.require("https://github.com/MLFlexer/resurrect.wezterm")
+	end
+	return resurrect
+end
+
+function M.apply_to_config(config, resurrect_instance)
+	-- Use passed instance or load once
+	resurrect = resurrect_instance or get_resurrect()
+
 	local resurrect_keys = {
 		{
 			key = "w",
@@ -35,21 +48,21 @@ function module.apply_to_config(config)
 			mods = "LEADER",
 			action = wezterm.action_callback(function(win, pane)
 				resurrect.fuzzy_loader.fuzzy_load(win, pane, function(id, label)
-					local type = string.match(id, "^([^/]+)") -- match before '/'
+					local state_type = string.match(id, "^([^/]+)") -- match before '/'
 					id = string.match(id, "([^/]+)$") -- match after '/'
-					id = string.match(id, "(.+)%..+$") -- remove file extention
+					id = string.match(id, "(.+)%..+$") -- remove file extension
 					local opts = {
 						relative = true,
 						restore_text = true,
 						on_pane_restore = resurrect.tab_state.default_on_pane_restore,
 					}
-					if type == "workspace" then
+					if state_type == "workspace" then
 						local state = resurrect.state_manager.load_state(id, "workspace")
 						resurrect.workspace_state.restore_workspace(state, opts)
-					elseif type == "window" then
+					elseif state_type == "window" then
 						local state = resurrect.state_manager.load_state(id, "window")
 						resurrect.window_state.restore_window(pane:window(), state, opts)
-					elseif type == "tab" then
+					elseif state_type == "tab" then
 						local state = resurrect.state_manager.load_state(id, "tab")
 						resurrect.tab_state.restore_tab(pane:tab(), state, opts)
 					end
@@ -72,24 +85,16 @@ function module.apply_to_config(config)
 		},
 	}
 
-	local merge = require("merge")
-	config.keys = merge.all(config.keys, resurrect_keys)
+	config.keys = utils.merge_arrays(config.keys, resurrect_keys)
 
-	wezterm.on("smart_workspace_switcher.workspace_switcher.created", function(window, path, label)
-		local workspace_state = resurrect.workspace_state
-
-		workspace_state.restore_workspace(resurrect.state_manager.load_state(label, "workspace"), {
-			window = window,
-			relative = true,
-			restore_text = true,
-			on_pane_restore = resurrect.tab_state.default_on_pane_restore,
-		})
-	end)
-
+	-- Error handler for resurrect (only register once)
 	wezterm.on("resurrect.error", function(err)
-		wezterm.log_error("ERROR!")
-		wezterm.gui.gui_windows()[1]:toast_notification("resurrect", err, nil, 3000)
+		wezterm.log_error("resurrect error: " .. tostring(err))
+		local windows = wezterm.gui.gui_windows()
+		if windows and windows[1] then
+			windows[1]:toast_notification("resurrect", err, nil, 3000)
+		end
 	end)
 end
 
-return module
+return M

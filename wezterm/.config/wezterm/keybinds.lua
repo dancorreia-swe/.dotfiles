@@ -1,15 +1,17 @@
 local wezterm = require("wezterm")
+local utils = require("utils")
 local act = wezterm.action
-local ssh = require("ssh")
 
-local module = {}
+local M = {}
 
-function module.apply_to_config(config)
+-- Vim process names lookup table (faster than multiple == checks)
+local vim_processes = { nvim = true, vim = true }
+
+function M.apply_to_config(config)
 	config.leader = { key = "Space", mods = "SHIFT", timeout_milliseconds = 1000 }
 
 	local function is_vim(pane)
-		local process_name = string.gsub(pane:get_foreground_process_name(), "(.*[/\\])(.*)", "%2")
-		return process_name == "nvim" or process_name == "vim"
+		return vim_processes[utils.basename(pane:get_foreground_process_name())] or false
 	end
 
 	local direction_keys = {
@@ -39,9 +41,6 @@ function module.apply_to_config(config)
 			end),
 		}
 	end
-
-	-- Get SSH keybinds from ssh module
-	local ssh_keybinds = ssh.get_keybinds()
 
 	local keybinds = {
 		{ key = "Enter", mods = "SHIFT", action = wezterm.action({ SendString = "\x1b\r" }) },
@@ -134,12 +133,7 @@ function module.apply_to_config(config)
 		},
 	}
 
-	-- Merge SSH keybinds
-	for _, kb in ipairs(ssh_keybinds) do
-		table.insert(keybinds, kb)
-	end
-
 	config.keys = keybinds
 end
 
-return module
+return M
