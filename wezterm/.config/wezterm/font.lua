@@ -11,9 +11,8 @@ function M.apply_to_config(config)
 	config.font_size = 16
 	config.cell_width = 0.9
 
-	-- Font rendering
 	config.freetype_load_flags = "NO_HINTING"
-	config.front_end = "OpenGL"
+	config.front_end = "WebGpu"
 	config.webgpu_power_preference = "HighPerformance"
 
 	-- Uncomment to disable ligatures for better performance
