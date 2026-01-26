@@ -30,7 +30,7 @@ return {
         lualine_a = {
           { 'mode', icon_enabled = true, icon = ' ' },
         },
-        lualine_b = { GaVim.lualine.vcs() },
+        lualine_b = { 'branch' },
         lualine_c = {
           vim.tbl_deep_extend(
             'error',
