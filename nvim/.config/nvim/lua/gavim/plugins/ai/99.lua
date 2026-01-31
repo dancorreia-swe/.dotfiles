@@ -1,7 +1,6 @@
 return {
   {
     'ThePrimeagen/99',
-    dev = true,
     opts = function(_, opts)
       local _99 = require '99'
       local cwd = vim.uv.cwd()
@@ -17,6 +16,7 @@ return {
           print_on_error = true,
         },
 
+        provider = _99.ClaudeCodeProvider,
         model = 'anthropic/claude-opus-4-5',
         -- A new feature that is centered around tags
         completion = {
@@ -39,11 +39,11 @@ return {
           -- {path = "scratch/custom_rules/vim/SKILL.md", name = "vim"},
           -- ... the other rules in that dir ...
           custom_rules = {
-            'custom_rules/',
+            'scratch/custom_rules/',
           },
 
           -- What autocomplete do you use. We currently only support cmp right now
-          -- source = 'blinka',
+          source = 'blink',
         },
 
         -- WARNING: if you change cwd then this is likely broken
@@ -99,20 +99,6 @@ return {
           require('99').fill_in_function()
         end,
         desc = '99: Fill in function (debug)',
-      },
-    },
-  },
-  {
-    'saghen/blink.cmp',
-    opts = {
-      sources = {
-        default = { '99' },
-        providers = {
-          ['99'] = {
-            module = '99.extensions.completion.blink',
-            name = '99',
-          },
-        },
       },
     },
   },
