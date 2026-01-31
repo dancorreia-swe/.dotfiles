@@ -23,6 +23,9 @@ require('lazy').setup({
   { import = 'gavim.plugins.ui' },
   { import = 'gavim.plugins.test' },
 }, {
+  dev = {
+    path = '~/Code/oss/',
+  },
   defaults = { lazy = true },
   checker = { enabled = true, notify = false },
   performance = {

@@ -29,7 +29,7 @@ return {
       },
     }
 
-    for i = 1, 9 do
+    for i = 1, 8 do
       table.insert(keys, {
         '<leader>' .. i,
         function()
