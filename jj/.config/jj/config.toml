@@ -20,6 +20,8 @@
 
   lg = ["log", "-T", "brief"]
 
+  clone = ["git", "clone"]
+
   lst = [
     "info",
     "-T",
