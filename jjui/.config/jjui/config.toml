@@ -31,20 +31,20 @@
   key = ["N"]
   args = ["new", "--no-edit", "-A", "$change_id"]
 
-[custom_commands.push_with_name]
-  key = ["B"]
-  lua = '''
-  local branch_name = jjui.input({
-    title = "Create New Branch",
-    prompt = "Branch name: "
-  })
-
-  local rev = revisions.current()
-  if branch_name then
-    jj("git", "push", "--named", branch_name.."="..rev)
-    revisions.refresh()
-  end
-  '''
+  # [custom_commands.push_with_name]
+  #   key = ["p", "b"]
+  #   lua = '''
+  #   local branch_name = jjui.input({
+  #     title = "Create New Branch",
+  #     prompt = "Branch name: "
+  #   })
+  #
+  #   local rev = revisions.current()
+  #   if branch_name then
+  #     jj("git", "push", "--named", branch_name.."="..rev)
+  #     revisions.refresh()
+  #   end
+  #   '''
 
 [custom_commands.open_file]
   key = ["O"]
