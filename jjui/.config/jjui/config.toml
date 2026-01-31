@@ -8,3 +8,25 @@
     context = ["$file", "$change_id"]
     help = "Edit file in change"
     send = ["$", "jj edit \"$change_id\" && $EDITOR $file", "enter"]
+
+[custom_commands.tug]
+  key = ["ctrl+t"]
+  args = [
+    "bookmark",
+    "move",
+    "--from",
+    "closest_bookmark($change_id)",
+    "--to",
+    "closest_pushable($change_id)",
+  ]
+[custom_commands."move commit down"]
+  key = ["J"]
+  args = ["rebase", "-r", "$change_id", "--insert-before", "$change_id-"]
+
+[custom_commands."move commit up"]
+  key = ["K"]
+  args = ["rebase", "-r", "$change_id", "--insert-after", "$change_id+"]
+
+[custom_commands."new note commit"]
+  key = ["N"]
+  args = ["new", "--no-edit", "-A", "$change_id"]
