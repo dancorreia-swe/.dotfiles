@@ -32,6 +32,21 @@ local charging_icons = {
 
 local WORKSPACE_ICON = wezterm.nerdfonts.fae_planet
 
+-- Battery info cache (avoid repeated system calls)
+local cached_battery = nil
+local battery_cache_time = 0
+local BATTERY_CACHE_TTL = 30 -- seconds
+
+local function get_battery_info()
+  local now = os.time()
+  if cached_battery and (now - battery_cache_time) < BATTERY_CACHE_TTL then
+    return cached_battery
+  end
+  cached_battery = wezterm.battery_info()
+  battery_cache_time = now
+  return cached_battery
+end
+
 function M.apply_to_config(config)
   wezterm.on("update-right-status", function(window, pane)
     local cells = {}
@@ -39,8 +54,8 @@ function M.apply_to_config(config)
     -- Date/time
     table.insert(cells, wezterm.strftime("%a %b %-d %H:%M"))
 
-    -- Battery info
-    for _, b in ipairs(wezterm.battery_info()) do
+    -- Battery info (cached, refreshes every 30s)
+    for _, b in ipairs(get_battery_info()) do
       local charge_level = math.floor(b.state_of_charge * 100)
       local nearest_ten = math.floor(charge_level / 10) * 10
       local icons = (b.state == "Charging" or b.state == "Unknown") and charging_icons or battery_icons

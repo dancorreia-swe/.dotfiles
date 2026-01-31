@@ -29,6 +29,10 @@ local ssh_icon = { icon = wezterm.nerdfonts.md_server_network, color = theme.pro
 local fallback_active = { icon = wezterm.nerdfonts.md_ghost, color = theme.process.fallback }
 local fallback_inactive = { icon = wezterm.nerdfonts.md_ghost_off_outline, color = theme.process.fallback_inactive }
 
+-- Cache formatted tab titles to reduce per-frame allocations
+local tab_title_cache = {}
+local TAB_CACHE_TTL = 2 -- seconds
+
 local function get_process_icon(tab)
   local pane = tab.active_pane
   local process_name = utils.basename(pane.foreground_process_name)
@@ -83,11 +87,24 @@ function M.apply_to_config(config)
   }
 
   wezterm.on("format-tab-title", function(tab, tabs, panes, cfg, hover, max_width)
+    local tab_id = tab.tab_id
+    local now = os.time()
+    local cached = tab_title_cache[tab_id]
+
+    if cached
+      and (now - cached.time) < TAB_CACHE_TTL
+      and cached.is_active == tab.is_active
+      and cached.max_width == max_width
+    then
+      return cached.result
+    end
+
     local title = wezterm.truncate_right(get_tab_title(tab), max_width - 2)
     local process = get_process_icon(tab)
 
+    local result
     if tab.is_active then
-      return {
+      result = {
         { Background = { Color = theme.ui.active_tab_bg } },
         { Foreground = { Color = process.color } },
         { Text = "  " .. process.icon .. "   " },
@@ -95,7 +112,7 @@ function M.apply_to_config(config)
         { Text = title .. " " },
       }
     else
-      return {
+      result = {
         { Background = { Color = "none" } },
         { Foreground = { Color = process.color } },
         { Text = "  " .. process.icon .. "   " },
@@ -103,6 +120,9 @@ function M.apply_to_config(config)
         { Text = title .. " " },
       }
     end
+
+    tab_title_cache[tab_id] = { result = result, time = now, is_active = tab.is_active, max_width = max_width }
+    return result
   end)
 end
 
