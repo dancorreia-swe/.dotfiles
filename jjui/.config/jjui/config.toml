@@ -30,3 +30,122 @@
 [custom_commands."new note commit"]
   key = ["N"]
   args = ["new", "--no-edit", "-A", "$change_id"]
+
+[custom_commands.push_with_name]
+  key = ["B"]
+  lua = '''
+  local branch_name = jjui.input({
+    title = "Create New Branch",
+    prompt = "Branch name: "
+  })
+
+  local rev = revisions.current()
+  if branch_name then
+    jj("git", "push", "--named", branch_name.."="..rev)
+    revisions.refresh()
+  end
+  '''
+
+[custom_commands.open_file]
+  key = ["O"]
+  lua = '''
+local file = context.file()
+if not file then
+    flash("No file selected")
+    return
+end
+-- exec_shell returns to jjui after the editor exits
+exec_shell("nvim " .. file)
+'''
+
+[custom_commands."Open GitHub PR"]
+  desc = "Open GitHub PR for bookmark"
+  key_sequence = ["w", "r"]
+  lua = """
+  -- Get the selected revision's change id
+  local change_id = context.change_id()
+  if not change_id then
+    flash("No revision selected")
+    return
+  end
+
+  -- Get bookmarks on this revision (local bookmarks only)
+  local template = [[if(!remote, name ++ "\n")]]
+  local output, err = jj({"bookmark", "list", "-r", change_id, "--template", template, "--color", "never"})
+  if err then
+    flash("Failed to get bookmarks: " .. err)
+    return
+  end
+
+  local bookmarks = {}
+  for _, line in ipairs(split_lines(output)) do
+    if line ~= "" then
+      table.insert(bookmarks, line)
+    end
+  end
+
+  if #bookmarks == 0 then
+    flash("No bookmarks on this revision")
+    return
+  end
+
+  -- If multiple bookmarks, let user choose
+  local bookmark
+  if #bookmarks == 1 then
+    bookmark = bookmarks[1]
+  else
+    bookmark = choose({title = "Select bookmark for PR", options = bookmarks})
+    if not bookmark then
+      return
+    end
+  end
+
+  -- Get remote URL for origin
+  local remote_output, remote_err = jj({"git", "remote", "list"})
+  if remote_err then
+    flash("Failed to get remotes: " .. remote_err)
+    return
+  end
+
+  local remote_url = nil
+  for _, line in ipairs(split_lines(remote_output)) do
+    local name, url = line:match("^(%S+)%s+(.+)$")
+    if name == "origin" and url then
+      remote_url = url
+      break
+    end
+  end
+
+  if not remote_url then
+    flash("No origin remote found")
+    return
+  end
+
+  -- Parse GitHub URL (supports both SSH and HTTPS)
+  local owner, repo
+
+  -- Try SSH format: git@github.com:owner/repo.git
+  local ssh_host, ssh_path = remote_url:match("^git@([^:]+):(.+)$")
+  if ssh_host and ssh_host:find("github") then
+    owner, repo = ssh_path:gsub("%.git$", ""):match("^([^/]+)/(.+)$")
+  end
+
+  -- Try HTTPS format: https://github.com/owner/repo.git
+  if not owner then
+    local https_host, https_path = remote_url:match("^https?://([^/]+)/(.+)$")
+    if https_host and https_host:find("github") then
+      owner, repo = https_path:gsub("%.git$", ""):match("^([^/]+)/(.+)$")
+    end
+  end
+
+  if not owner or not repo then
+    flash("Not a GitHub repository or unsupported URL format")
+    return
+  end
+
+  -- Build the PR URL (comparing against main)
+  local pr_url = string.format("https://github.com/%s/%s/pull/new/%s", owner, repo, bookmark)
+
+  -- Open in browser
+  exec_shell("open " .. pr_url)
+  """
