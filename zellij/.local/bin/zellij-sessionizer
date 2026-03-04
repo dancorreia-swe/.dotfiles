@@ -7,14 +7,6 @@ SPECIFIC_PATHS=(${ZELLIJ_SESSIONIZER_SPECIFIC_PATHS:-"$HOME/.dotfiles"})
 SWITCH_PLUGIN="${ZELLIJ_SESSIONIZER_SWITCH_PLUGIN:-"https://github.com/mostafaqanbaryan/zellij-switch/releases/download/0.2.1/zellij-switch.wasm"}"
 
 # ── Helpers ─────────────────────────────────────────
-get_atime() {
-  if [[ "$(uname)" == "Linux" ]]; then
-    stat -c "%X" "$1" 2>/dev/null || echo "0"
-  else
-    stat -f "%a" "$1" 2>/dev/null || echo "0"
-  fi
-}
-
 # Strip ANSI codes and status suffixes from a display line, return full path
 resolve_path() {
   local clean
@@ -28,38 +20,31 @@ resolve_path() {
 
 # ── Generate project list ──────────────────────────
 generate_list() {
-  local all_dirs=()
+  local dirs=()
+  local seen=()
 
-  # Find all git repos under search paths
-  for search_path in "${SEARCH_PATHS[@]}"; do
-    [[ -d "$search_path" ]] || continue
-    while IFS= read -r gitdir; do
-      all_dirs+=("${gitdir%/.git}")
-    done < <(find "$search_path" -name .git -type d \
-      -not -path "*/node_modules/*" \
-      -not -path "*/deps/*" \
-      -not -path "*/vendor/*" \
-      -not -path "*/_build/*" \
-      -not -path "*/.elixir_ls/*" \
-      -prune 2>/dev/null)
-  done
+  # Use zoxide for directories under search paths (already ranked by frecency)
+  while IFS= read -r dir; do
+    for search_path in "${SEARCH_PATHS[@]}"; do
+      if [[ "$dir" == "$search_path"/* && -d "$dir/.git" ]]; then
+        dirs+=("$dir")
+        seen+=("$dir")
+        break
+      fi
+    done
+  done < <(zoxide query -l 2>/dev/null)
 
-  # Specific paths
+  # Add specific paths if not already included
   for path in "${SPECIFIC_PATHS[@]}"; do
-    [[ -d "$path" ]] && all_dirs+=("$path")
+    [[ -d "$path" ]] || continue
+    local already=false
+    for s in "${seen[@]}"; do
+      [[ "$s" == "$path" ]] && already=true && break
+    done
+    $already || dirs+=("$path")
   done
 
-  # Sort by access time (most recent first)
-  local sorted=()
-  while IFS= read -r line; do
-    sorted+=("${line#* }")
-  done < <(
-    for dir in "${all_dirs[@]}"; do
-      echo "$(get_atime "$dir") $dir"
-    done | sort -nr
-  )
-
-  # Get zellij session statuses (bash 3.2 compatible — no associative arrays)
+  # Get zellij session statuses
   local status_keys=()
   local status_vals=()
   if command -v zellij &>/dev/null; then
@@ -81,11 +66,10 @@ generate_list() {
   fi
 
   # Output display lines
-  for dir in "${sorted[@]}"; do
+  for dir in "${dirs[@]}"; do
     local display="${dir/#$HOME/~}"
     local session_name
     session_name=$(basename "$dir")
-    # Linear lookup for session status
     local i
     for i in "${!status_keys[@]}"; do
       if [[ "${status_keys[$i]}" == "$session_name" ]]; then
