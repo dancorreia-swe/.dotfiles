@@ -1,0 +1,127 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ── Config ──────────────────────────────────────────
+SEARCH_PATHS=(${ZELLIJ_SESSIONIZER_SEARCH_PATHS:-"$HOME/Code"})
+SPECIFIC_PATHS=(${ZELLIJ_SESSIONIZER_SPECIFIC_PATHS:-"$HOME/.dotfiles"})
+SWITCH_PLUGIN="${ZELLIJ_SESSIONIZER_SWITCH_PLUGIN:-"https://github.com/mostafaqanbaryan/zellij-switch/releases/download/0.2.1/zellij-switch.wasm"}"
+
+# ── Helpers ─────────────────────────────────────────
+get_atime() {
+  if [[ "$(uname)" == "Linux" ]]; then
+    stat -c "%X" "$1" 2>/dev/null || echo "0"
+  else
+    stat -f "%a" "$1" 2>/dev/null || echo "0"
+  fi
+}
+
+# Strip ANSI codes and status suffixes from a display line, return full path
+resolve_path() {
+  local clean
+  clean=$(echo "$1" | sed 's/ \x1b\[[0-9;]*m([^)]*)\x1b\[[0-9;]*m$//' | sed 's/ ([^)]*)$//')
+  if [[ "$clean" == ~* ]]; then
+    echo "$HOME${clean:1}"
+  else
+    echo "$clean"
+  fi
+}
+
+# ── Generate project list ──────────────────────────
+generate_list() {
+  local all_dirs=()
+
+  # First-level children of search paths
+  for search_path in "${SEARCH_PATHS[@]}"; do
+    [[ -d "$search_path" ]] || continue
+    for dir in "$search_path"/*/; do
+      [[ -d "$dir" ]] && all_dirs+=("${dir%/}")
+    done
+  done
+
+  # Specific paths
+  for path in "${SPECIFIC_PATHS[@]}"; do
+    [[ -d "$path" ]] && all_dirs+=("$path")
+  done
+
+  # Sort by access time (most recent first)
+  local sorted=()
+  while IFS= read -r line; do
+    sorted+=("${line#* }")
+  done < <(
+    for dir in "${all_dirs[@]}"; do
+      echo "$(get_atime "$dir") $dir"
+    done | sort -nr
+  )
+
+  # Get zellij session statuses (bash 3.2 compatible — no associative arrays)
+  local status_keys=()
+  local status_vals=()
+  if command -v zellij &>/dev/null; then
+    while IFS= read -r line; do
+      [[ -z "$line" ]] && continue
+      local name
+      name=$(echo "$line" | awk '{print $1}')
+      if [[ "$line" == *"(current)"* ]]; then
+        status_keys+=("$name")
+        status_vals+=(" $(tput setaf 2)(current)$(tput sgr0)")
+      elif [[ "$line" == *"EXITED"* ]]; then
+        status_keys+=("$name")
+        status_vals+=(" $(tput setaf 1)(exited)$(tput sgr0)")
+      else
+        status_keys+=("$name")
+        status_vals+=(" $(tput setaf 3)(active)$(tput sgr0)")
+      fi
+    done < <(zellij ls -n 2>/dev/null)
+  fi
+
+  # Output display lines
+  for dir in "${sorted[@]}"; do
+    local display="${dir/#$HOME/~}"
+    local session_name
+    session_name=$(basename "$dir")
+    # Linear lookup for session status
+    local i
+    for i in "${!status_keys[@]}"; do
+      if [[ "${status_keys[$i]}" == "$session_name" ]]; then
+        display+="${status_vals[$i]}"
+        break
+      fi
+    done
+    echo "$display"
+  done
+}
+
+# ── Session management (for fzf binds) ─────────────
+if [[ "${1:-}" == "--delete" ]]; then
+  session=$(basename "$(resolve_path "$2")")
+  zellij delete-session "$session" --force 2>/dev/null || true
+  exit 0
+fi
+
+if [[ "${1:-}" == "--kill" ]]; then
+  session=$(basename "$(resolve_path "$2")")
+  zellij kill-session "$session" 2>/dev/null || true
+  exit 0
+fi
+
+if [[ "${1:-}" == "--list" ]]; then
+  generate_list
+  exit 0
+fi
+
+# ── Main: fzf picker ───────────────────────────────
+selected=$(generate_list | fzf --ansi \
+  --prompt="  session: " \
+  --header="enter: attach | ctrl-d: delete | ctrl-k: kill" \
+  --bind="ctrl-d:execute-silent($0 --delete {})+reload($0 --list)" \
+  --bind="ctrl-k:execute-silent($0 --kill {})+reload($0 --list)") || exit 1
+
+dir=$(resolve_path "$selected")
+session_name=$(basename "$dir")
+
+# ── Attach or switch ───────────────────────────────
+if [[ -n "${ZELLIJ:-}" ]]; then
+  zellij pipe --plugin "$SWITCH_PLUGIN" -- "--session $session_name --cwd $dir"
+else
+  zellij attach --create "$session_name" -c "$dir"
+fi
