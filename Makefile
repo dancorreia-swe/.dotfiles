@@ -18,7 +18,7 @@ else
 endif
 
 # Package groups
-CORE := fish nvim wezterm
+CORE := fish nvim wezterm ghostty zellij
 WM_MAC := aerospace aerospace-swipe sketchybar yabai skhd
 TOOLS := yazi fastfetch ohmyposh claude
 
