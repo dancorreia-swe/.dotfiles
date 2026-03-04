@@ -30,12 +30,18 @@ resolve_path() {
 generate_list() {
   local all_dirs=()
 
-  # First-level children of search paths
+  # Find all git repos under search paths
   for search_path in "${SEARCH_PATHS[@]}"; do
     [[ -d "$search_path" ]] || continue
-    for dir in "$search_path"/*/; do
-      [[ -d "$dir" ]] && all_dirs+=("${dir%/}")
-    done
+    while IFS= read -r gitdir; do
+      all_dirs+=("${gitdir%/.git}")
+    done < <(find "$search_path" -name .git -type d \
+      -not -path "*/node_modules/*" \
+      -not -path "*/deps/*" \
+      -not -path "*/vendor/*" \
+      -not -path "*/_build/*" \
+      -not -path "*/.elixir_ls/*" \
+      -prune 2>/dev/null)
   done
 
   # Specific paths
