@@ -113,5 +113,5 @@ session_name=$(basename "$dir")
 if [[ -n "${ZELLIJ:-}" ]]; then
   zellij pipe --plugin "$SWITCH_PLUGIN" -- "--session $session_name --cwd $dir"
 else
-  cd "$dir" && zellij attach --create "$session_name"
+  zellij attach --create "$session_name" options --default-cwd "$dir"
 fi
