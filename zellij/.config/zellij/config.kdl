@@ -35,7 +35,7 @@ keybinds clear-defaults=true {
     // URL repeated per-bind because KDL has no variables
 
     // --- Return to locked from any non-locked mode ---
-    shared_except "locked" "search" "entersearch" "renametab" {
+    shared_except "locked" "search" "entersearch" "renametab" "renamepane" {
         bind "Esc" { SwitchToMode "locked"; }
         bind "Alt Space" { SwitchToMode "locked"; }
     }
@@ -89,6 +89,10 @@ keybinds clear-defaults=true {
         bind "z" { TogglePaneFrames; SwitchToMode "locked"; }
         bind "f" { ToggleFloatingPanes; SwitchToMode "locked"; }
         bind "e" { TogglePaneEmbedOrFloating; SwitchToMode "locked"; }
+        bind "b" { BreakPane; SwitchToMode "locked"; }
+        bind "B" { BreakPaneLeft; SwitchToMode "locked"; }
+        bind "R" { SwitchToMode "renamepane"; PaneNameInput 0; }
+        bind "Space" { NextSwapLayout; SwitchToMode "locked"; }
 
         // Tab operations
         bind "n" { NewTab; SwitchToMode "locked"; }
@@ -104,6 +108,10 @@ keybinds clear-defaults=true {
         bind "9" { GoToTab 9; SwitchToMode "locked"; }
         bind "h" { GoToPreviousTab; SwitchToMode "locked"; }
         bind "l" { GoToNextTab; SwitchToMode "locked"; }
+        bind "H" { MoveTab "Left"; SwitchToMode "locked"; }
+        bind "L" { MoveTab "Right"; SwitchToMode "locked"; }
+        bind "X" { CloseTab; SwitchToMode "locked"; }
+        bind "Tab" { ToggleTab; SwitchToMode "locked"; }
 
         // Session operations
         bind "w" {
@@ -167,6 +175,11 @@ keybinds clear-defaults=true {
 
     // --- Scroll/search mode (Leader, s to enter) ---
     scroll {
+        bind "h" { GoToPreviousTab; }
+        bind "l" { GoToNextTab; }
+        bind "Ctrl H" { GoToPreviousTab; }
+        bind "Ctrl L" { GoToNextTab; }
+        bind "c" { Clear; }
         bind "j" { ScrollDown; }
         bind "k" { ScrollUp; }
         bind "d" { HalfPageScrollDown; }
@@ -195,6 +208,11 @@ keybinds clear-defaults=true {
         bind "Esc" { UndoRenameTab; SwitchToMode "locked"; }
         bind "Enter" { SwitchToMode "locked"; }
     }
+
+    renamepane {
+        bind "Esc" { UndoRenamePane; SwitchToMode "locked"; }
+        bind "Enter" { SwitchToMode "locked"; }
+    }
 }
 
 // ── Plugins ──────────────────────────────────────────
@@ -213,3 +231,4 @@ load_plugins {
         hide_frame_except_for_fullscreen "true"
     }
 }
+

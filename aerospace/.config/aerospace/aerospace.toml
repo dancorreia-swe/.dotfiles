@@ -208,7 +208,3 @@ automatically-unhide-macos-hidden-apps = false
 [[on-window-detected]]
   if.app-id = 'com.hnc.Discord'
   run = 'move-node-to-workspace C' # mnemonics C - Chat
-
-[[on-window-detected]]
-  if.app-id = "com.mitchellh.ghostty"
-  run = ["layout floating"]
