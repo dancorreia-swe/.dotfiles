@@ -56,9 +56,9 @@ return {
             -- stylua: ignore
             keys = {
               { "<leader>cl", function() Snacks.picker.lsp_config() end, desc = "Lsp Info" },
-              { "K", function() return vim.lsp.buf.hover() end, desc = "Hover" },
-              { "gK", function() return vim.lsp.buf.signature_help() end, desc = "Signature Help", has = "signatureHelp" },
-              { "<c-k>", function() return vim.lsp.buf.signature_help() end, mode = "i", desc = "Signature Help", has = "signatureHelp" },
+              { "K", function() vim.lsp.buf.hover() end, desc = "Hover" },
+              { "gK", function() vim.lsp.buf.signature_help() end, desc = "Signature Help", has = "signatureHelp" },
+              { "<c-k>", function() vim.lsp.buf.signature_help() end, mode = "i", desc = "Signature Help", has = "signatureHelp" },
               { "<leader>ca", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "x" }, has = "codeAction" },
               { "<leader>cc", vim.lsp.codelens.run, desc = "Run Codelens", mode = { "n", "x" }, has = "codeLens" },
               { "<leader>cC", function()
