@@ -19,6 +19,7 @@ mouse_mode true
 copy_on_select true
 scroll_buffer_size 10000
 on_force_close "detach"
+support_kitty_keyboard_protocol true
 
 // ── Keybinds ─────────────────────────────────────────
 // Philosophy: locked mode by default (all keys pass to shell/nvim).
@@ -28,7 +29,36 @@ keybinds clear-defaults=true {
 
     // --- Locked mode: keys pass through, only unlock binding active ---
     locked {
-        bind "Ctrl Space" { SwitchToMode "normal"; }
+        bind "Alt Space" { SwitchToMode "normal"; }
+        // Vim-aware pane navigation (plugin checks if nvim is focused)
+        bind "Ctrl h" {
+            MessagePlugin "https://github.com/hiasr/vim-zellij-navigator/releases/download/0.3.0/vim-zellij-navigator.wasm" {
+                name "move_focus";
+                payload "left";
+                move_mod "ctrl";
+            };
+        }
+        bind "Ctrl j" {
+            MessagePlugin "https://github.com/hiasr/vim-zellij-navigator/releases/download/0.3.0/vim-zellij-navigator.wasm" {
+                name "move_focus";
+                payload "down";
+                move_mod "ctrl";
+            };
+        }
+        bind "Ctrl k" {
+            MessagePlugin "https://github.com/hiasr/vim-zellij-navigator/releases/download/0.3.0/vim-zellij-navigator.wasm" {
+                name "move_focus";
+                payload "up";
+                move_mod "ctrl";
+            };
+        }
+        bind "Ctrl l" {
+            MessagePlugin "https://github.com/hiasr/vim-zellij-navigator/releases/download/0.3.0/vim-zellij-navigator.wasm" {
+                name "move_focus";
+                payload "right";
+                move_mod "ctrl";
+            };
+        }
     }
 
     // --- Normal mode acts as "leader" mode ---
@@ -68,6 +98,13 @@ keybinds clear-defaults=true {
             }
             SwitchToMode "locked"
         }
+        bind "o" {
+            Run "zellij-sessionizer" {
+                floating true
+                close_on_exit true
+            }
+            SwitchToMode "locked"
+        }
         bind "d" { Detach; }
         bind "q" { Quit; }
 
@@ -77,8 +114,8 @@ keybinds clear-defaults=true {
         bind "s" { SwitchToMode "scroll"; }
 
         // Escape back to locked
-        bind "Escape" { SwitchToMode "locked"; }
-        bind "Ctrl Space" { SwitchToMode "locked"; }
+        bind "Esc" { SwitchToMode "locked"; }
+        bind "Alt Space" { SwitchToMode "locked"; }
     }
 
     // --- Resize mode (Leader, Ctrl+n to enter) ---
@@ -93,7 +130,7 @@ keybinds clear-defaults=true {
         bind "L" { Resize "Decrease right"; }
         bind "=" { Resize "Increase"; }
         bind "-" { Resize "Decrease"; }
-        bind "Escape" { SwitchToMode "locked"; }
+        bind "Esc" { SwitchToMode "locked"; }
         bind "Enter" { SwitchToMode "locked"; }
     }
 
@@ -105,7 +142,7 @@ keybinds clear-defaults=true {
         bind "l" { MovePane "right"; }
         bind "n" { MovePane; }
         bind "p" { MovePaneBackwards; }
-        bind "Escape" { SwitchToMode "locked"; }
+        bind "Esc" { SwitchToMode "locked"; }
         bind "Enter" { SwitchToMode "locked"; }
     }
 
@@ -119,8 +156,8 @@ keybinds clear-defaults=true {
         bind "Ctrl b" { PageScrollUp; }
         bind "e" { EditScrollback; SwitchToMode "locked"; }
         bind "/" { SwitchToMode "entersearch"; SearchInput 0; }
-        bind "Escape" { SwitchToMode "locked"; }
-        bind "Ctrl Space" { SwitchToMode "locked"; }
+        bind "Esc" { SwitchToMode "locked"; }
+        bind "Alt Space" { SwitchToMode "locked"; }
     }
 
     search {
@@ -129,16 +166,16 @@ keybinds clear-defaults=true {
         bind "c" { SearchToggleOption "CaseSensitivity"; }
         bind "w" { SearchToggleOption "Wrap"; }
         bind "o" { SearchToggleOption "WholeWord"; }
-        bind "Escape" { SwitchToMode "scroll"; }
+        bind "Esc" { SwitchToMode "scroll"; }
     }
 
     entersearch {
-        bind "Escape" { SwitchToMode "scroll"; }
+        bind "Esc" { SwitchToMode "scroll"; }
         bind "Enter" { SwitchToMode "search"; }
     }
 
     renametab {
-        bind "Escape" { UndoRenameTab; SwitchToMode "locked"; }
+        bind "Esc" { UndoRenameTab; SwitchToMode "locked"; }
         bind "Enter" { SwitchToMode "locked"; }
     }
 }
