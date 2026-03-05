@@ -189,7 +189,6 @@ keybinds clear-defaults=true {
 
 // ── Plugins ──────────────────────────────────────────
 plugins {
-    compact-bar location="zellij:compact-bar"
     session-manager location="zellij:session-manager"
     configuration location="zellij:configuration"
     plugin-manager location="zellij:plugin-manager"
