@@ -5,7 +5,7 @@ layout {
             plugin location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
                 // ── Format ──────────────────────────────────
                 format_left   "{mode} #[fg=#89B4FA,bold]{session}"
-                format_center ""
+                format_center "{tabs}"
                 format_right  "{command_jj_rev}{datetime}"
                 format_space  "#[bg=#1E1E2E]"
 
