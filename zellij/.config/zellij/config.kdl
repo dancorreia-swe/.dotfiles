@@ -4,7 +4,7 @@
 // ── Appearance ───────────────────────────────────────
 theme "catppuccin-mocha"
 pane_frames true
-default_layout "default"
+default_layout "minimalistic"
 show_startup_tips false
 
 // ── Session Persistence ──────────────────────────────
@@ -16,6 +16,8 @@ scrollback_lines_to_serialize 1000
 default_mode "locked"
 default_shell "fish"
 mouse_mode true
+advanced_mouse_actions true
+mouse_hover_effects true
 copy_on_select true
 scroll_buffer_size 10000
 on_force_close "detach"
@@ -23,6 +25,8 @@ scrollback_editor "nvim"
 copy_command "pbcopy"
 styled_underlines true
 auto_layout true
+stacked_resize true
+osc8_hyperlinks true
 support_kitty_keyboard_protocol true
 
 // ── Keybinds ─────────────────────────────────────────
@@ -30,9 +34,6 @@ support_kitty_keyboard_protocol true
 // Ctrl+Space enters "leader" mode. Single key executes action, returns to locked.
 
 keybinds clear-defaults=true {
-
-    // vim-zellij-navigator v0.3.0
-    // URL repeated per-bind because KDL has no variables
 
     // --- Return to locked from any non-locked mode ---
     shared_except "locked" "search" "entersearch" "renametab" "renamepane" {
@@ -45,28 +46,28 @@ keybinds clear-defaults=true {
         bind "Alt Space" { SwitchToMode "normal"; }
         // Vim-aware pane navigation (plugin checks if nvim is focused)
         bind "Ctrl h" {
-            MessagePlugin "https://github.com/hiasr/vim-zellij-navigator/releases/download/0.3.0/vim-zellij-navigator.wasm" {
+            MessagePlugin "vim-nav" {
                 name "move_focus";
                 payload "left";
                 move_mod "ctrl";
             };
         }
         bind "Ctrl j" {
-            MessagePlugin "https://github.com/hiasr/vim-zellij-navigator/releases/download/0.3.0/vim-zellij-navigator.wasm" {
+            MessagePlugin "vim-nav" {
                 name "move_focus";
                 payload "down";
                 move_mod "ctrl";
             };
         }
         bind "Ctrl k" {
-            MessagePlugin "https://github.com/hiasr/vim-zellij-navigator/releases/download/0.3.0/vim-zellij-navigator.wasm" {
+            MessagePlugin "vim-nav" {
                 name "move_focus";
                 payload "up";
                 move_mod "ctrl";
             };
         }
         bind "Ctrl l" {
-            MessagePlugin "https://github.com/hiasr/vim-zellij-navigator/releases/download/0.3.0/vim-zellij-navigator.wasm" {
+            MessagePlugin "vim-nav" {
                 name "move_focus";
                 payload "right";
                 move_mod "ctrl";
@@ -91,8 +92,10 @@ keybinds clear-defaults=true {
         bind "e" { TogglePaneEmbedOrFloating; SwitchToMode "locked"; }
         bind "b" { BreakPane; SwitchToMode "locked"; }
         bind "B" { BreakPaneLeft; SwitchToMode "locked"; }
+        bind "]" { BreakPaneRight; SwitchToMode "locked"; }
+        bind "i" { TogglePanePinned; SwitchToMode "locked"; }
         bind "R" { SwitchToMode "renamepane"; PaneNameInput 0; }
-        bind "Space" { NextSwapLayout; SwitchToMode "locked"; }
+        bind "Space" { NextSwapLayout; }
 
         // Tab operations
         bind "n" { NewTab; SwitchToMode "locked"; }
@@ -106,10 +109,10 @@ keybinds clear-defaults=true {
         bind "7" { GoToTab 7; SwitchToMode "locked"; }
         bind "8" { GoToTab 8; SwitchToMode "locked"; }
         bind "9" { GoToTab 9; SwitchToMode "locked"; }
-        bind "h" { GoToPreviousTab; SwitchToMode "locked"; }
-        bind "l" { GoToNextTab; SwitchToMode "locked"; }
-        bind "H" { MoveTab "Left"; SwitchToMode "locked"; }
-        bind "L" { MoveTab "Right"; SwitchToMode "locked"; }
+        bind "h" { GoToPreviousTab; }
+        bind "l" { GoToNextTab; }
+        bind "H" { MoveTab "Left"; }
+        bind "L" { MoveTab "Right"; }
         bind "X" { CloseTab; SwitchToMode "locked"; }
         bind "Tab" { ToggleTab; SwitchToMode "locked"; }
 
@@ -138,6 +141,22 @@ keybinds clear-defaults=true {
                 move_to_focused_tab true
                 "LOAD_ZELLIJ_BINDINGS" "true"
             }
+            SwitchToMode "locked"
+        }
+
+        // Plugin launchers
+        bind "P" {
+            LaunchOrFocusPlugin "zellij:layout-manager" {
+                floating true
+                move_to_focused_tab true
+            };
+            SwitchToMode "locked"
+        }
+        bind "S" {
+            LaunchOrFocusPlugin "zellij:share" {
+                floating true
+                move_to_focused_tab true
+            };
             SwitchToMode "locked"
         }
 
@@ -186,6 +205,8 @@ keybinds clear-defaults=true {
         bind "u" { HalfPageScrollUp; }
         bind "Ctrl f" { PageScrollDown; }
         bind "Ctrl b" { PageScrollUp; }
+        bind "g" { ScrollToTop; }
+        bind "G" { ScrollToBottom; }
         bind "e" { EditScrollback; SwitchToMode "locked"; }
         bind "/" { SwitchToMode "entersearch"; SearchInput 0; }
     }
@@ -220,10 +241,12 @@ plugins {
     session-manager location="zellij:session-manager"
     configuration location="zellij:configuration"
     plugin-manager location="zellij:plugin-manager"
+    vim-nav location="https://github.com/hiasr/vim-zellij-navigator/releases/download/0.3.0/vim-zellij-navigator.wasm"
 }
 
 // ── Background Plugins ──────────────────────────────
 load_plugins {
+    "zellij:link"
     "https://github.com/dj95/zjstatus/releases/latest/download/zjframes.wasm" {
         hide_frame_for_single_pane       "true"
         hide_frame_except_for_search     "true"
