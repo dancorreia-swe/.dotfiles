@@ -1,0 +1,48 @@
+layout {
+    default_tab_template {
+        children
+        pane size=1 borderless=true {
+            plugin location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
+                // ── Format ──────────────────────────────────
+                format_left   "{mode} #[fg=#89B4FA,bold]{session}"
+                format_center ""
+                format_right  "{command_jj_rev}{datetime}"
+                format_space  "#[bg=#1E1E2E]"
+
+                // ── Border ──────────────────────────────────
+                border_enabled  "false"
+
+                hide_frame_for_single_pane "true"
+
+                // ── Mode (catppuccin-mocha) ──────────────────
+                mode_locked        "#[bg=#A6E3A1,fg=#1E1E2E,bold] LOCKED "
+                mode_normal        "#[bg=#F9E2AF,fg=#1E1E2E,bold] NORMAL "
+                mode_resize        "#[bg=#F38BA8,fg=#1E1E2E,bold] RESIZE "
+                mode_move          "#[bg=#F38BA8,fg=#1E1E2E,bold] MOVE "
+                mode_scroll        "#[bg=#89DCEB,fg=#1E1E2E,bold] SCROLL "
+                mode_search        "#[bg=#89DCEB,fg=#1E1E2E,bold] SEARCH "
+                mode_enter_search  "#[bg=#89DCEB,fg=#1E1E2E,bold] SEARCH "
+                mode_rename_tab    "#[bg=#CBA6F7,fg=#1E1E2E,bold] RENAME "
+                mode_session       "#[bg=#CBA6F7,fg=#1E1E2E,bold] SESSION "
+
+                mode_default_to_mode "normal"
+
+                // ── Tabs ────────────────────────────────────
+                tab_normal   "#[fg=#6C7086] {name} "
+                tab_active   "#[fg=#CDD6F4,bold,italic] {name} "
+
+                // ── Jujutsu revision (disappears outside jj repos) ──
+                command_jj_rev_command     "jj log --no-graph -r @ -T 'change_id.shortest()' 2>/dev/null"
+                command_jj_rev_format      "#[fg=#CBA6F7,italic] {stdout} "
+                command_jj_rev_interval    "10"
+                command_jj_rev_rendermode  "static"
+
+                // ── Datetime ────────────────────────────────
+                datetime          "#[fg=#6C7086] {format} "
+                datetime_format   "%H:%M"
+                datetime_timezone "America/New_York"
+            }
+        }
+    }
+    tab name="main"
+}
