@@ -18,20 +18,21 @@ The bootstrap script will:
 
 ## Usage
 
-### Make Commands
+### Just Commands
 
 ```bash
-make help           # Show all available commands
-make install        # Stow all packages
-make install-nvim   # Stow specific package
-make uninstall-fish # Unstow specific package
-make deps           # Install dependencies (Brewfile/packages.txt)
-make bob            # Install bob + neovim nightly
-make core           # Install core packages (fish, nvim, scripts, wezterm)
-make tools          # Install tool packages (yazi, fastfetch, ohmyposh, claude)
-make wm             # Install window manager packages (macOS only)
-make all            # Full setup: deps + bob + all packages
-make list           # List available packages
+just                    # List all available recipes
+just install            # Stow all packages
+just install-pkg nvim   # Stow specific package
+just uninstall-pkg fish # Unstow specific package
+just deps               # Install dependencies (Brewfile/packages.txt)
+just bob                # Install bob + neovim nightly
+just fisher             # Install fisher and fish plugins
+just core               # Install core packages (fish, nvim, wezterm, ghostty, zellij)
+just tools              # Install tool packages (yazi, fastfetch, ohmyposh, claude)
+just wm                 # Install window manager packages (macOS only)
+just all                # Full setup: deps + bob + stow + fisher
+just list               # List available packages
 ```
 
 ### Manual Stow
@@ -49,11 +50,16 @@ stow */             # Symlink all packages
 | `nvim` | Neovim config (lazy.nvim) | All |
 | `fish` | Fish shell + functions | All |
 | `wezterm` | Terminal emulator | All |
+| `ghostty` | Terminal emulator | All |
+| `zellij` | Terminal multiplexer | All |
 | `yazi` | File manager | All |
 | `fastfetch` | System info | All |
 | `ohmyposh` | Prompt theme | All |
 | `claude` | Claude CLI settings | All |
+| `jj` | Jujutsu VCS config | All |
+| `jjui` | Jujutsu TUI config | All |
 | `aerospace` | Tiling window manager | macOS |
+| `aerospace-swipe` | Aerospace swipe gestures | macOS |
 | `sketchybar` | Status bar | macOS |
 | `yabai` | Window manager | macOS |
 | `skhd` | Hotkey daemon | macOS |
@@ -72,7 +78,7 @@ Neovim is installed via [bob](https://github.com/MordechaiHadad/bob) (not packag
 ```
 ~/.dotfiles/
 ├── bootstrap.sh      # Cross-platform setup script
-├── Makefile          # Make targets for common operations
+├── Justfile          # Just recipes for common operations
 ├── .stowrc           # Default stow options
 ├── Brewfile          # macOS dependencies
 ├── packages.txt      # Arch Linux dependencies
