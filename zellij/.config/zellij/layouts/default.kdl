@@ -15,8 +15,6 @@ layout {
                 border_format   "#[fg=#313244]{char}"
                 border_position "top"
 
-                hide_frame_for_single_pane "true"
-
                 // ── Mode (catppuccin-mocha) ──────────────────
                 mode_locked        "#[bg=#A6E3A1,fg=#1E1E2E,bold] LOCKED "
                 mode_normal        "#[bg=#F9E2AF,fg=#1E1E2E,bold] NORMAL "
