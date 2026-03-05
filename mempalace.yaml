@@ -1,0 +1,36 @@
+wing: .dotfiles
+rooms:
+- name: sketchybar
+  description: Files from sketchybar/
+- name: nvim
+  description: Files from nvim/
+- name: claude
+  description: Files from claude/
+- name: wezterm
+  description: Files from wezterm/
+- name: skhd
+  description: Files from skhd/
+- name: documentation
+  description: Files from docs/
+- name: ohmyposh
+  description: Files from ohmyposh/
+- name: aerospace_swipe
+  description: Files from aerospace-swipe/
+- name: yabai
+  description: Files from yabai/
+- name: yazi
+  description: Files from yazi/
+- name: zellij
+  description: Files from zellij/
+- name: jjui
+  description: Files from jjui/
+- name: aerospace
+  description: Files from aerospace/
+- name: fish
+  description: Files from fish/
+- name: fastfetch
+  description: Files from fastfetch/
+- name: ghostty
+  description: Files from ghostty/
+- name: general
+  description: Files that don't fit other rooms
