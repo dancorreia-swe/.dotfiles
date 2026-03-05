@@ -32,7 +32,6 @@ return {
         'bash',
         'c',
         'diff',
-        'docker',
         'elixir',
         'eex',
         'html',
