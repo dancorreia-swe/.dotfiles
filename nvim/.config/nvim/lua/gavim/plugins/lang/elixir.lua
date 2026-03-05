@@ -13,6 +13,11 @@ return {
             filetypes = { 'elixir', 'eelixir', 'heex' },
             root_dir = lspconfig.util.root_pattern('mix.exs', '.git'),
             single_file_support = true,
+            settings = {
+              workspaceSymbols = {
+                minQueryLength = 0,
+              },
+            },
           },
           docs = {
             description = [[

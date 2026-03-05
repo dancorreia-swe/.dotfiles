@@ -27,6 +27,19 @@ function M.create_undo()
   end
 end
 
+---@param opts? LazyNotifyOpts
+function M.deprecate(old, new, opts)
+  M.warn(
+    ('`%s` is deprecated. Please use `%s` instead'):format(old, new),
+    vim.tbl_extend('force', {
+      title = 'GaVim',
+      once = true,
+      stacktrace = true,
+      stacklevel = 6,
+    }, opts or {})
+  )
+end
+
 ---@param name string
 function M.get_plugin(name)
   return require('lazy.core.config').spec.plugins[name]

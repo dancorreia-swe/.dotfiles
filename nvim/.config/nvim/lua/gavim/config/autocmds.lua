@@ -19,25 +19,16 @@ vim.api.nvim_create_autocmd({ 'FocusGained', 'TermClose', 'TermLeave' }, {
 --  See `:help vim.highlight.on_yank()`
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
-  group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
+  group = augroup 'highlight_yank',
   callback = function()
     vim.hl.on_yank()
   end,
 })
 
--- Auto save files when focus is lost
-vim.api.nvim_create_autocmd('FocusLost', {
-  desc = 'Auto save files when focus is lost',
-  group = vim.api.nvim_create_augroup('kickstart-autosave', { clear = true }),
-  callback = function()
-    vim.cmd 'silent! wa'
-  end,
-})
-
--- Auto save files when buffer is hidden
-vim.api.nvim_create_autocmd('BufLeave', {
-  desc = 'Auto save files when buffer is hidden',
-  group = vim.api.nvim_create_augroup('kickstart-autosave', { clear = false }),
+-- Auto save files when focus is lost or buffer is hidden
+vim.api.nvim_create_autocmd({ 'FocusLost', 'BufLeave' }, {
+  desc = 'Auto save files when focus is lost or buffer is hidden',
+  group = augroup 'autosave',
   callback = function()
     vim.cmd 'silent! wa'
   end,
@@ -59,10 +50,10 @@ vim.api.nvim_create_autocmd('BufReadPost', {
   callback = function(event)
     local exclude = { 'gitcommit' }
     local buf = event.buf
-    if vim.tbl_contains(exclude, vim.bo[buf].filetype) or vim.b[buf].lazyvim_last_loc then
+    if vim.tbl_contains(exclude, vim.bo[buf].filetype) or vim.b[buf].gavim_last_loc then
       return
     end
-    vim.b[buf].lazyvim_last_loc = true
+    vim.b[buf].gavim_last_loc = true
     local mark = vim.api.nvim_buf_get_mark(buf, '"')
     local lcount = vim.api.nvim_buf_line_count(buf)
     if mark[1] > 0 and mark[1] <= lcount then
@@ -127,7 +118,6 @@ vim.api.nvim_create_autocmd('FileType', {
     'neotest-summary',
     'notify',
     'qf',
-    'spectre_panel',
     'startuptime',
     'tsplayground',
   },

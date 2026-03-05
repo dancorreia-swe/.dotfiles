@@ -22,31 +22,6 @@ function M.status(icon, status)
   }
 end
 
----@param name string
----@param icon? string
-function M.cmp_source(name, icon)
-  icon = icon or GaVim.icons.icons.kinds[name:sub(1, 1):upper() .. name:sub(2)]
-  local started = false
-  return M.status(icon, function()
-    if not package.loaded['cmp'] then
-      return
-    end
-    for _, s in ipairs(require('cmp').core.sources or {}) do
-      if s.name == name then
-        if s.source:is_available() then
-          started = true
-        else
-          return started and 'error' or nil
-        end
-        if s.status == s.SourceStatus.FETCHING then
-          return 'pending'
-        end
-        return 'ok'
-      end
-    end
-  end)
-end
-
 ---@param component any
 ---@param text string
 ---@param hl_group? string

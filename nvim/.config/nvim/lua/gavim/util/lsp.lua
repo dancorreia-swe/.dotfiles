@@ -61,4 +61,33 @@ function M.execute(opts)
   end
 end
 
+---@param list any[]
+---@return any[]
+local function dedup(list)
+  local seen = {}
+  return vim.tbl_filter(function(item)
+    if seen[item] then
+      return false
+    end
+    seen[item] = true
+    return true
+  end, list)
+end
+
+---@param filter? vim.lsp.get_clients.Filter
+---@return string[]
+function M.code_actions(filter)
+  filter = filter or {}
+  local ret = {} ---@type string[]
+  local clients = vim.lsp.get_clients(filter)
+  for _, client in ipairs(clients) do
+    vim.list_extend(ret, vim.tbl_get(client, 'server_capabilities', 'codeActionProvider', 'codeActionKinds') or {})
+    local regs = client.dynamic_capabilities:get('codeActionProvider', filter)
+    for _, reg in ipairs(regs or {}) do
+      vim.list_extend(ret, vim.tbl_get(reg, 'registerOptions', 'codeActionKinds') or {})
+    end
+  end
+  return dedup(ret)
+end
+
 return M

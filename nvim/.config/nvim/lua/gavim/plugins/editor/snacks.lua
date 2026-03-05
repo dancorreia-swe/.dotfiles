@@ -1,7 +1,10 @@
 local function term_nav(dir)
   ---@param self snacks.terminal
   return function(self)
-    return self:is_floating() and '<c-' .. dir .. '>' or vim.schedule(function()
+    if self:is_floating() then
+      return '<c-' .. dir .. '>'
+    end
+    vim.schedule(function()
       vim.cmd.wincmd(dir)
     end)
   end
@@ -50,7 +53,7 @@ return {
             section = 'header',
             align = 'center',
             enabled = function()
-              return not (vim.o.columns > 135)
+              return vim.o.columns <= 135
             end,
           },
           {
@@ -106,7 +109,7 @@ return {
               section = 'startup',
               padding = 1,
               enabled = function()
-                return not (vim.o.columns > 135)
+                return vim.o.columns <= 135
               end,
             },
           },
@@ -158,9 +161,9 @@ return {
     keys = {
       -- Terminal 
       { "<leader>fT", function() Snacks.terminal() end, desc = "Terminal (cwd)" },
-      { "<leader>ft", function() Snacks.terminal(nil, {GaVim.root()}) end, desc = "Terminal (Root Dir)"},
-      { "<c-/>", function() Snacks.terminal(nil, {GaVim.root()}) end, desc = "Terminal (Root Dir)", mode = {"n", "t"}},
-      { "c-_", function() Snacks.terminal(nil, { cwd = GaVim.root() }) end, desc = "which_key_ignore"},
+      { "<leader>ft", function() Snacks.terminal(nil, { cwd = GaVim.root() }) end, desc = "Terminal (Root Dir)"},
+      { "<c-/>", function() Snacks.terminal(nil, { cwd = GaVim.root() }) end, desc = "Terminal (Root Dir)", mode = {"n", "t"}},
+      { "<c-_>", function() Snacks.terminal(nil, { cwd = GaVim.root() }) end, desc = "which_key_ignore"},
 
       -- Top Pickers & Explorer
       { "<leader><cr>", function() Snacks.picker.smart() end, desc = "Smart Find Files" },
@@ -170,9 +173,6 @@ return {
       { "<leader>,", function() Snacks.picker.buffers() end, desc = "Buffers" },
 
       -- find
-
-      ---@diagnostic disable-next-line: assign-type-mismatch
-      { "<leader>fb", function() Snacks.picker.buffers() end, desc = "Buffers" },
       { "<leader>fc", function() Snacks.picker.files({ cwd = vim.fn.stdpath("config") }) end, desc = "Find Config File" },
       { "<leader>ff", function() Snacks.picker.files() end, desc = "Find Files" },
       { "<leader>fg", function() Snacks.picker.git_files() end, desc = "Find Git Files" },
@@ -244,7 +244,6 @@ return {
       { "<leader>N", function() Snacks.picker.notifications() end, desc = "Notification History" },
       { "<leader>z",  function() Snacks.zen() end, desc = "Toggle Zen Mode" },
       { "<leader>Z",  function() Snacks.zen.zoom() end, desc = "Toggle Zoom" },
-      { "<leader>cR", function() Snacks.rename.rename_file() end, desc = "Rename File" },
 
       -- lua
       { "<localleader>r", function() Snacks.debug.run() end, desc = "Run Lua", ft = "lua", mode = { "n", "x" } },

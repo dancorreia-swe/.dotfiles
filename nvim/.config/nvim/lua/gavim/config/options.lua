@@ -12,8 +12,6 @@ vim.g.root_spec = { 'lsp', { '.git', 'lua' }, 'cwd' }
 
 vim.g.root_lsp_ignore = { 'copilot' }
 
-vim.diagnostic.config { jump = { float = true } }
-
 -- Hide deprecation warnings
 vim.g.deprecation_warnings = false
 
@@ -23,6 +21,7 @@ vim.g.trouble_lualine = false
 
 local opt = vim.opt
 
+opt.hlsearch = true -- Highlight search matches
 opt.autowrite = true -- Enable auto write
 opt.breakindent = true
 opt.clipboard = vim.env.SSH_CONNECTION and '' or 'unnamedplus' -- Sync with system clipboard
@@ -74,7 +73,7 @@ opt.spelllang = { 'en' }
 opt.splitbelow = true -- Put new windows below current
 opt.splitkeep = 'screen'
 opt.splitright = true -- Put new windows right of current
-opt.statuscolumn = [[%!v:lua.GaVim.statuscolumn()]]
+-- statuscolumn handled by Snacks.statuscolumn
 opt.tabstop = 2 -- Number of spaces tabs count for
 opt.termguicolors = true -- True color support
 opt.timeoutlen = vim.g.vscode and 1000 or 300 -- Lower than default (1000) to quickly trigger which-key
