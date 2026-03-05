@@ -59,6 +59,8 @@ keybinds clear-defaults=true {
                 move_mod "ctrl";
             };
         }
+        bind "Ctrl H" { GoToPreviousTab; }
+        bind "Ctrl L" { GoToNextTab; }
     }
 
     // --- Normal mode acts as "leader" mode ---

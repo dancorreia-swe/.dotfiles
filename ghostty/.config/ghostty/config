@@ -48,7 +48,8 @@
 # # Just for example:
 # resize-overlay-duration = 4s 200ms
 
-font-family = "JetBrainsMono Nerd Font Mono"
+font-family = "JetBrainsMono Nerd Font"
+font-size = 15
 theme = Catppuccin Mocha
 background = #1e1e2e
 macos-icon = xray
