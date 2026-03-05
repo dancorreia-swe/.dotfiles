@@ -4,7 +4,7 @@
 // ── Appearance ───────────────────────────────────────
 theme "catppuccin-mocha"
 pane_frames false
-default_layout "compact"
+default_layout "default"
 show_startup_tips false
 
 // ── Session Persistence ──────────────────────────────
@@ -19,6 +19,10 @@ mouse_mode true
 copy_on_select true
 scroll_buffer_size 10000
 on_force_close "detach"
+scrollback_editor "nvim"
+copy_command "pbcopy"
+styled_underlines true
+auto_layout true
 support_kitty_keyboard_protocol true
 
 // ── Keybinds ─────────────────────────────────────────
