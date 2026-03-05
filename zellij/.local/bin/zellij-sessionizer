@@ -10,7 +10,8 @@ SWITCH_PLUGIN="${ZELLIJ_SESSIONIZER_SWITCH_PLUGIN:-"https://github.com/mostafaqa
 # Strip ANSI codes and status suffixes from a display line, return full path
 resolve_path() {
   local clean
-  clean=$(echo "$1" | sed 's/ \x1b\[[0-9;]*m([^)]*)\x1b\[[0-9;]*m$//' | sed 's/ ([^)]*)$//')
+  # Remove all ANSI escape sequences, then strip any trailing (status) suffix
+  clean=$(echo "$1" | sed $'s/\x1b[^m]*m//g' | sed $'s/\x1b([^)]*B//g' | sed 's/ ([^)]*)$//')
   if [[ "$clean" == ~* ]]; then
     echo "$HOME${clean:1}"
   else
@@ -113,10 +114,5 @@ session_name=$(basename "$dir")
 if [[ -n "${ZELLIJ:-}" ]]; then
   zellij pipe --plugin "$SWITCH_PLUGIN" -- "--session $session_name --cwd $dir"
 else
-  # Check if session already exists
-  if zellij ls -n 2>/dev/null | grep -q "^$session_name "; then
-    zellij attach "$session_name"
-  else
-    cd "$dir" && zellij --session "$session_name"
-  fi
+  cd "$dir" && zellij attach --create "$session_name"
 fi
