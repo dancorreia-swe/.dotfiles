@@ -6,7 +6,7 @@ layout {
                 // ── Format ──────────────────────────────────
                 format_left   "{mode} #[fg=#89B4FA,bold]{session}"
                 format_center "{tabs}"
-                format_right  "{command_jj_rev}{datetime}"
+                format_right  "{datetime}"
                 format_space  "#[bg=#1E1E2E]"
 
                 // ── Border ──────────────────────────────────
@@ -30,12 +30,6 @@ layout {
                 // ── Tabs ────────────────────────────────────
                 tab_normal   "#[fg=#6C7086] {name} "
                 tab_active   "#[fg=#CDD6F4,bold,italic] {name} "
-
-                // ── Jujutsu revision (disappears outside jj repos) ──
-                command_jj_rev_command     "jj log --no-graph -r @ -T 'change_id.shortest()' 2>/dev/null"
-                command_jj_rev_format      "#[fg=#CBA6F7,italic] {stdout} "
-                command_jj_rev_interval    "10"
-                command_jj_rev_rendermode  "static"
 
                 // ── Datetime ────────────────────────────────
                 datetime          "#[fg=#6C7086] {format} "
