@@ -31,6 +31,15 @@ support_kitty_keyboard_protocol true
 
 keybinds clear-defaults=true {
 
+    // vim-zellij-navigator v0.3.0
+    // URL repeated per-bind because KDL has no variables
+
+    // --- Return to locked from any non-locked mode ---
+    shared_except "locked" "search" "entersearch" "renametab" {
+        bind "Esc" { SwitchToMode "locked"; }
+        bind "Alt Space" { SwitchToMode "locked"; }
+    }
+
     // --- Locked mode: keys pass through, only unlock binding active ---
     locked {
         bind "Alt Space" { SwitchToMode "normal"; }
@@ -118,10 +127,6 @@ keybinds clear-defaults=true {
         bind "Ctrl n" { SwitchToMode "resize"; }
         bind "Ctrl h" { SwitchToMode "move"; }
         bind "s" { SwitchToMode "scroll"; }
-
-        // Escape back to locked
-        bind "Esc" { SwitchToMode "locked"; }
-        bind "Alt Space" { SwitchToMode "locked"; }
     }
 
     // --- Resize mode (Leader, Ctrl+n to enter) ---
@@ -136,7 +141,6 @@ keybinds clear-defaults=true {
         bind "L" { Resize "Decrease right"; }
         bind "=" { Resize "Increase"; }
         bind "-" { Resize "Decrease"; }
-        bind "Esc" { SwitchToMode "locked"; }
         bind "Enter" { SwitchToMode "locked"; }
     }
 
@@ -148,7 +152,6 @@ keybinds clear-defaults=true {
         bind "l" { MovePane "right"; }
         bind "n" { MovePane; }
         bind "p" { MovePaneBackwards; }
-        bind "Esc" { SwitchToMode "locked"; }
         bind "Enter" { SwitchToMode "locked"; }
     }
 
@@ -162,8 +165,6 @@ keybinds clear-defaults=true {
         bind "Ctrl b" { PageScrollUp; }
         bind "e" { EditScrollback; SwitchToMode "locked"; }
         bind "/" { SwitchToMode "entersearch"; SearchInput 0; }
-        bind "Esc" { SwitchToMode "locked"; }
-        bind "Alt Space" { SwitchToMode "locked"; }
     }
 
     search {
