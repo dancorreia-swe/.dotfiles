@@ -60,9 +60,8 @@ cursor-style = block
 shell-integration-features = no-cursor,sudo,no-title
 window-save-state = always
 
-# Zellij integration
-command = zellij attach --create main
+# Zellij integration (auto-launch via fish config, not command=)
 macos-option-as-alt = left
 
 # Unbind keys that conflict with zellij
-keybind = ctrl+space=unbind
+keybind = alt+space=unbind
