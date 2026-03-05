@@ -112,7 +112,11 @@ session_name=$(basename "$dir")
 
 # ── Attach or switch ───────────────────────────────
 if [[ -n "${ZELLIJ:-}" ]]; then
-  zellij pipe --plugin "$SWITCH_PLUGIN" -- "--session $session_name --cwd $dir"
+  # If session doesn't exist yet, create it in the background with correct cwd
+  if ! zellij ls -n 2>/dev/null | grep -q "^$session_name "; then
+    (cd "$dir" && ZELLIJ="" zellij attach "$session_name" --create-background) 2>/dev/null
+  fi
+  zellij pipe --plugin "$SWITCH_PLUGIN" -- "--session $session_name"
 else
   cd "$dir" && zellij attach --create "$session_name"
 fi
