@@ -8,7 +8,7 @@ on:
 
 jobs:
   shellcheck:
-    name: Shellcheck
+    name: ShellCheck
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -17,8 +17,76 @@ jobs:
         uses: ludeeus/action-shellcheck@master
         with:
           scandir: '.'
-          severity: warning
+          severity: error
         env:
-          SHELLCHECK_OPTS: -e SC1091 -e SC2034
+          SHELLCHECK_OPTS: -e SC1091 -e SC2034 -e SC2155
           # SC1091: Not following sourced files
           # SC2034: Unused variables (common in config files)
+          # SC2155: Declare and assign separately (noise in dotfiles scripts)
+
+  stow-validate:
+    name: Stow Structure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install stow
+        run: sudo apt-get update && sudo apt-get install -y stow
+
+      - name: Detect stow packages
+        id: packages
+        run: |
+          # Directories that are not stow packages
+          SKIP="docs .git .github"
+
+          packages=""
+          for dir in */; do
+            dir="${dir%/}"
+            skip=false
+            for s in $SKIP; do
+              [[ "$dir" == "$s" ]] && skip=true && break
+            done
+            $skip && continue
+            packages="$packages $dir"
+          done
+          echo "list=$packages" >> "$GITHUB_OUTPUT"
+          echo "Stow packages:$packages"
+
+      - name: Validate stow targets (dry-run)
+        env:
+          PACKAGES: ${{ steps.packages.outputs.list }}
+        run: |
+          target=$(mktemp -d)
+          mkdir -p "$target/.config" "$target/.local" "$target/.claude"
+          errors=0
+
+          for pkg in $PACKAGES; do
+            echo "::group::$pkg"
+            if stow --no --target="$target" --verbose=1 "$pkg" 2>&1; then
+              echo "✓ $pkg"
+            else
+              echo "::error::stow dry-run failed for package: $pkg"
+              errors=$((errors + 1))
+            fi
+            echo "::endgroup::"
+          done
+
+          if [ "$errors" -gt 0 ]; then
+            echo "::error::$errors stow package(s) failed validation"
+            exit 1
+          fi
+
+      - name: Check for cross-package conflicts
+        env:
+          PACKAGES: ${{ steps.packages.outputs.list }}
+        run: |
+          target=$(mktemp -d)
+          mkdir -p "$target/.config" "$target/.local" "$target/.claude"
+
+          echo "Stowing all packages to detect conflicts..."
+          if stow --no --target="$target" --verbose=1 $PACKAGES 2>&1; then
+            echo "✓ No conflicts detected"
+          else
+            echo "::error::Cross-package conflict detected! Two packages target the same file."
+            exit 1
+          fi
