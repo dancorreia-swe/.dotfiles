@@ -14,13 +14,21 @@
 
 [revset-aliases]
   'closest_bookmark(to)' = 'heads(::to & bookmarks())'
+  'closest_pushable(to)' = 'heads(::to & ~description(exact:"") & (~empty() | merges()))'
+  "mutable_roots()" = "roots(trunk()..) & mutable()"
 
 [aliases]
-  info = ["log", "--no-graph"]
+  rebase-all = ["rebase", "-s", "(::trunk())+ & mutable()", "-o", "trunk()"]
 
+  long = ["log", "-T", "builtin_log_detailed"]
+  info = ["log", "--no-graph"]
   lg = ["log", "-T", "brief"]
+  l = ["log", "-r", "ancestors(@)"]
 
   clone = ["git", "clone"]
+  sync = ['git', 'fetch', '--all-remotes']
+
+  blame = ["file", "annotate"]
 
   lst = [
     "info",
@@ -34,13 +42,14 @@
     "bookmark",
     "move",
     "--from",
-    "heads(::@- & bookmarks())",
+    "closest_bookmark(@)",
     "--to",
-    "@-",
+    "closest_pushable(@)",
   ]
 
-  book = ["bookmark"]
+  restack = ["rebase", "-o", "trunk()", "-s", "mutable_roots()"]
 
+  book = ["bookmark"]
   drop = ["abandon"]
 
   ls = ["util", "exec", "--", "bash", "-c", """
