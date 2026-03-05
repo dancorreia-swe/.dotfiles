@@ -7,6 +7,7 @@ function M.apply_to_config(config)
   config.max_fps = 120
   config.animation_fps = 60
   config.scrollback_lines = 10000
+  config.use_ime = false
 
   -- Window appearance
   config.window_decorations = "RESIZE"

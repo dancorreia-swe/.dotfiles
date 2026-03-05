@@ -108,6 +108,45 @@ function M.apply_to_config(config)
     split_nav("resize", "k"),
     split_nav("resize", "l"),
     {
+      key = "q",
+      mods = "LEADER",
+      action = wezterm.action_callback(function(win, pane)
+        local current_workspace = win:active_workspace()
+        local workspaces = wezterm.mux.get_workspace_names()
+
+        -- Don't close if it's the only workspace
+        if #workspaces <= 1 then
+          win:toast_notification("wezterm", "Can't close the last workspace", nil, 3000)
+          return
+        end
+
+        -- Pick another workspace to switch to
+        local target = nil
+        for _, ws in ipairs(workspaces) do
+          if ws ~= current_workspace then
+            target = ws
+            break
+          end
+        end
+
+        -- Switch away, then close all windows from the old workspace
+        win:perform_action(wezterm.action.SwitchToWorkspace({ name = target }), pane)
+
+        for _, mux_win in ipairs(wezterm.mux.all_windows()) do
+          if mux_win:get_workspace() == current_workspace then
+            local gui_win = mux_win:gui_window()
+            local num_tabs = #mux_win:tabs()
+            for _ = 1, num_tabs do
+              gui_win:perform_action(
+                wezterm.action.CloseCurrentTab({ confirm = false }),
+                mux_win:active_pane()
+              )
+            end
+          end
+        end
+      end),
+    },
+    {
       key = "w",
       mods = "CTRL|CMD",
       action = wezterm.action.PromptInputLine({

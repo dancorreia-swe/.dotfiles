@@ -13,7 +13,7 @@ function M.apply_to_config(config)
 
   config.freetype_load_flags = "NO_HINTING"
   config.webgpu_power_preference = "HighPerformance"
-  -- config.front_end = "OpenGL"
+  config.front_end = "OpenGL"
 
   -- Uncomment to disable ligatures for better performance
   -- config.harfbuzz_features = { "calt=0", "clig=0", "liga=0" }
