@@ -1,16 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# ── Config ──────────────────────────────────────────
-SEARCH_PATHS=(${ZELLIJ_SESSIONIZER_SEARCH_PATHS:-"$HOME/Code"})
-SPECIFIC_PATHS=(${ZELLIJ_SESSIONIZER_SPECIFIC_PATHS:-"$HOME/.dotfiles"})
+# ── Ensure PATH and HOME are set ────────────────────
+if [[ -z "${HOME:-}" ]]; then
+  export HOME="$(eval echo ~"$(id -un)")"
+fi
+export PATH="/opt/homebrew/bin:$HOME/.local/bin:$PATH"
+
 SWITCH_PLUGIN="${ZELLIJ_SESSIONIZER_SWITCH_PLUGIN:-"https://github.com/mostafaqanbaryan/zellij-switch/releases/download/0.2.1/zellij-switch.wasm"}"
 
 # ── Helpers ─────────────────────────────────────────
-# Strip ANSI codes and status suffixes from a display line, return full path
 resolve_path() {
   local clean
-  # Remove all ANSI escape sequences, then strip any trailing (status) suffix
   clean=$(echo "$1" | sed $'s/\x1b[^m]*m//g' | sed $'s/\x1b([^)]*B//g' | sed 's/ ([^)]*)$//')
   if [[ "$clean" == ~* ]]; then
     echo "$HOME${clean:1}"
@@ -19,78 +20,56 @@ resolve_path() {
   fi
 }
 
-# ── Generate project list ──────────────────────────
+# ── Generate list (matches smart_workspace_switcher) ─
 generate_list() {
-  local dirs=()
-  local seen=()
+  local session_names=""
 
-  # Use zoxide for directories under search paths (already ranked by frecency)
-  while IFS= read -r dir; do
-    for search_path in "${SEARCH_PATHS[@]}"; do
-      if [[ "$dir" == "$search_path"/* && -d "$dir/.git" ]]; then
-        dirs+=("$dir")
-        seen+=("$dir")
-        break
-      fi
-    done
-  done < <(zoxide query -l 2>/dev/null)
-
-  # Add specific paths if not already included
-  for path in "${SPECIFIC_PATHS[@]}"; do
-    [[ -d "$path" ]] || continue
-    local already=false
-    for s in "${seen[@]}"; do
-      [[ "$s" == "$path" ]] && already=true && break
-    done
-    $already || dirs+=("$path")
-  done
-
-  # Get zellij session statuses
-  local status_keys=()
-  local status_vals=()
+  # 1. Existing zellij sessions first (like wezterm workspaces)
   if command -v zellij &>/dev/null; then
     while IFS= read -r line; do
       [[ -z "$line" ]] && continue
       local name
       name=$(echo "$line" | awk '{print $1}')
+      local status_label
       if [[ "$line" == *"(current)"* ]]; then
-        status_keys+=("$name")
-        status_vals+=(" $(tput setaf 2)(current)$(tput sgr0)")
+        status_label=" $(tput setaf 2)(current)$(tput sgr0)"
       elif [[ "$line" == *"EXITED"* ]]; then
-        status_keys+=("$name")
-        status_vals+=(" $(tput setaf 1)(exited)$(tput sgr0)")
+        status_label=" $(tput setaf 1)(exited)$(tput sgr0)"
       else
-        status_keys+=("$name")
-        status_vals+=(" $(tput setaf 3)(active)$(tput sgr0)")
+        status_label=" $(tput setaf 3)(active)$(tput sgr0)"
       fi
+      echo "󱂬 ${name}${status_label}"
+      session_names="${session_names}:${name}:"
     done < <(zellij ls -n 2>/dev/null)
   fi
 
-  # Output display lines
-  for dir in "${dirs[@]}"; do
+  # 2. All zoxide entries (no filtering — frecency handles ranking)
+  while IFS= read -r dir; do
+    [[ -z "$dir" ]] && continue
     local display="${dir/#$HOME/~}"
-    local session_name
-    session_name=$(basename "$dir")
-    local i
-    for i in "${!status_keys[@]}"; do
-      if [[ "${status_keys[$i]}" == "$session_name" ]]; then
-        display+="${status_vals[$i]}"
-        break
-      fi
-    done
+    local bname
+    bname=$(basename "$dir")
+    # Skip if already listed as a session
+    if [[ "$session_names" == *":${bname}:"* ]]; then
+      continue
+    fi
     echo "$display"
-  done
+  done < <(zoxide query -l 2>/dev/null)
 }
 
 # ── Session management (for fzf binds) ─────────────
+clean_session_name() {
+  echo "$1" | sed 's/^󱂬 //' | sed $'s/\x1b[^m]*m//g' | sed $'s/\x1b([^)]*B//g' | sed 's/ ([^)]*)$//' | awk '{print $1}'
+}
+
 if [[ "${1:-}" == "--delete" ]]; then
-  session=$(basename "$(resolve_path "$2")")
+  session=$(clean_session_name "$2")
   zellij delete-session "$session" --force 2>/dev/null || true
   exit 0
 fi
 
 if [[ "${1:-}" == "--kill" ]]; then
-  session=$(basename "$(resolve_path "$2")")
+  session=$(clean_session_name "$2")
   zellij kill-session "$session" 2>/dev/null || true
   exit 0
 fi
@@ -107,16 +86,29 @@ selected=$(generate_list | fzf --ansi \
   --bind="ctrl-d:execute-silent($0 --delete {})+reload($0 --list)" \
   --bind="ctrl-k:execute-silent($0 --kill {})+reload($0 --list)") || exit 1
 
-dir=$(resolve_path "$selected")
-session_name=$(basename "$dir")
+# ── Resolve selection ──────────────────────────────
+if [[ "$selected" == 󱂬\ * ]]; then
+  # Session entry — extract name
+  session_name=$(clean_session_name "$selected")
+  dir=""
+else
+  # Zoxide path entry
+  dir=$(resolve_path "$selected")
+  session_name=$(basename "$dir")
+  # Boost zoxide score
+  zoxide add "$dir" 2>/dev/null || true
+fi
 
 # ── Attach or switch ───────────────────────────────
 if [[ -n "${ZELLIJ:-}" ]]; then
-  # If session doesn't exist yet, create it in the background with correct cwd
-  if ! zellij ls -n 2>/dev/null | grep -q "^$session_name "; then
+  if [[ -n "$dir" ]] && ! zellij ls -n 2>/dev/null | grep -q "^$session_name "; then
     (cd "$dir" && ZELLIJ="" zellij attach "$session_name" --create-background) 2>/dev/null
   fi
   zellij pipe --plugin "$SWITCH_PLUGIN" -- "--session $session_name"
 else
-  cd "$dir" && zellij attach --create "$session_name"
+  if [[ -n "$dir" ]]; then
+    cd "$dir" && zellij attach --create "$session_name"
+  else
+    zellij attach "$session_name"
+  fi
 fi

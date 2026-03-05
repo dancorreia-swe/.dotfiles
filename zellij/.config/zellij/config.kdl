@@ -99,7 +99,7 @@ keybinds clear-defaults=true {
             SwitchToMode "locked"
         }
         bind "o" {
-            Run "zellij-sessionizer" {
+            Run "/Users/danielmac/.local/bin/zellij-sessionizer" {
                 floating true
                 close_on_exit true
             }
