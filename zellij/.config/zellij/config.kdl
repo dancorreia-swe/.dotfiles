@@ -123,6 +123,16 @@ keybinds clear-defaults=true {
         bind "d" { Detach; }
         bind "q" { Quit; }
 
+        // Keybind cheatsheet
+        bind "?" {
+            LaunchOrFocusPlugin "https://github.com/karimould/zellij-forgot/releases/latest/download/zellij_forgot.wasm" {
+                floating true
+                move_to_focused_tab true
+                "LOAD_ZELLIJ_BINDINGS" "true"
+            }
+            SwitchToMode "locked"
+        }
+
         // Sub-modes
         bind "Ctrl n" { SwitchToMode "resize"; }
         bind "Ctrl h" { SwitchToMode "move"; }
