@@ -133,6 +133,12 @@ end, { desc = 'Quickfix List' })
 -- lazy
 vim.keymap.set('n', '<leader>l', '<cmd>Lazy<cr>', { desc = 'Lazy' })
 
+-- built-in packages (nvim 0.12+)
+vim.keymap.set('n', '<leader>sU', function()
+  vim.cmd.packadd 'nvim.undotree'
+  vim.cmd 'Undotree'
+end, { desc = 'Undo Tree' })
+
 -- windows
 vim.keymap.set('n', '<leader>-', '<C-W>s', { desc = 'Split Window Below', remap = true })
 vim.keymap.set('n', '<leader>|', '<C-W>v', { desc = 'Split Window Right', remap = true })
