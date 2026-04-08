@@ -59,8 +59,8 @@ return {
               { "K", function() vim.lsp.buf.hover() end, desc = "Hover" },
               { "gK", function() vim.lsp.buf.signature_help() end, desc = "Signature Help", has = "signatureHelp" },
               { "<c-k>", function() vim.lsp.buf.signature_help() end, mode = "i", desc = "Signature Help", has = "signatureHelp" },
-              { "<leader>ca", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "x" }, has = "codeAction" },
-              { "<leader>cc", vim.lsp.codelens.run, desc = "Run Codelens", mode = { "n", "x" }, has = "codeLens" },
+              { "gra", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "x" }, has = "codeAction" },
+              { "grx", vim.lsp.codelens.run, desc = "Run Codelens", mode = { "n", "x" }, has = "codeLens" },
               { "<leader>cC", function()
                   local enabled = vim.lsp.codelens.is_enabled({ bufnr = 0 })
                   vim.lsp.codelens.enable(not enabled, { bufnr = 0 })
@@ -70,7 +70,7 @@ return {
                   vim.lsp.inlay_hint.enable(not enabled, { bufnr = 0 })
                 end, desc = "Toggle Inlay Hints", mode = { "n" }, has = "inlayHint" },
               { "<leader>cR", function() Snacks.rename.rename_file() end, desc = "Rename File", mode ={"n"}, has = { "workspace/didRenameFiles", "workspace/willRenameFiles" } },
-              { "<leader>cr", vim.lsp.buf.rename, desc = "Rename", has = "rename" },
+              { "grn", vim.lsp.buf.rename, desc = "Rename", has = "rename" },
               { "<leader>cA", GaVim.lsp.action.source, desc = "Source Action", has = "codeAction" },
               { "]]", function() Snacks.words.jump(vim.v.count1) end, has = "documentHighlight",
                 desc = "Next Reference", enabled = function() return Snacks.words.is_enabled() end },
