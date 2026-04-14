@@ -1,6 +1,6 @@
 return {
   'nicolasgb/jj.nvim',
-  version = '*',
+  branch = 'main',
   event = 'VeryLazy',
   dependencies = {
     'esmuellert/codediff.nvim',
@@ -9,6 +9,9 @@ return {
   opts = {
     terminal = {
       cursor_render_delay = 10,
+    },
+    editor = {
+      auto_insert = true,
     },
     diff = {
       backend = 'codediff',
@@ -32,6 +35,7 @@ return {
           diff = '<S-d>',
           abandon = '<S-a>',
           fetch = '<S-f>',
+          change_revset = 'r',
         },
         status = {
           open_file = '<CR>',
@@ -62,9 +66,31 @@ return {
     { '<leader>ju', function() require('jj.cmd').undo() end, desc = 'JJ undo' },
     { '<leader>jy', function() require('jj.cmd').redo() end, desc = 'JJ redo' },
     { '<leader>jr', function() require('jj.cmd').rebase() end, desc = 'JJ rebase' },
+    { '<leader>jx', function() require('jj.cmd').abandon() end, desc = 'JJ abandon' },
+    { '<leader>jc', function() require('jj.cmd').commit() end, desc = 'JJ commit (finalize)' },
     { '<leader>jbc', function() require('jj.cmd').bookmark_create() end, desc = 'JJ bookmark create' },
+    { '<leader>jbm', function() require('jj.cmd').bookmark_move() end, desc = 'JJ bookmark move' },
+    { '<leader>jbd', function() require('jj.cmd').bookmark_delete() end, desc = 'JJ bookmark delete' },
+    { '<leader>jbt', function() require('jj.cmd').bookmark_track() end, desc = 'JJ bookmark track' },
+    { '<leader>jbf', function() require('jj.cmd').bookmark_forget() end, desc = 'JJ bookmark forget' },
+    { '<leader>jgf', function() require('jj.cmd').fetch() end, desc = 'JJ fetch' },
+    { '<leader>jgp', function() require('jj.cmd').push() end, desc = 'JJ push' },
+    { '<leader>jgP', function() require('jj.cmd').open_pr() end, desc = 'JJ open PR' },
+    { '<leader>jgr', function() require('jj.cmd').fetch_pr() end, desc = 'JJ fetch PR' },
+    { '<leader>jTs', function() require('jj.cmd').tag_set() end, desc = 'JJ tag set' },
+    { '<leader>jTd', function() require('jj.cmd').tag_delete() end, desc = 'JJ tag delete' },
+    { '<leader>jTp', function() require('jj.cmd').tag_push() end, desc = 'JJ tag push' },
     { '<leader>jf', function() require('jj.diff').open_vdiff() end, desc = 'JJ diff buffer (vertical)' },
     { '<leader>jF', function() require('jj.diff').open_hdiff() end, desc = 'JJ diff buffer (horizontal)' },
+    {
+      '<leader>jH',
+      function()
+        vim.ui.input({ prompt = 'JJ diff (history-aware) revset: ', default = '@-..@' }, function(rev)
+          if rev and rev ~= '' then require('jj.cmd').diff_history { revision = rev } end
+        end)
+      end,
+      desc = 'JJ diff history',
+    },
     {
       '<leader>jD',
       function()
@@ -115,6 +141,8 @@ return {
     },
     { '<leader>jps', function() require('jj.picker').status() end, desc = 'JJ picker status' },
     { '<leader>jph', function() require('jj.picker').file_history() end, desc = 'JJ picker file history' },
+    { '<leader>ja',  function() require('jj.annotate').file() end, desc = 'JJ annotate file' },
+    { '<leader>jA',  function() require('jj.annotate').line() end, desc = 'JJ annotate line' },
     {
       '<leader>jt',
       function()

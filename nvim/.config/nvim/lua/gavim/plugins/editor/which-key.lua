@@ -18,6 +18,8 @@ return {
         { '<leader>j', group = 'jj' },
         { '<leader>jb', group = 'bookmark' },
         { '<leader>jp', group = 'picker' },
+        { '<leader>jg', group = 'git/remote' },
+        { '<leader>jT', group = 'tag' },
         { '<leader>q', group = 'quit/session' },
         { '<leader>s', group = 'search' },
         { '<leader>u', group = 'ui' },
