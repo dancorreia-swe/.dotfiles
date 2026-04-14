@@ -40,7 +40,7 @@ if status is-interactive
     # 1. Attach to "main" on first launch
     # 2. On detach: show sessionizer picker
     # 3. On picker cancel: re-attach "main" (never bare shell)
-    if test "$TERM" = xterm-ghostty; and not set -q ZELLIJ
+    if test "$TERM" = xterm-ghostty; and not set -q ZELLIJ; and not set -q TMUX
         zellij attach --create main
         while zellij-sessionizer; end
         zellij attach --create main
