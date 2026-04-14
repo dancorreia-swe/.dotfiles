@@ -82,15 +82,7 @@ return {
     { '<leader>jTp', function() require('jj.cmd').tag_push() end, desc = 'JJ tag push' },
     { '<leader>jf', function() require('jj.diff').open_vdiff() end, desc = 'JJ diff buffer (vertical)' },
     { '<leader>jF', function() require('jj.diff').open_hdiff() end, desc = 'JJ diff buffer (horizontal)' },
-    {
-      '<leader>jH',
-      function()
-        vim.ui.input({ prompt = 'JJ diff (history-aware) revset: ', default = '@-..@' }, function(rev)
-          if rev and rev ~= '' then require('jj.cmd').diff_history { revision = rev } end
-        end)
-      end,
-      desc = 'JJ diff history',
-    },
+    { '<leader>jh', function() require('jj.cmd').diff_history() end, desc = 'JJ diff history' },
     {
       '<leader>jD',
       function()
