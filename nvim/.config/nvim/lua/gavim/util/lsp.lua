@@ -1,35 +1,33 @@
 ---@class gavim.util.lsp
 local M = {}
 
----@param opts? lsp.Client.format
-function M.format(opts)
-  opts = vim.tbl_deep_extend('force', {}, opts or {}, GaVim.opts('nvim-lspconfig').format or {})
-  local ok, conform = pcall(require, 'conform')
-  -- use conform for formatting with LSP when available,
-  -- since it has better format diffing
-  if ok then
-    -- It should be `nil`, otherwise it doesn't fetch options from `formatters_by_ft`,
-    -- see https://github.com/stevearc/conform.nvim/blob/5420c4b5ea0aeb99c09cfbd4fd0b70d257b44f25/lua/conform/init.lua#L417-L418
-    opts.formatters = nil
-    conform.format(opts)
-  else
-    vim.lsp.buf.format(opts)
+---Returns a callback that runs code actions of a specific LSP CodeActionKind.
+---When a single action matches, it applies immediately (you named the intent by
+---picking this keymap); multiple matches fall back to the picker.
+---@param kind string  e.g. "source.organizeImports", "source.fixAll.ts"
+---@return fun()
+function M.run_action(kind)
+  return function()
+    vim.lsp.buf.code_action {
+      apply = true,
+      context = {
+        only = { kind },
+        diagnostics = {},
+      },
+    }
   end
 end
 
-M.action = setmetatable({}, {
-  __index = function(_, action)
-    return function()
-      vim.lsp.buf.code_action {
-        apply = true,
-        context = {
-          only = { action },
-          diagnostics = {},
-        },
-      }
-    end
-  end,
-})
+---Opens the code-action picker filtered to source-level (whole-file) kinds.
+---Never auto-applies — always shows the picker so you see what runs.
+function M.pick_source_actions()
+  vim.lsp.buf.code_action {
+    context = {
+      only = { 'source' },
+      diagnostics = {},
+    },
+  }
+end
 
 ---@class LspCommand: lsp.ExecuteCommandParams
 ---@field open? boolean

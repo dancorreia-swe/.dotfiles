@@ -77,22 +77,22 @@ return {
             },
             {
               '<leader>co',
-              GaVim.lsp.action['source.organizeImports'],
+              GaVim.lsp.run_action 'source.organizeImports',
               desc = 'Organize Imports',
             },
             {
               '<leader>cM',
-              GaVim.lsp.action['source.addMissingImports.ts'],
+              GaVim.lsp.run_action 'source.addMissingImports.ts',
               desc = 'Add missing imports',
             },
             {
               '<leader>cu',
-              GaVim.lsp.action['source.removeUnused.ts'],
+              GaVim.lsp.run_action 'source.removeUnused.ts',
               desc = 'Remove unused imports',
             },
             {
               '<leader>cD',
-              GaVim.lsp.action['source.fixAll.ts'],
+              GaVim.lsp.run_action 'source.fixAll.ts',
               desc = 'Fix all diagnostics',
             },
             {

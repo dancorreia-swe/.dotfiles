@@ -27,6 +27,7 @@ return {
         { '[', group = 'prev' },
         { ']', group = 'next' },
         { 'g', group = 'goto' },
+        { 'gr', group = 'lsp' },
         { 'gs', group = 'surround' },
         { 'z', group = 'fold' },
         {
@@ -46,6 +47,11 @@ return {
         },
         -- better descriptions
         { 'gx', desc = 'Open with system app' },
+        -- relabel Nvim 0.12+ LSP defaults (`:h lsp-defaults`) without rebinding them;
+        -- gri/grr/grt are overridden by snacks.lua with their own descs
+        { 'gra', desc = 'Code Action', mode = { 'n', 'x' } },
+        { 'grn', desc = 'Rename' },
+        { 'grx', desc = 'Run Codelens' },
       },
     },
   },

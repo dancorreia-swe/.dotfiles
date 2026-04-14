@@ -1,8 +1,6 @@
 ---@class gavim.util.lsp-keymaps
 local M = {}
 
-M._keys = {}
-
 ---@param filter vim.lsp.get_clients.Filter
 ---@param spec LazyKeysLspSpec[]
 function M.set(filter, spec)

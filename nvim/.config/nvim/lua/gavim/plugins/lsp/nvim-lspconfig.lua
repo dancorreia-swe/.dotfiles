@@ -53,14 +53,17 @@ return {
                 },
               },
             },
+            -- Nvim 0.12+ already binds these globally (`:h lsp-defaults`):
+            --   gra  code_action   grn  rename        grr  references
+            --   gri  implementation grt  type_definition
+            --   grx  codelens.run  gO   document_symbol
+            --   K    hover (buffer-local)   <C-s>(i)  signature_help
+            -- Don't re-declare them here — the defaults already cover it.
             -- stylua: ignore
             keys = {
               { "<leader>cl", function() Snacks.picker.lsp_config() end, desc = "Lsp Info" },
-              { "K", function() vim.lsp.buf.hover() end, desc = "Hover" },
               { "gK", function() vim.lsp.buf.signature_help() end, desc = "Signature Help", has = "signatureHelp" },
               { "<c-k>", function() vim.lsp.buf.signature_help() end, mode = "i", desc = "Signature Help", has = "signatureHelp" },
-              { "gra", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "x" }, has = "codeAction" },
-              { "grx", vim.lsp.codelens.run, desc = "Run Codelens", mode = { "n", "x" }, has = "codeLens" },
               { "<leader>cC", function()
                   local enabled = vim.lsp.codelens.is_enabled({ bufnr = 0 })
                   vim.lsp.codelens.enable(not enabled, { bufnr = 0 })
@@ -70,8 +73,7 @@ return {
                   vim.lsp.inlay_hint.enable(not enabled, { bufnr = 0 })
                 end, desc = "Toggle Inlay Hints", mode = { "n" }, has = "inlayHint" },
               { "<leader>cR", function() Snacks.rename.rename_file() end, desc = "Rename File", mode ={"n"}, has = { "workspace/didRenameFiles", "workspace/willRenameFiles" } },
-              { "grn", vim.lsp.buf.rename, desc = "Rename", has = "rename" },
-              { "<leader>cA", GaVim.lsp.action.source, desc = "Source Action", has = "codeAction" },
+              { "grA", GaVim.lsp.pick_source_actions, desc = "Source Action", mode = { "n", "x" }, has = "codeAction" },
               { "]]", function() Snacks.words.jump(vim.v.count1) end, has = "documentHighlight",
                 desc = "Next Reference", enabled = function() return Snacks.words.is_enabled() end },
               { "[[", function() Snacks.words.jump(-vim.v.count1) end, has = "documentHighlight",
@@ -82,7 +84,7 @@ return {
                 desc = "Prev Reference", enabled = function() return Snacks.words.is_enabled() end },
               {
                 "<leader>co",
-                GaVim.lsp.action["source.organizeImports"],
+                GaVim.lsp.run_action("source.organizeImports"),
                 desc = "Organize Imports",
                 has = "codeAction",
                 enabled = function(buf)
