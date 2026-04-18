@@ -41,7 +41,7 @@ swap_tiled_layout name="horizontal" {
 }
 
 swap_tiled_layout name="stacked" {
-    tab min_panes=5 {
+    tab min_panes=2 {
         pane split_direction="vertical" {
             pane
             pane stacked=true { children; }
