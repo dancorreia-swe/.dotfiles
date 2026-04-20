@@ -1,26 +1,48 @@
-# ── Zellij tab naming ────────────────────────────────
-# Shows running command while active, directory name when idle.
-# Manual renames (Leader+r) get overwritten on next command — that's intentional.
+# ── Zellij tab naming with process icons ─────────────
+# Shows icon + command while active, folder icon + dirname when idle.
+# Uses Material Design nerd font icons (nf-md-*) for JetBrainsMono NF.
 
 if not set -q ZELLIJ
     return
 end
 
-# Show command name when a command starts
+function __zellij_cmd_icon
+    switch $argv[1]
+        case nvim vim
+            echo "󰅴"
+        case node npm npx bun
+            echo "󰎙"
+        case python python3 pip
+            echo "󰌠"
+        case cargo rustc
+            echo "󱘗"
+        case git jj
+            echo "󰊢"
+        case docker
+            echo "󰡨"
+        case go
+            echo "󰟓"
+        case make cmake
+            echo "󰖷"
+        case ssh
+            echo "󰣀"
+        case '*'
+            echo "󰅴"
+    end
+end
+
 function __zellij_preexec --on-event fish_preexec
     set -l cmd_name (string split ' ' -- $argv[1])[1]
-    command zellij action rename-tab "$cmd_name"
+    set -l icon (__zellij_cmd_icon $cmd_name)
+    command zellij action rename-tab "$icon $cmd_name"
 end
 
-# Show directory name when command finishes (idle at prompt)
 function __zellij_postexec --on-event fish_postexec
-    command zellij action rename-tab (basename $PWD)
+    command zellij action rename-tab "󰉋 "(basename $PWD)
 end
 
-# Rename on cd (covers cd without running a visible command)
 function __zellij_tab_name --on-variable PWD
-    command zellij action rename-tab (basename $PWD)
+    command zellij action rename-tab "󰉋 "(basename $PWD)
 end
 
-# Initial rename on session start
-command zellij action rename-tab (basename $PWD)
+command zellij action rename-tab "󰉋 "(basename $PWD)

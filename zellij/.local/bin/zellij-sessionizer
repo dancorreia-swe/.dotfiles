@@ -7,8 +7,6 @@ if [[ -z "${HOME:-}" ]]; then
 fi
 export PATH="/opt/homebrew/bin:$HOME/.local/bin:$PATH"
 
-SWITCH_PLUGIN="${ZELLIJ_SESSIONIZER_SWITCH_PLUGIN:-"https://github.com/mostafaqanbaryan/zellij-switch/releases/download/0.2.1/zellij-switch.wasm"}"
-
 # ── Helpers ─────────────────────────────────────────
 resolve_path() {
   local clean
@@ -101,10 +99,14 @@ fi
 
 # ── Attach or switch ───────────────────────────────
 if [[ -n "${ZELLIJ:-}" ]]; then
+  # Track current session for last-session toggle
+  mkdir -p "$HOME/.cache/zellij"
+  echo -n "${ZELLIJ_SESSION_NAME:-}" > "$HOME/.cache/zellij/.session-state.last"
+
   if [[ -n "$dir" ]] && ! zellij ls -n 2>/dev/null | grep -q "^$session_name "; then
     (cd "$dir" && ZELLIJ="" zellij attach "$session_name" --create-background) 2>/dev/null
   fi
-  zellij pipe --plugin "$SWITCH_PLUGIN" -- "--session $session_name"
+  zellij action switch-session "$session_name"
 else
   if [[ -n "$dir" ]]; then
     cd "$dir" && zellij attach --create "$session_name"
