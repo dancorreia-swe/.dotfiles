@@ -42,9 +42,13 @@ if status is-interactive
     # 3. On picker cancel: re-attach "main" (never bare shell)
     if test "$TERM" = xterm-ghostty; and not set -q ZELLIJ; and not set -q TMUX
         zellij attach --create main
-        while zellij-sessionizer; end
+        while zellij-sessionizer
+        end
         zellij attach --create main
     end
+
+    # Set vi mode
+    set -gx fish_key_bindings fish_vi_key_bindings
 end
 
 # Added by OrbStack: command-line tools and integration
