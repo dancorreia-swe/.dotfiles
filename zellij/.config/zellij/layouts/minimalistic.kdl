@@ -3,47 +3,50 @@ layout {
         children
         pane size=1 borderless=true {
             plugin location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
-                // ── Format ──────────────────────────────────
-                format_left   "{mode} #[fg=#89B4FA,bold]{session}"
-                format_center "{tabs}"
-                format_right  "#[fg=#6C7086]{swap_layout}  #[fg=#6C7086]{command}  {datetime}"
-                format_space  "#[bg=#1E1E2E]"
+                // One-row replacement for the default tab/status bars.
+                format_left   "{mode}#[fg=#89B4FA,bg=#181825,bold] {session} #[fg=#45475A,bg=#181825]| {tabs}"
+                format_center ""
+                format_right  "{command_git_branch}{swap_layout}#[fg=#45475A,bg=#181825] | {datetime}"
+                format_space  "#[bg=#181825]"
 
-                // ── Border ──────────────────────────────────
-                border_enabled  "true"
-                border_char     "─"
-                border_format   "#[fg=#313244]{char}"
-                border_position "top"
+                format_hide_on_overlength "true"
+                format_precedence         "clr"
 
-                // ── Mode (catppuccin-mocha) ──────────────────
-                mode_locked        "#[bg=#A6E3A1,fg=#1E1E2E,bold] LOCKED "
-                mode_normal        "#[bg=#F9E2AF,fg=#1E1E2E,bold] NORMAL "
-                mode_resize        "#[bg=#F38BA8,fg=#1E1E2E,bold] RESIZE "
-                mode_move          "#[bg=#F38BA8,fg=#1E1E2E,bold] MOVE "
-                mode_scroll        "#[bg=#89DCEB,fg=#1E1E2E,bold] SCROLL "
-                mode_search        "#[bg=#89DCEB,fg=#1E1E2E,bold] SEARCH "
-                mode_enter_search  "#[bg=#89DCEB,fg=#1E1E2E,bold] SEARCH "
-                mode_rename_tab    "#[bg=#CBA6F7,fg=#1E1E2E,bold] RENAME "
-                mode_rename_pane   "#[bg=#CBA6F7,fg=#1E1E2E,bold] RENAME "
-                mode_session       "#[bg=#CBA6F7,fg=#1E1E2E,bold] SESSION "
-
+                mode_locked       "#[fg=#A6E3A1,bg=#181825,bold] LOCK "
+                mode_normal       "#[fg=#F9E2AF,bg=#181825,bold] LEADER "
+                mode_resize       "#[fg=#F38BA8,bg=#181825,bold] RESIZE "
+                mode_move         "#[fg=#F38BA8,bg=#181825,bold] MOVE "
+                mode_scroll       "#[fg=#89DCEB,bg=#181825,bold] SCROLL "
+                mode_search       "#[fg=#89DCEB,bg=#181825,bold] SEARCH "
+                mode_enter_search "#[fg=#89DCEB,bg=#181825,bold] SEARCH "
+                mode_rename_tab   "#[fg=#CBA6F7,bg=#181825,bold] RENAME "
+                mode_rename_pane  "#[fg=#CBA6F7,bg=#181825,bold] RENAME "
+                mode_session      "#[fg=#CBA6F7,bg=#181825,bold] SESSION "
                 mode_default_to_mode "normal"
 
-                // ── Tabs ────────────────────────────────────
-                tab_normal              "#[fg=#6C7086] {index} {name} "
-                tab_normal_fullscreen   "#[fg=#6C7086] {index} {name} □ "
-                tab_normal_sync         "#[fg=#6C7086] {index} {name} <> "
-                tab_active              "#[fg=#CDD6F4,bold] {index} {name} {floating_indicator}"
-                tab_active_fullscreen   "#[fg=#CDD6F4,bold] {index} {name} □ "
-                tab_active_sync         "#[fg=#CDD6F4,bold] {index} {name} <> "
-                tab_separator           "  "
-                tab_rename              "#[fg=#F38BA8,italic] {index} {name} "
-                tab_fullscreen_indicator "□ "
-                tab_sync_indicator       "<> "
-                tab_floating_indicator   "⬚ "
+                tab_normal            "#[fg=#6C7086,bg=#181825] {index}:{name}{fullscreen_indicator}{sync_indicator}{floating_indicator} "
+                tab_active            "#[fg=#CDD6F4,bg=#313244,bold] {index}:{name}{fullscreen_indicator}{sync_indicator}{floating_indicator} "
+                tab_normal_fullscreen "#[fg=#6C7086,bg=#181825] {index}:{name}{fullscreen_indicator} "
+                tab_active_fullscreen "#[fg=#CDD6F4,bg=#313244,bold] {index}:{name}{fullscreen_indicator} "
+                tab_normal_sync       "#[fg=#6C7086,bg=#181825] {index}:{name}{sync_indicator} "
+                tab_active_sync       "#[fg=#CDD6F4,bg=#313244,bold] {index}:{name}{sync_indicator} "
+                tab_rename            "#[fg=#F38BA8,bg=#313244,bold] {index}:{name} "
+                tab_separator         "#[fg=#45475A,bg=#181825] "
+                tab_fullscreen_indicator "[F]"
+                tab_sync_indicator       "[S]"
+                tab_floating_indicator   "[~]"
+                tab_truncate_start_format "#[fg=#6C7086,bg=#181825] +{count} "
+                tab_truncate_end_format   "#[fg=#6C7086,bg=#181825] +{count} "
 
-                // ── Datetime ────────────────────────────────
-                datetime          "#[fg=#6C7086] {format} "
+                command_git_branch_command    "bash -lc 'branch=$(git branch --show-current 2>/dev/null); if [ -n \"$branch\" ]; then printf \"#[fg=#A6E3A1,bg=#181825] git:%s #[fg=#45475A,bg=#181825]| \" \"$branch\"; fi'"
+                command_git_branch_format     "{stdout}"
+                command_git_branch_interval   "10"
+                command_git_branch_rendermode "dynamic"
+
+                swap_layout_format        "#[fg=#89B4FA,bg=#181825] {name} "
+                swap_layout_hide_if_empty "true"
+
+                datetime          "#[fg=#BAC2DE,bg=#181825] {format} "
                 datetime_format   "%H:%M"
                 datetime_timezone "America/Maceio"
             }

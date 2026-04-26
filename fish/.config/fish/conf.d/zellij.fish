@@ -13,6 +13,8 @@ end
 
 function __zellij_cmd_icon
     switch $argv[1]
+        case mix iex
+            echo ""
         case nvim vim
             echo ""
         case node npm npx
@@ -38,7 +40,7 @@ function __zellij_cmd_icon
         case ssh
             echo "󰣀"
         case claude codex gemini opencode
-            echo ""
+            echo " "
         case '*'
             echo ""
     end

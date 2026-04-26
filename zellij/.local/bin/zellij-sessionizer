@@ -103,10 +103,11 @@ if [[ -n "${ZELLIJ:-}" ]]; then
   mkdir -p "$HOME/.cache/zellij"
   echo -n "${ZELLIJ_SESSION_NAME:-}" > "$HOME/.cache/zellij/.session-state.last"
 
-  if [[ -n "$dir" ]] && ! zellij ls -n 2>/dev/null | grep -q "^$session_name "; then
-    (cd "$dir" && ZELLIJ="" zellij attach "$session_name" --create-background) 2>/dev/null
+  if [[ -n "$dir" ]]; then
+    zellij action switch-session "$session_name" --cwd "$dir"
+  else
+    zellij action switch-session "$session_name"
   fi
-  zellij action switch-session "$session_name"
 else
   if [[ -n "$dir" ]]; then
     cd "$dir" && zellij attach --create "$session_name"

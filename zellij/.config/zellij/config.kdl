@@ -17,14 +17,14 @@ default_mode "locked"
 default_shell "fish"
 mouse_mode true
 advanced_mouse_actions true
-mouse_hover_effects true
+mouse_hover_effects false
 copy_on_select true
 scroll_buffer_size 10000
 on_force_close "detach"
 scrollback_editor "nvim"
 copy_command "pbcopy"
 styled_underlines true
-auto_layout true
+auto_layout false
 stacked_resize true
 osc8_hyperlinks true
 support_kitty_keyboard_protocol true
@@ -266,11 +266,4 @@ plugins {
 // ── Background Plugins ──────────────────────────────
 load_plugins {
     "zellij:link"
-    "https://github.com/dj95/zjstatus/releases/latest/download/zjframes.wasm" {
-        hide_frame_for_single_pane       "true"
-        hide_frame_except_for_search     "true"
-        hide_frame_except_for_scroll     "true"
-        hide_frame_except_for_fullscreen "true"
-    }
 }
-
