@@ -1,4 +1,2 @@
--- Add the sketchybar module to the package cpath
-package.cpath = package.cpath .. ";/Users/" .. os.getenv("USER") .. "/.local/share/sketchybar_lua/?.so"
-
-os.execute("(cd helpers && make)")
+local helpers_dir = debug.getinfo(1, "S").source:sub(2):match("(.*/)")
+os.execute("(cd " .. helpers_dir .. " && make)")

@@ -2,7 +2,11 @@
 # Available commands : https://nikitabobko.github.io/AeroSpace/commands
 after-startup-command = []
 
-exec-on-workspace-change = []
+exec-on-workspace-change = [
+  '/bin/bash',
+  '-c',
+  'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE',
+]
 
 on-focus-changed = ['move-mouse window-lazy-center']
 
@@ -52,12 +56,13 @@ automatically-unhide-macos-hidden-apps = false
 #                 See:
 #                 https://nikitabobko.github.io/AeroSpace/guide#assign-workspaces-to-monitors
 [gaps]
-  inner.horizontal = 4
-  inner.vertical = 4
-  outer.left = 4
-  outer.bottom = 4
-  outer.top = 4
-  outer.right = 4
+  inner.horizontal = 8
+  inner.vertical = 8
+  outer.left = 8
+  outer.bottom = 8
+  # SketchyBar is 40px tall with a 6px y-offset; leave a little breathing room.
+  outer.top = 56
+  outer.right = 8
 
 # 'main' binding mode declaration
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
