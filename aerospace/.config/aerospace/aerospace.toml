@@ -123,7 +123,6 @@ automatically-unhide-macos-hidden-apps = false
   alt-0 = 'workspace 0'
   alt-a = 'workspace A' # (A)ctions - TickTick
   alt-c = 'workspace C' # (C)hat - Whatsapp, Discord
-  alt-f = 'workspace F' # (F)iles - Finder
   alt-m = 'workspace M' # (M)usic - Spotify
   alt-n = 'workspace N' # (N)otes - Obsidian
   alt-t = 'workspace T' # (T)erminal - WezTerm
@@ -136,7 +135,6 @@ automatically-unhide-macos-hidden-apps = false
   alt-shift-0 = 'move-node-to-workspace 0'
   alt-shift-a = 'move-node-to-workspace A'
   alt-shift-c = 'move-node-to-workspace C'
-  alt-shift-f = 'move-node-to-workspace F'
   alt-shift-m = 'move-node-to-workspace M'
   alt-shift-n = 'move-node-to-workspace N'
   alt-shift-t = 'move-node-to-workspace T'
@@ -199,6 +197,14 @@ automatically-unhide-macos-hidden-apps = false
   run = 'move-node-to-workspace W'         # mnemonics W - Web browser
 
 [[on-window-detected]]
+  if.app-id = 'app.zen-browser.zen'
+  run = 'move-node-to-workspace W'
+
+[[on-window-detected]]
+  if.app-id = 'net.imput.helium'
+  run = 'move-node-to-workspace W'
+
+[[on-window-detected]]
   if.app-id = 'com.spotify.client'
   run = 'move-node-to-workspace M' # mnemonics M - Music
 
@@ -209,10 +215,6 @@ automatically-unhide-macos-hidden-apps = false
 [[on-window-detected]]
   if.app-id = 'com.TickTick.task.mac'
   run = 'move-node-to-workspace A'    # mnemonics A - Actions
-
-[[on-window-detected]]
-  if.app-id = 'com.apple.finder'
-  run = 'move-node-to-workspace F' # mnemonics F - Files
 
 [[on-window-detected]]
   if.app-id = 'net.whatsapp.WhatsApp'
