@@ -89,7 +89,7 @@ automatically-unhide-macos-hidden-apps = false
 
   # See: https://nikitabobko.github.io/AeroSpace/commands#exec-and-forget
   # Launch terminal with alt-enter (like i3)
-  # alt-enter = 'exec-and-forget open -b com.github.wez.wezterm'
+  # alt-enter = 'exec-and-forget open -b com.mitchellh.ghostty'
 
   # See: https://nikitabobko.github.io/AeroSpace/commands#layout
   alt-slash = 'layout tiles horizontal vertical'
@@ -117,15 +117,21 @@ automatically-unhide-macos-hidden-apps = false
   alt-shift-q = 'close'
 
   # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
+  # alt = go to a CONTEXT.  hyper = jump to an APP (see "Hyper app keys" below).
+  #   A  Agents     T3 Code + Orca (stack them: alt-, then alt-h/l flips)
+  #   T  Terminal   Ghostty
+  #   W  Web        browsers
+  #   C  Chat       WhatsApp, Discord, OpenBot
+  #   0  Parking    Obsidian, TickTick, Spotify
+  #   1-3 Scratch   pop a window out for a side-by-side
   alt-1 = 'workspace 1'
   alt-2 = 'workspace 2'
   alt-3 = 'workspace 3'
-  alt-0 = 'workspace 0'
-  alt-a = 'workspace A' # (A)ctions - TickTick
-  alt-c = 'workspace C' # (C)hat - Whatsapp, Discord
-  alt-n = 'workspace N' # (N)otes - Obsidian
-  alt-t = 'workspace T' # (T)erminal - WezTerm
-  alt-w = 'workspace W' # (W)eb - Browser
+  alt-0 = 'workspace 0' # Parking
+  alt-a = 'workspace A' # (A)gents
+  alt-t = 'workspace T' # (T)erminal
+  alt-w = 'workspace W' # (W)eb
+  alt-c = 'workspace C' # (C)hat
 
   # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
   alt-shift-1 = 'move-node-to-workspace 1'
@@ -133,10 +139,9 @@ automatically-unhide-macos-hidden-apps = false
   alt-shift-3 = 'move-node-to-workspace 3'
   alt-shift-0 = 'move-node-to-workspace 0'
   alt-shift-a = 'move-node-to-workspace A'
-  alt-shift-c = 'move-node-to-workspace C'
-  alt-shift-n = 'move-node-to-workspace N'
   alt-shift-t = 'move-node-to-workspace T'
   alt-shift-w = 'move-node-to-workspace W'
+  alt-shift-c = 'move-node-to-workspace C'
 
   # See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
   alt-tab = 'workspace-back-and-forth'
@@ -152,47 +157,88 @@ automatically-unhide-macos-hidden-apps = false
   alt-ctrl-j = 'focus-monitor down'
   alt-ctrl-k = 'focus-monitor up'
 
+  # Hyper layer (ctrl-alt-shift-cmd): one-shot layout surgery, no mode needed.
+  #   hyper + h/j/k/l -> stack focused window with its neighbour (tabbed/accordion)
+  #   hyper + f       -> (F)loat <-> tiling toggle
+  #   hyper + r       -> (R)eset: unstack everything on the workspace
+  #   hyper + ;       -> layout mode (sticky, for multi-step edits)
+  ctrl-alt-shift-cmd-h = ['join-with left', 'layout accordion']
+  ctrl-alt-shift-cmd-j = ['join-with down', 'layout accordion']
+  ctrl-alt-shift-cmd-k = ['join-with up', 'layout accordion']
+  ctrl-alt-shift-cmd-l = ['join-with right', 'layout accordion']
+  ctrl-alt-shift-cmd-f = 'layout floating tiling'
+  ctrl-alt-shift-cmd-r = 'flatten-workspace-tree'
+
+  # Hyper app keys: focus the app wherever it lives (launches it if closed);
+  # AeroSpace follows it to its workspace.
+  ctrl-alt-shift-cmd-3 = 'exec-and-forget open -b com.t3tools.t3code'     # T(3) Code
+  ctrl-alt-shift-cmd-o = 'exec-and-forget open -b com.stablyai.orca'      # (O)rca
+  ctrl-alt-shift-cmd-b = 'exec-and-forget open -b app.openbot.desktop'    # Open(B)ot
+  ctrl-alt-shift-cmd-g = 'exec-and-forget open -b com.mitchellh.ghostty'  # (G)hostty
+  ctrl-alt-shift-cmd-z = 'exec-and-forget open -b app.zen-browser.zen'    # (Z)en
+  ctrl-alt-shift-cmd-w = 'exec-and-forget open -b net.whatsapp.WhatsApp'  # (W)hatsApp
+  ctrl-alt-shift-cmd-d = 'exec-and-forget open -b com.hnc.Discord'        # (D)iscord
+  ctrl-alt-shift-cmd-n = 'exec-and-forget open -b md.obsidian'            # (N)otes - Obsidian
+  ctrl-alt-shift-cmd-m = 'exec-and-forget open -b com.spotify.client'     # (M)usic - Spotify
+  ctrl-alt-shift-cmd-t = 'exec-and-forget open -b com.TickTick.task.mac'  # (T)ickTick
+
   # See: https://nikitabobko.github.io/AeroSpace/commands#mode
   ctrl-alt-shift-cmd-semicolon = 'mode service'
 
-# 'service' binding mode declaration.
+# 'service' (layout) mode: STICKY - every key keeps you in the mode so you
+# can chain edits (stack, move, resize...). Leave with esc or enter.
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
 [mode.service.binding]
-  esc = ['reload-config', 'mode main']
-  r = ['flatten-workspace-tree', 'mode main'] # reset layout
-  f = [
-    'layout floating tiling',
-    'mode main',
-  ] # Toggle between floating and tiling layout
+  esc = ['reload-config', 'mode main'] # exit + reload config
+  enter = 'mode main'                  # exit
+
+  # h/j/k/l        -> focus (same as alt-h/j/k/l, minus the alt)
+  h = 'focus left'
+  j = 'focus down'
+  k = 'focus up'
+  l = 'focus right'
+
+  # shift-h/j/k/l  -> move window
+  shift-h = 'move left'
+  shift-j = 'move down'
+  shift-k = 'move up'
+  shift-l = 'move right'
+
+  # ctrl-h/j/k/l   -> join (stack) with neighbour
+  ctrl-h = ['join-with left', 'layout accordion']
+  ctrl-j = ['join-with down', 'layout accordion']
+  ctrl-k = ['join-with up', 'layout accordion']
+  ctrl-l = ['join-with right', 'layout accordion']
+
+  o = 'layout horizontal vertical'   # (O)rientation flip
+  f = 'layout floating tiling'       # (F)loat <-> tiling
+  r = 'flatten-workspace-tree'       # (R)eset layout
+  b = 'balance-sizes'                # (B)alance
+  minus = 'resize smart -50'
+  equal = 'resize smart +50'
   backspace = ['close-all-windows-but-current', 'mode main']
-
-  # sticky is not yet supported https://github.com/nikitabobko/AeroSpace/issues/2
-  #s = ['layout sticky tiling', 'mode main']
-
-  alt-shift-h = ['join-with left', 'mode main']
-  alt-shift-j = ['join-with down', 'mode main']
-  alt-shift-k = ['join-with up', 'mode main']
-  alt-shift-l = ['join-with right', 'mode main']
 
   down = 'volume down'
   up = 'volume up'
   shift-down = ['volume set 0', 'mode main']
 
-[[on-window-detected]]
-  if.app-id = 'com.github.wez.wezterm'
-  run = 'move-node-to-workspace T'     # mnemonics T - Terminal
+  # AI agents
 
 [[on-window-detected]]
-  if.app-id = 'com.mitchellh.ghostty'
-  run = 'move-node-to-workspace T'
-
-[[on-window-detected]]
-  if.app-id = 'com.conductor.app'
-  run = 'move-node-to-workspace T'
+  if.app-id = 'com.t3tools.t3code'
+  run = 'move-node-to-workspace A'     # mnemonics A - Agents
 
 [[on-window-detected]]
   if.app-id = 'com.stablyai.orca'
-  run = 'move-node-to-workspace T'
+  run = 'move-node-to-workspace A'
+
+  # Terminal
+
+[[on-window-detected]]
+  if.app-id = 'com.mitchellh.ghostty'
+  run = 'move-node-to-workspace T'     # mnemonics T - Terminal
+
+  # Browser
 
 [[on-window-detected]]
   if.app-id = 'company.thebrowser.Browser'
@@ -206,22 +252,30 @@ automatically-unhide-macos-hidden-apps = false
   if.app-id = 'net.imput.helium'
   run = 'move-node-to-workspace W'
 
-[[on-window-detected]]
-  if.app-id = 'com.spotify.client'
-  run = 'move-node-to-workspace M' # mnemonics M - Music
+  # Parking (rarely used)
 
 [[on-window-detected]]
   if.app-id = 'md.obsidian'
-  run = 'move-node-to-workspace N' # mnemonics N - Notes
+  run = 'move-node-to-workspace 0'
 
 [[on-window-detected]]
   if.app-id = 'com.TickTick.task.mac'
-  run = 'move-node-to-workspace A'    # mnemonics A - Actions
+  run = 'move-node-to-workspace 0'
+
+[[on-window-detected]]
+  if.app-id = 'com.spotify.client'
+  run = 'move-node-to-workspace 0'
+
+  # Chat (humans and bots)
 
 [[on-window-detected]]
   if.app-id = 'net.whatsapp.WhatsApp'
-  run = 'move-node-to-workspace C'    # mnemonics C - Chat
+  run = 'move-node-to-workspace C'     # mnemonics C - Chat
+
+[[on-window-detected]]
+  if.app-id = 'app.openbot.desktop'
+  run = 'move-node-to-workspace C'
 
 [[on-window-detected]]
   if.app-id = 'com.hnc.Discord'
-  run = 'move-node-to-workspace C' # mnemonics C - Chat
+  run = 'move-node-to-workspace C'
