@@ -1,13 +1,15 @@
 if status is-interactive
     # Cross-platform paths
     fish_add_path "$HOME/.local/share/bob/nvim-bin"
-    fish_add_path "$HOME/.local/bin"
 
     # macOS-specific paths
     if test (uname) = Darwin
         fish_add_path /opt/homebrew/sbin
         fish_add_path /opt/homebrew/bin
     end
+
+    fish_add_path "$HOME/.local/bin"
+    fish_add_path "$HOME/.bun/bin"
 
     oh-my-posh init fish --config $HOME/.config/ohmyposh/zen.toml | source
 
@@ -57,3 +59,7 @@ source ~/.orbstack/shell/init2.fish 2>/dev/null || :
 
 # Mole shell completion
 set -l output (mole completion fish 2>/dev/null); and echo "$output" | source
+
+# >>> grok installer >>>
+fish_add_path $HOME/.grok/bin
+# <<< grok installer <<<

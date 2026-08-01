@@ -2,6 +2,7 @@
 fish/.config/fish/conf.d/secrets.fish
 fish/.config/fish/conf.d/local.fish
 Brewfile.lock.json
+*.bak.[0-9]*
 .claude/
 .omc/
 **/.omc/
