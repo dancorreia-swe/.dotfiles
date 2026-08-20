@@ -42,10 +42,7 @@ vim.keymap.set('v', '<A-Up>', ":<C-u>execute \"'<,'>move '<-\" . (v:count1 + 1)<
 vim.keymap.set('n', ']q', '<cmd>cnext<CR>', { desc = 'Move to the next quickfix item' })
 vim.keymap.set('n', '[q', '<cmd>cprev<CR>', { desc = 'Move to the previous quickfix item' })
 
--- Keybinds to use the black hole register aka not yank/delete into the system clipboard
-vim.keymap.set('n', '<leader>p', '"_dP', { desc = 'Paste without' })
-vim.keymap.set('v', '<leader>p', '"_dP', { desc = 'Paste without yanking' })
-
+-- Delete without yanking into the system clipboard
 vim.keymap.set('n', '<leader>D', '"_d', { desc = 'Delete without yanking' })
 vim.keymap.set('v', '<leader>D', '"_d', { desc = 'Delete without yanking' })
 
