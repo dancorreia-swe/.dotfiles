@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Installed by agents/install.sh, which replaces __HOME__. -->
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>dev.dotfiles.agents-sync</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/sh</string><string>-c</string>
+    <string>git -C "$HOME/.dotfiles" pull --ff-only -q || echo "agents-sync: git pull failed, syncing current checkout"; exec "$HOME/.dotfiles/agents/bin/agents-sync"</string>
+  </array>
+  <key>EnvironmentVariables</key>
+  <dict><key>PATH</key><string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string></dict>
+  <key>StartInterval</key><integer>3600</integer>
+  <key>RunAtLoad</key><true/>
+  <key>StandardOutPath</key><string>__HOME__/Library/Logs/agents-sync.log</string>
+  <key>StandardErrorPath</key><string>__HOME__/Library/Logs/agents-sync.log</string>
+</dict>
+</plist>

@@ -1,0 +1,42 @@
+{
+  "claude": {
+    "model": "opus",
+    "effortLevel": "high",
+    "autoCompactWindow": 300000,
+    "disableClaudeAiConnectors": true,
+    "env": {
+      "CLAUDE_CODE_DISABLE_WORKFLOWS": "1",
+      "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"
+    },
+    "attribution": { "commit": "", "pr": "" },
+    "permissions": { "deny": ["Workflow"] },
+    "skillOverrides": {
+      "anthropic-skills:docs": "user-invocable-only",
+      "anthropic-skills:docx": "user-invocable-only",
+      "anthropic-skills:google-workspace": "user-invocable-only",
+      "anthropic-skills:import-memory": "user-invocable-only",
+      "anthropic-skills:morning": "user-invocable-only",
+      "anthropic-skills:pdf": "user-invocable-only",
+      "anthropic-skills:pptx": "user-invocable-only",
+      "anthropic-skills:skill-creator": "user-invocable-only",
+      "anthropic-skills:xlsx": "user-invocable-only",
+      "ai-memory-durable-pages": "user-invocable-only",
+      "ai-memory-handoff": "user-invocable-only",
+      "ai-memory-learning-maintenance": "user-invocable-only",
+      "ai-memory-messaging": "user-invocable-only",
+      "ai-memory-retrieval": "user-invocable-only",
+      "ai-memory-routing-install": "user-invocable-only"
+    }
+  },
+  "hook_defs": {
+    "emulator-qa-guard": { "event": "PreToolUse", "matcher": "Bash", "timeout": 5 },
+    "orca-model-guard": { "event": "PreToolUse", "matcher": "Bash", "timeout": 5 }
+  },
+  "hooks": ["orca-model-guard"],
+  "codex": {
+    "model": "gpt-6.1-sol",
+    "model_reasoning_effort": "high"
+  },
+  "skills": ["orca-workflow", "t3-workflow"],
+  "targets": [{ "user": "self" }]
+}

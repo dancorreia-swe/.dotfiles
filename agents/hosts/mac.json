@@ -1,0 +1,7 @@
+{
+  "hooks": ["emulator-qa-guard", "orca-model-guard"],
+  "claude": {
+    "enabledPlugins": { "cloudflare@cloudflare": false }
+  },
+  "codex": { "model_reasoning_effort": "xhigh" }
+}

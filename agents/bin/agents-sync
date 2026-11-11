@@ -1,0 +1,134 @@
+#!/usr/bin/env bash
+# agents-sync: apply ~/.dotfiles/agents (base.json + hosts/<host>.json) to this host's Claude/Codex config.
+# Usage: agents-sync [--host mac|devbox|vps] [--dry-run | --check]
+#   --dry-run  print what would change (settings as a diff), change nothing
+#   --check    same, but exit 1 when anything drifted (for timers/alerts)
+# Owns only what the repo declares: listed settings keys (deep-merged; arrays unioned), the hooks named in
+# hook_defs, the shared files and skills. Everything else in settings.json / config.toml is left alone.
+# Other-user targets (e.g. the VPS `agent` user) get copies, written as that user via `sudo -n -H -u`.
+set -euo pipefail
+SRC=$(cd "$(dirname "$0")/.." && pwd -P)
+HOST=${AGENTS_HOST:-}; DRY=0; CHECK=0; LOCAL=""
+while [ $# -gt 0 ]; do case $1 in
+  --host) HOST=$2; shift 2 ;;
+  --check) CHECK=1; DRY=1; shift ;;
+  --dry-run|-n) DRY=1; shift ;;
+  --local) LOCAL=$2; shift 2 ;; # internal: sync only $HOME, mode link|copy
+  -h|--help) sed -n 2,8p "$0"; exit 0 ;;
+  *) echo "agents-sync: unknown arg $1" >&2; exit 2 ;;
+esac; done
+if [ -z "$HOST" ]; then case "$(uname -s)" in Darwin) HOST=mac ;; *) HOST=$(hostname -s) ;; esac; fi
+[ -f "$SRC/hosts/$HOST.json" ] || { echo "agents-sync: no hosts/$HOST.json" >&2; exit 2; }
+CFG=$(jq -s '.[0] * .[1]' "$SRC/base.json" "$SRC/hosts/$HOST.json")
+DRIFT=0; STAMP=$(date +%Y%m%dT%H%M%S); BK="$HOME/.claude/backups/agents-sync/$STAMP"
+
+act() { DRIFT=1; printf '  %s\n' "$*"; }
+backup() { # backup <path relative to $HOME>
+  [ -e "$HOME/$1" ] || [ -L "$HOME/$1" ] || return 0
+  mkdir -p "$BK/$(dirname "$1")"; cp -pR "$HOME/$1" "$BK/$1"
+}
+same() { # same <src> <dest>: identical content (file or dir)
+  if [ -d "$1" ]; then [ -d "$2" ] && diff -rq -x .DS_Store "$1" "$2" >/dev/null 2>&1
+  else [ -f "$2" ] && cmp -s "$1" "$2"; fi
+}
+link_target() { # absolute path a symlink points to (parent dirs resolved)
+  local t; t=$(readlink "$1")
+  (cd "$(dirname "$1")" && cd "$(dirname "$t")" 2>/dev/null && printf '%s/%s' "$(pwd -P)" "$(basename "$t")")
+}
+place() { # place <src> <rel>: link (or copy) a file/dir into $HOME/<rel>
+  local src=$1 rel=$2 dest="$HOME/$2"
+  if [ "$LOCAL" = link ]; then
+    [ -L "$dest" ] && [ "$(link_target "$dest")" = "$src" ] && return 0
+    act "link ~/$rel -> $src"
+  else
+    [ ! -L "$dest" ] && same "$src" "$dest" && return 0
+    act "copy ~/$rel"
+  fi
+  [ "$DRY" = 1 ] && return 0
+  backup "$rel"; rm -rf "$dest"; mkdir -p "$(dirname "$dest")"
+  if [ "$LOCAL" = link ]; then ln -s "$src" "$dest"; else cp -R "$src" "$dest"; fi
+}
+place_claude_skill() { # ~/.claude/skills/<s> must resolve to ~/.agents/skills/<s>
+  local s=$1 rel=".claude/skills/$1" want; want="$(cd "$HOME/.agents/skills" && pwd -P)/$1"
+  [ -L "$HOME/$rel" ] && [ "$(link_target "$HOME/$rel")" = "$want" ] && return 0
+  act "link ~/$rel -> ~/.agents/skills/$s"
+  [ "$DRY" = 1 ] && return 0
+  backup "$rel"; rm -rf "${HOME:?}/$rel"; mkdir -p "$HOME/.claude/skills"; ln -s "$HOME/.agents/skills/$s" "$HOME/$rel"
+}
+
+merge_claude() {
+  local f="$HOME/.claude/settings.json" live new
+  live=$(cat "$f" 2>/dev/null || echo '{}'); [ -n "$live" ] || live='{}'
+  new=$(jq --argjson cfg "$CFG" '
+    def m($a; $b): if ($a|type) == "object" and ($b|type) == "object"
+        then reduce ($b|keys_unsorted[]) as $k ($a; .[$k] = m($a[$k]; $b[$k]))
+      elif ($a|type) == "array" and ($b|type) == "array" then $a + ($b - $a) else $b end;
+    ("\\.claude/hooks/(" + ($cfg.hook_defs|keys|join("|")) + ")\\.sh") as $pat
+    | m(.; $cfg.claude)
+    | if .hooks == null and ($cfg.hooks|length) == 0 then . else
+        .hooks = ((.hooks // {})
+          | with_entries(.value |= (map(.hooks |= map(select((.command // "") | test($pat) | not)))
+                                   | map(select((.hooks|length) > 0))))
+          | with_entries(select((.value|length) > 0)))
+        | reduce ([$cfg.hooks[] as $h | $cfg.hook_defs[$h] + {name: $h}]
+                  | group_by(.event + " " + .matcher)[]) as $g (.;
+            .hooks[$g[0].event] += [{matcher: $g[0].matcher, hooks: [$g[] |
+              {type: "command", command: ("bash \"$HOME/.claude/hooks/" + .name + ".sh\""), timeout: .timeout}]}])
+      end' <<<"$live")
+  [ "$(jq -S . <<<"$live")" = "$(jq -S . <<<"$new")" ] && return 0
+  act "merge ~/.claude/settings.json"
+  if [ "$DRY" = 1 ]; then diff <(jq -S . <<<"$live") <(jq -S . <<<"$new") | sed 's/^/    /' | cut -c1-200 || true; return 0; fi
+  backup .claude/settings.json; mkdir -p "$HOME/.claude"; printf '%s\n' "$new" > "$f"
+}
+
+merge_codex() { # owned top-level keys only; tables untouched
+  local f="$HOME/.codex/config.toml" kv new
+  kv=$(jq -r '.codex // {} | to_entries[] | "\(.key) = \(.value|tojson)"' <<<"$CFG"); [ -n "$kv" ] || return 0
+  if [ ! -f "$f" ]; then new=$kv; else
+  new=$(KV=$kv awk '
+    BEGIN { n = split(ENVIRON["KV"], L, "\n"); for (i = 1; i <= n; i++) { k = L[i]; sub(/ = .*/, "", k); K[i] = k } }
+    function flush(  f) { for (i = 1; i <= n; i++) if (!seen[i]) { print L[i]; seen[i] = 1; f = 1 }; return f }
+    !intab && /^[[:space:]]*\[/ { if (flush()) print ""; intab = 1 }
+    !intab { for (i = 1; i <= n; i++) if ($0 ~ "^[[:space:]]*" K[i] "[[:space:]]*=") { print L[i]; seen[i] = 1; next } }
+    { print }
+    END { if (!intab) flush() }' "$f")
+  [ "$(printf '%s\n' "$new" | wc -l)" -ge "$(wc -l < "$f")" ] || { echo "agents-sync: codex merge lost lines, aborting" >&2; exit 3; }
+  fi
+  [ "$new" = "$(cat "$f" 2>/dev/null)" ] && return 0
+  act "merge ~/.codex/config.toml ($(jq -r '.codex|to_entries|map("\(.key)=\(.value)")|join(", ")' <<<"$CFG"))"
+  [ "$DRY" = 1 ] && return 0
+  backup .codex/config.toml; mkdir -p "$HOME/.codex"; printf '%s\n' "$new" > "$f"
+}
+
+sync_local() {
+  echo "== $(id -un)@$HOST ($LOCAL)"
+  place "$SRC/claude/CLAUDE.md" .claude/CLAUDE.md
+  for h in "$SRC"/claude/hooks/*.sh; do place "$h" ".claude/hooks/$(basename "$h")"; done
+  for t in "$SRC"/claude/tools/*; do place "$t" ".claude/tools/$(basename "$t")"; done
+  place "$SRC/codex/AGENTS.md" .codex/AGENTS.md
+  [ "$DRY" = 1 ] || mkdir -p "$HOME/.agents/skills"
+  for s in $(jq -r '.skills[]' <<<"$CFG"); do
+    place "$SRC/skills/$s" ".agents/skills/$s"
+    if [ -d "$HOME/.agents/skills" ]; then place_claude_skill "$s"; fi
+  done
+  merge_claude
+  merge_codex
+  [ "$DRIFT" = 1 ] || echo "  up to date"
+  [ "$DRIFT" = 1 ] && [ "$DRY" = 0 ] && [ -d "$BK" ] && echo "  backups: $BK"
+  [ "$CHECK" = 1 ] && [ "$DRIFT" = 1 ] && return 1
+  return 0
+}
+
+if [ -n "$LOCAL" ]; then sync_local; exit $?; fi
+flags=""; [ "$DRY" = 1 ] && flags="--dry-run"; [ "$CHECK" = 1 ] && flags="--check"
+rc=0
+for u in $(jq -r '.targets[].user' <<<"$CFG"); do
+  if [ "$u" = self ] || [ "$u" = "$(id -un)" ]; then
+    LOCAL=link sync_local || rc=1; DRIFT=0
+  else
+    COPYFILE_DISABLE=1 tar -C "$SRC" --exclude .DS_Store -cf - . | sudo -n -H -u "$u" bash -c '
+      set -e; d=$(mktemp -d); trap "rm -rf \"$d\"" EXIT; tar -xf - -C "$d"
+      bash "$d/bin/agents-sync" --host "$1" --local copy $2' _ "$HOST" "$flags" || rc=1
+  fi
+done
+exit $rc

@@ -160,6 +160,7 @@ stow_packages() {
 
         # Skip non-stow directories
         [[ "$package" == ".git" ]] && continue
+        [[ "$package" == "agents" ]] && continue  # applied by setup_agents, not stow
 
         # Skip macOS-specific packages on Linux
         if [[ "$OS" == "linux" ]]; then
@@ -178,6 +179,16 @@ stow_packages() {
     done
 }
 
+# Shared Claude Code / Codex setup (see agents/README.md)
+setup_agents() {
+    if ! command -v jq &>/dev/null; then
+        warn "jq not found; skipping agents setup (run agents/install.sh later)."
+        return 0
+    fi
+    info "Applying shared agent setup..."
+    "$DOTFILES_DIR/agents/install.sh" || warn "agents setup failed; run agents/install.sh to retry."
+}
+
 # Main
 main() {
     info "Dotfiles bootstrap for $OS"
@@ -189,6 +200,7 @@ main() {
     setup_neovim
     stow_packages
     setup_fisher
+    setup_agents
 
     echo
     info "Dotfiles setup complete!"

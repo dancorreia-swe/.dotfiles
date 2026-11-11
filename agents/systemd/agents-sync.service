@@ -1,0 +1,6 @@
+[Unit]
+Description=Pull ~/.dotfiles and apply the shared agent setup (agents-sync)
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'git -C %h/.dotfiles pull --ff-only -q || echo "agents-sync: git pull failed, syncing current checkout"; exec %h/.dotfiles/agents/bin/agents-sync'
