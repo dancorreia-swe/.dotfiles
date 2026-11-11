@@ -3,49 +3,31 @@ return {
   opts = {
     servers = {
       tailwindcss = {
-        -- exclude a filetype from the default_config
+        -- filetypes to drop from / add to the nvim-lspconfig defaults
         filetypes_exclude = { 'markdown' },
-        -- add additional filetypes to the default_config
         filetypes_include = {},
-        -- to fully override the default_config, change the below
-        -- filetypes = {},
-      },
-    },
-    setup = {
-      tailwindcss = function(_, opts)
-        local function get_raw_config(server)
-          local ok, ret = pcall(require, 'lspconfig.configs.' .. server)
-          if ok then
-            return ret
-          end
-          return require('lspconfig.server_configurations.' .. server)
-        end
-
-        local tw = get_raw_config 'tailwindcss'
-        opts.filetypes = opts.filetypes or {}
-
-        -- Add default filetypes
-        vim.list_extend(opts.filetypes, tw.default_config.filetypes)
-
-        -- Remove excluded filetypes
-        --- @param ft string
-        opts.filetypes = vim.tbl_filter(function(ft)
-          return not vim.tbl_contains(opts.filetypes_exclude or {}, ft)
-        end, opts.filetypes)
-
-        -- Additional settings for Phoenix projects
-        opts.settings = {
+        settings = {
           tailwindCSS = {
+            -- Phoenix templates
             includeLanguages = {
               elixir = 'html-eex',
               eelixir = 'html-eex',
               heex = 'html-eex',
             },
           },
-        }
-
-        -- Add additional filetypes
-        vim.list_extend(opts.filetypes, opts.filetypes_include or {})
+        },
+      },
+    },
+    setup = {
+      tailwindcss = function(_, opts)
+        -- defaults come from nvim-lspconfig's lsp/tailwindcss.lua
+        local defaults = vim.lsp.config.tailwindcss or {}
+        local filetypes = vim.list_extend(vim.deepcopy(opts.filetypes or defaults.filetypes or {}), opts.filetypes_include or {})
+        opts.filetypes = vim.tbl_filter(function(ft)
+          return not vim.tbl_contains(opts.filetypes_exclude or {}, ft)
+        end, filetypes)
+        -- not part of vim.lsp.Config
+        opts.filetypes_exclude, opts.filetypes_include = nil, nil
       end,
     },
   },

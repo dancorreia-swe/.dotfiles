@@ -6,10 +6,16 @@
 ---@field lualine gavim.util.lualine
 ---@field treesitter gavim.util.treesitter
 ---@field root gavim.util.root
+---@field watch gavim.util.watch
 local M = {}
 
 setmetatable(M, {
   __index = function(t, k)
+    -- fall back to lazy.nvim's util (merge, norm, ...) like LazyVim does
+    local LazyUtil = require 'lazy.core.util'
+    if LazyUtil[k] then
+      return LazyUtil[k]
+    end
     ---@diagnostic disable-next-line: no-unknown
     t[k] = require('gavim.util.' .. k)
     return t[k]

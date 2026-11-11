@@ -19,7 +19,18 @@ return {
     linters = {
       eslint_d = {
         condition = function(ctx)
-          return vim.fs.find({ '.eslintrc.js', '.eslintrc.json', '.eslintrc.yml', '.eslintrc.yaml' }, {
+          return vim.fs.find({
+            'eslint.config.js',
+            'eslint.config.mjs',
+            'eslint.config.cjs',
+            'eslint.config.ts',
+            'eslint.config.mts',
+            '.eslintrc.js',
+            '.eslintrc.cjs',
+            '.eslintrc.json',
+            '.eslintrc.yml',
+            '.eslintrc.yaml',
+          }, {
             path = ctx.dirname,
             upward = true,
           })[1]
@@ -64,6 +75,9 @@ return {
     end
 
     function M.lint()
+      if vim.bo.buftype ~= '' then
+        return
+      end
       -- Use nvim-lint's logic first:
       -- * checks if linters exist for the full filetype first
       -- * otherwise will split filetype by "." and add all those linters
@@ -87,7 +101,7 @@ return {
       names = vim.tbl_filter(function(name)
         local linter = lint.linters[name]
         if not linter then
-          vim.health.warn('Linter not found: ' .. name, { title = 'nvim-lint' })
+          GaVim.warn('Linter not found: ' .. name, { title = 'nvim-lint', once = true })
         end
         return linter and not (type(linter) == 'table' and linter.condition and not linter.condition(ctx))
       end, names)

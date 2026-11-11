@@ -134,7 +134,17 @@ function M.ensure_treesitter_cli(cb)
   local mr = require 'mason-registry'
   mr.refresh(function()
     local p = mr.get_package 'tree-sitter-cli'
-    if not p:is_installed() then
+    if p:is_installed() then
+      -- installed but mason's bin dir is not on PATH (see config/options.lua)
+      local bin = vim.fn.stdpath 'data' .. '/mason/bin'
+      if not vim.env.PATH:find(bin, 1, true) then
+        vim.env.PATH = bin .. ':' .. vim.env.PATH
+      end
+      vim.schedule(function()
+        local ok = vim.fn.executable 'tree-sitter' == 1
+        cb(ok, not ok and 'tree-sitter-cli is installed in mason but not executable' or nil)
+      end)
+    else
       GaVim.info 'Installing `tree-sitter-cli` with `mason.nvim`...'
       p:install(
         nil,

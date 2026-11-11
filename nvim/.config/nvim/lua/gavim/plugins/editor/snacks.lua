@@ -39,7 +39,7 @@ return {
             { icon = ' ', key = 'g', desc = 'Find Text', action = ":lua Snacks.dashboard.pick('live_grep')" },
             { icon = ' ', key = 'r', desc = 'Recent Files', action = ":lua Snacks.dashboard.pick('oldfiles')" },
             { icon = ' ', key = 'y', desc = 'Yazi', action = '<cmd>Yazi<cr>' },
-            { icon = ' ', key = 'o', desc = 'Obsidian Vault', action = ':e ~/vaults/personal/' },
+            { icon = ' ', key = 'o', desc = 'Obsidian Notes', action = ':Obsidian quick_switch' },
             { icon = ' ', key = 'c', desc = 'Config', action = ":lua Snacks.dashboard.pick('files', {cwd = vim.fn.stdpath('config')})" },
             { icon = ' ', key = 's', desc = 'Restore Session', section = 'session' },
             { icon = '󰒲 ', key = 'L', desc = 'Lazy', action = ':Lazy', enabled = package.loaded.lazy ~= nil },
@@ -231,7 +231,7 @@ return {
       { "<leader>sS", function() Snacks.picker.lsp_workspace_symbols() end, desc = "LSP Workspace Symbols" },
 
       -- Lazygit
-      { "<leader>lg", function() Snacks.lazygit.open() end, desc = "[L]azy[g]it" },
+      { "<leader>gg", function() Snacks.lazygit.open() end, desc = "Lazygit" },
       { "<leader>jj", function() Snacks.terminal("jjui") end, desc = "[Jj]ui" },
 
       -- Buffer
@@ -260,7 +260,6 @@ return {
             Snacks.debug.backtrace()
           end
           vim.print = _G.dd -- Override print to use snacks for `:=` command
-          vim.g.snacks_copilot_enabled = true
 
           -- Create some toggle mappings
           Snacks.toggle.option('spell', { name = 'Spelling' }):map '<leader>us'
@@ -274,21 +273,6 @@ return {
           Snacks.toggle.inlay_hints():map '<leader>uh'
           Snacks.toggle.indent():map '<leader>ug'
           Snacks.toggle.dim():map '<leader>uD'
-          Snacks.toggle({
-            name = 'Copilot Suggestions',
-            get = function()
-              return vim.g.snacks_copilot_enabled
-            end,
-            set = function(state)
-              if state then
-                vim.g.snacks_copilot_enabled = true
-                require('copilot.command').enable()
-              else
-                vim.g.snacks_copilot_enabled = false
-                require('copilot.command').disable()
-              end
-            end,
-          }):map '<leader>ua' -- ai
         end,
       })
     end,
@@ -381,27 +365,6 @@ return {
         })
       end,
     },
-  },
-  {
-    'folke/edgy.nvim',
-    ---@module 'edgy'
-    ---@param opts Edgy.Config
-    opts = function(_, opts)
-      for _, pos in ipairs { 'top', 'bottom', 'left', 'right' } do
-        opts[pos] = opts[pos] or {}
-        table.insert(opts[pos], {
-          ft = 'snacks_terminal',
-          size = { height = 0.4 },
-          title = '%{b:snacks_terminal.id}: %{b:term_title}',
-          filter = function(_buf, win)
-            return vim.w[win].snacks_win
-              and vim.w[win].snacks_win.position == pos
-              and vim.w[win].snacks_win.relative == 'editor'
-              and not vim.w[win].trouble_preview
-          end,
-        })
-      end
-    end,
   },
   {
     'gitsigns.nvim',

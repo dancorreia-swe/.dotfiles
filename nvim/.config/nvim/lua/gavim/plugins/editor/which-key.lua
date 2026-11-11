@@ -9,9 +9,14 @@ return {
       {
         mode = { 'n', 'x' },
         { '<leader><tab>', group = 'tabs' },
+        { '<leader>a', group = 'ai' },
         { '<leader>c', group = 'code' },
-        { '<leader>d', group = 'debug' },
+        { '<leader>d', group = 'debug/profile' },
         { '<leader>dp', group = 'profiler' },
+        { '<leader>h', group = 'haunt (annotations)' },
+        { '<leader>o', group = 'obsidian' },
+        { '<leader>od', group = 'daily notes' },
+        { '<leader>sn', group = 'noice' },
         { '<leader>f', group = 'file/find' },
         { '<leader>g', group = 'git' },
         { '<leader>gh', group = 'hunks' },
@@ -28,7 +33,6 @@ return {
         { ']', group = 'next' },
         { 'g', group = 'goto' },
         { 'gr', group = 'lsp' },
-        { 'gs', group = 'surround' },
         { 'z', group = 'fold' },
         {
           '<leader>b',

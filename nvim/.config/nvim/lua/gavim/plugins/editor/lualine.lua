@@ -32,21 +32,6 @@ return {
         },
         lualine_b = { 'branch' },
         lualine_c = {
-          vim.tbl_deep_extend(
-            'error',
-            {
-              padding = { left = 1 },
-              separator = { right = '' },
-            },
-            GaVim.lualine.status(GaVim.icons.icons.kinds.Copilot, function()
-              local clients = package.loaded['copilot'] and vim.lsp.get_clients { name = 'copilot', bufnr = 0 } or {}
-
-              if #clients > 0 then
-                local status = require('copilot.status').data.status
-                return (status == 'InProgress' and 'pending') or (status == 'Warning' and 'error') or 'ok'
-              end
-            end)
-          ),
           GaVim.lualine.root_dir(),
           {
             'diagnostics',
@@ -73,12 +58,6 @@ return {
             function() return require("noice").api.status.mode.get() end,
             cond = function() return package.loaded["noice"] and require("noice").api.status.mode.has() end,
             color = function() return { fg = Snacks.util.color("Constant") } end,
-          },
-          -- stylua: ignore
-          {
-            function() return "  " .. require("dap").status() end,
-            cond = function() return package.loaded["dap"] and require("dap").status() ~= "" end,
-            color = function() return { fg = Snacks.util.color("Debug") } end,
           },
           -- stylua: ignore
           {
@@ -114,7 +93,7 @@ return {
               done = '✓',
               separator = ' ',
             },
-            ignore_lsp = { 'copilot', 'tailwindcss' },
+            ignore_lsp = { 'tailwindcss' },
           },
           { 'progress', separator = ' ', padding = { left = 1, right = 1 } },
         },
@@ -122,7 +101,7 @@ return {
           { 'location', padding = { left = 0, right = 1 } },
         },
       },
-      extensions = { 'neo-tree', 'lazy', 'fzf' },
+      extensions = { 'lazy', 'mason', 'trouble', 'quickfix', 'man' },
     }
 
     -- do not add trouble symbols if aerial is enabled

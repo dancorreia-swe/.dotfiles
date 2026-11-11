@@ -13,6 +13,9 @@ return {
   -- Session management
   {
     'folke/persistence.nvim',
+    -- not when opened as $EDITOR by an agent/VCS: that would overwrite the
+    -- project's session with a single temp file
+    cond = not vim.g.gavim_quick_edit,
     event = 'BufReadPre',
     opts = {},
     -- stylua: ignore

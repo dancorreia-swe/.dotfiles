@@ -4,24 +4,98 @@ local function augroup(name)
   return vim.api.nvim_create_augroup('gvim_' .. name, { clear = true })
 end
 
--- Check if we need to reload the file when it changed
-vim.api.nvim_create_autocmd({ 'FocusGained', 'TermClose', 'TermLeave' }, {
+-- Check if we need to reload the file when it changed.
+-- Agents edit files on disk from other terminals, so besides focus events we
+-- also check on buffer enter / cursor idle, and gavim.util.watch triggers a
+-- check as soon as a watched file changes.
+vim.api.nvim_create_autocmd({ 'FocusGained', 'TermClose', 'TermLeave', 'BufEnter', 'CursorHold' }, {
   group = augroup 'checktime',
   callback = function()
-    if vim.o.buftype ~= 'nofile' then
-      vim.cmd 'checktime'
+    if vim.o.buftype ~= 'nofile' and vim.fn.getcmdwintype() == '' then
+      pcall(vim.cmd.checktime)
     end
   end,
 })
 
--- Auto save files when focus is lost or buffer is hidden
+-- Decide what happens when a file changed on disk, without blocking prompts:
+-- * unmodified buffer -> reload silently (the common "agent edited it" case)
+-- * modified buffer   -> keep your text, mark the conflict and warn once
+vim.api.nvim_create_autocmd('FileChangedShell', {
+  group = augroup 'file_changed',
+  callback = function(event)
+    local buf = event.buf
+    local name = vim.fn.fnamemodify(event.file, ':~:.')
+    if vim.v.fcs_reason == 'deleted' then
+      vim.v.fcs_choice = ''
+      vim.b[buf].gavim_disk_conflict = true
+      vim.notify(('`%s` was deleted on disk'):format(name), vim.log.levels.WARN, { title = 'File changed' })
+    elseif vim.bo[buf].modified then
+      vim.v.fcs_choice = ''
+      if not vim.b[buf].gavim_disk_conflict then
+        vim.b[buf].gavim_disk_conflict = true
+        vim.notify(
+          ('`%s` changed on disk but has unsaved edits.\n`:e!` to load the disk version, `:w!` to overwrite it.'):format(name),
+          vim.log.levels.WARN,
+          { title = 'File changed' }
+        )
+      end
+    else
+      vim.v.fcs_choice = 'reload'
+    end
+  end,
+})
+vim.api.nvim_create_autocmd({ 'BufReadPost', 'BufWritePost' }, {
+  group = augroup 'file_changed_reset',
+  callback = function(event)
+    vim.b[event.buf].gavim_disk_conflict = nil
+  end,
+})
+
+-- Watch directories of open files so external edits show up immediately.
+require('gavim.util.watch').setup()
+
+-- Auto save modified files when focus is lost or the buffer is hidden.
+-- Skips buffers whose file changed on disk meanwhile, so an agent's edits are
+-- never silently overwritten (and no "file changed" prompt blocks the UI).
 vim.api.nvim_create_autocmd({ 'FocusLost', 'BufLeave' }, {
   desc = 'Auto save files when focus is lost or buffer is hidden',
   group = augroup 'autosave',
   callback = function()
-    vim.cmd 'silent! wa'
+    pcall(vim.cmd.checktime) -- flags disk conflicts via FileChangedShell above
+    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+      if
+        vim.api.nvim_buf_is_loaded(buf)
+        and vim.bo[buf].modified
+        and vim.bo[buf].buftype == ''
+        and vim.bo[buf].modifiable
+        and not vim.bo[buf].readonly
+        and not vim.b[buf].gavim_disk_conflict
+        and vim.api.nvim_buf_get_name(buf) ~= ''
+      then
+        vim.api.nvim_buf_call(buf, function()
+          pcall(vim.cmd, 'silent update')
+        end)
+      end
+    end
   end,
 })
+
+-- Quick-edit mode (Neovim opened as $EDITOR by Claude Code, Codex, git, jj...):
+-- prose-friendly settings and <C-s> to save and hand the text back.
+if vim.g.gavim_quick_edit then
+  vim.api.nvim_create_autocmd('BufWinEnter', {
+    group = augroup 'quick_edit',
+    once = true,
+    callback = function(event)
+      vim.b[event.buf].autoformat = false
+      vim.opt_local.wrap = true
+      vim.opt_local.linebreak = true
+      vim.opt_local.spell = true
+      vim.opt_local.cursorcolumn = false
+      vim.keymap.set({ 'n', 'i', 'x' }, '<C-s>', '<cmd>wq<cr>', { buffer = event.buf, desc = 'Save and Return to Caller' })
+    end,
+  })
+end
 
 -- resize splits if window got resized
 vim.api.nvim_create_autocmd({ 'VimResized' }, {
@@ -102,9 +176,6 @@ vim.api.nvim_create_autocmd('FileType', {
     'grug-far',
     'help',
     'lspinfo',
-    'neotest-output',
-    'neotest-output-panel',
-    'neotest-summary',
     'notify',
     'qf',
     'startuptime',

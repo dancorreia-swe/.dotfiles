@@ -1,19 +1,54 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = '\\'
 
--- Disables netrw
--- vim.g.loaded_netrw = 1
+-- No plugin here needs the remote-plugin providers; disabling them skips
+-- their startup probes and silences the `:checkhealth vim.provider` warnings.
+vim.g.loaded_node_provider = 0
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_python3_provider = 0
+vim.g.loaded_ruby_provider = 0
 
--- if the completion engine supports the AI source,
--- use that instead of inline suggestions
-vim.g.ai_cmp = false
+-- Put mason's bin dir on PATH before any plugin loads, so tools it manages
+-- (tree-sitter CLI for parser builds, formatters, linters) are found even
+-- when mason.nvim itself hasn't been loaded yet.
+local mason_bin = vim.fn.stdpath 'data' .. '/mason/bin'
+if not vim.env.PATH:find(mason_bin, 1, true) then
+  vim.env.PATH = mason_bin .. ':' .. vim.env.PATH
+end
+
+-- Quick-edit mode: Neovim was launched as $EDITOR by an agent CLI or VCS
+-- (Claude Code / Codex `Ctrl-G` prompt editing, git commit, jj describe, ...).
+-- Detected as a single file argument living in a temp dir, or a known
+-- commit/description file. In this mode we skip sessions, the Claude Code IDE
+-- server and format-on-save, so the editor opens fast and only edits the text.
+vim.g.gavim_quick_edit = (function()
+  local argv = vim.fn.argv() --[[@as string[] ]]
+  if #argv ~= 1 then
+    return false
+  end
+  local path = vim.fs.normalize(vim.fn.fnamemodify(argv[1], ':p'))
+  local name = vim.fs.basename(path)
+  if name:match '^COMMIT_EDITMSG$' or name:match '^MERGE_MSG$' or name:match '^TAG_EDITMSG$' or name:match '%.jjdescription$' then
+    return true
+  end
+  for _, dir in ipairs { vim.env.TMPDIR, '/tmp', '/private/tmp', '/var/folders', '/private/var/folders' } do
+    if dir and dir ~= '' then
+      dir = vim.fs.normalize(dir)
+      local real = vim.uv.fs_realpath(dir) or dir
+      if vim.startswith(path, dir) or vim.startswith(path, real) then
+        return true
+      end
+    end
+  end
+  return false
+end)()
+
+-- Format on save. Toggle globally with <leader>uf, per buffer with <leader>uF.
+vim.g.autoformat = not vim.g.gavim_quick_edit
 
 vim.g.root_spec = { 'lsp', { '.git', 'lua' }, 'cwd' }
 
 vim.g.root_lsp_ignore = { 'copilot' }
-
--- Hide deprecation warnings
-vim.g.deprecation_warnings = false
 
 -- Show the current document symbols location from Trouble in lualine
 -- You can disable this for a buffer by setting `vim.b.trouble_lualine = false`
@@ -23,6 +58,7 @@ local opt = vim.opt
 
 opt.hlsearch = true -- Highlight search matches
 opt.autowrite = true -- Enable auto write
+opt.autoread = true -- Reload files changed outside Neovim (agents edit files on disk)
 opt.breakindent = true
 opt.clipboard = vim.env.SSH_CONNECTION and '' or 'unnamedplus' -- Sync with system clipboard
 opt.completeopt = 'menu,menuone,noselect'

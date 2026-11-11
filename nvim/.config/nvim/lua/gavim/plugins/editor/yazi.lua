@@ -1,7 +1,6 @@
 ---@type LazySpec
 return {
   'mikavilpas/yazi.nvim',
-  event = 'VeryLazy',
   keys = {
     -- 👇 in this section, choose your own keymappings!
     {
@@ -25,8 +24,8 @@ return {
   },
   ---@type YaziConfig
   opts = {
-    -- if you want to open yazi instead of netrw, see below for more info
-    open_for_directories = true,
+    -- directory buffers (`nvim .`, `:e dir/`) open the Snacks explorer instead
+    open_for_directories = false,
     keymaps = {
       show_help = 'g?',
     },

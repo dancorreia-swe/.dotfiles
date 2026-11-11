@@ -1,260 +1,161 @@
-# kickstart.nvim
+# GaVim
 
-## Introduction
+Personal Neovim config (nightly, `lazy.nvim`). It started from kickstart.nvim and
+borrows a small util layer from LazyVim (`_G.GaVim`, `lua/gavim/util`).
 
-A starting point for Neovim that is:
+Code is mostly written by agents (Claude Code, Codex, …). Neovim is for **reading
+and navigating** code, reviewing what the agents changed, and editing prompts or
+commit messages. The config is tuned for that:
 
-* Small
-* Single-file
-* Completely Documented
+- Files changed on disk show up right away (see [Live reload](#live-reload)).
+- Formatters only run when the project is configured for them, so an agent's
+  output is never restyled behind its back.
+- No inline AI completion. Agents run in their own terminal and talk to Neovim
+  over the Claude Code IDE protocol, or through sidekick.
 
-**NOT** a Neovim distribution, but instead a starting point for your configuration.
-
-## Installation
-
-### Install Neovim
-
-Kickstart.nvim targets *only* the latest
-['stable'](https://github.com/neovim/neovim/releases/tag/stable) and latest
-['nightly'](https://github.com/neovim/neovim/releases/tag/nightly) of Neovim.
-If you are experiencing issues, please make sure you have the latest versions.
-
-### Install External Dependencies
-
-> **NOTE**
-> [Backup](#FAQ) your previous configuration (if any exists)
-
-External Requirements:
-- Basic utils: `git`, `make`, `unzip`, C Compiler (`gcc`)
-- [ripgrep](https://github.com/BurntSushi/ripgrep#installation)
-- A [Nerd Font](https://www.nerdfonts.com/): optional, provides various icons
-  - if you have it set `vim.g.have_nerd_font` in `init.lua` to true
-- Language Setup:
-  - If want to write Typescript, you need `npm`
-  - If want to write Golang, you will need `go`
-  - etc.
-
-> **NOTE**
-> See [Install Recipes](#Install-Recipes) for additional Windows and Linux specific notes
-> and quick install snippets
-
-Neovim's configurations are located under the following paths, depending on your OS:
-
-| OS | PATH |
-| :- | :--- |
-| Linux, MacOS | `$XDG_CONFIG_HOME/nvim`, `~/.config/nvim` |
-| Windows (cmd)| `%userprofile%\AppData\Local\nvim\` |
-| Windows (powershell)| `$env:USERPROFILE\AppData\Local\nvim\` |
-
-### Install Kickstart
-
-Clone kickstart.nvim:
-
-<details><summary> Linux and Mac </summary>
-
-```sh
-git clone https://github.com/nvim-lua/kickstart.nvim.git "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim
-```
-
-</details>
-
-<details><summary> Windows </summary>
-
-If you're using `cmd.exe`:
+## Layout
 
 ```
-git clone https://github.com/nvim-lua/kickstart.nvim.git %userprofile%\AppData\Local\nvim\
+init.lua                    leader, options/keymaps/autocmds, lazy bootstrap
+lua/gavim/config/           options, keymaps, autocmds (incl. live reload + quick-edit)
+lua/gavim/util/             GaVim helpers (root, lsp, format, treesitter, watch, ...)
+lua/gavim/plugins/<group>/  one spec per plugin: ai, coding, editor, lang, lsp, ui
+after/                      ftplugins / queries
 ```
 
-If you're using `powershell.exe`
+## Agent integration
 
-```
-git clone https://github.com/nvim-lua/kickstart.nvim.git $env:USERPROFILE\AppData\Local\nvim\
-```
+### Claude Code: `coder/claudecode.nvim`
 
-</details>
+Neovim exposes the same IDE protocol as the VS Code and JetBrains extensions. It
+starts a WebSocket server and writes `~/.claude/ide/<port>.lock`.
 
-### Post Installation
+- **Claude in another terminal** (Orca, zellij, …) in the same project: run
+  `/ide` and pick Neovim. Claude can then see the current file and selection,
+  read LSP diagnostics, and open its proposed edits here as diffs.
+- **Claude inside Neovim**: `<leader>ac` opens a Snacks terminal on the right.
 
-Start Neovim
+| Key          | Action                                                      |
+| ------------ | ----------------------------------------------------------- |
+| `<leader>ac` | Toggle Claude (visual: send selection)                      |
+| `<leader>aC` | Claude `--continue`                                         |
+| `<leader>ab` | Add buffer (or the file under the cursor in explorer/yazi)  |
+| `<leader>ay` | Accept the proposed diff                                    |
+| `<leader>an` | Deny the proposed diff                                      |
+| `<leader>aS` | Server status                                               |
 
-```sh
-nvim
-```
+Diffs open in a new tab. `:w` in the diff also accepts it.
 
-That's it! Lazy will install all the plugins you have. Use `:Lazy` to view
-current plugin status.
+### Any agent CLI: `folke/sidekick.nvim`
 
-Read through the `init.lua` file in your configuration folder for more
-information about extending and exploring Neovim.
+Runs Codex, Claude, opencode, gemini, etc. in a split, or in a zellij session if
+zellij is installed, and sends them context. Copilot NES is disabled.
 
-### Getting Started
+| Key          | Action                                    |
+| ------------ | ----------------------------------------- |
+| `<c-.>`      | Toggle the CLI (works from terminal mode) |
+| `<leader>aa` | Toggle the CLI                            |
+| `<leader>as` | Pick an installed CLI                     |
+| `<leader>at` | Send `{this}` (position or selection)     |
+| `<leader>af` | Send the file                             |
+| `<leader>av` | Send the visual selection                 |
+| `<leader>ax` | Send the diagnostics                      |
+| `<leader>ap` | Prompt picker                             |
+| `<leader>ad` | Detach the session                        |
 
-[The Only Video You Need to Get Started with Neovim](https://youtu.be/m8C0Cq9Uv9o)
+### Neovim as `$EDITOR` (quick-edit mode)
 
-### Recommended Steps
+Claude Code's `Ctrl-G` (edit prompt), Codex, `git commit` and `jj describe`
+launch `$EDITOR` on a temp file. Quick-edit mode is on when Neovim is started
+with a single file that is:
 
-[Fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo) this repo
-(so that you have your own copy that you can modify) and then install. You
-can install it on your machine using the methods above.
+- under `$TMPDIR`, `/tmp` or `/var/folders`, or
+- named `COMMIT_EDITMSG`, `MERGE_MSG`, `TAG_EDITMSG` or `*.jjdescription`.
 
-> **NOTE**
-> Your fork's url will be something like this: `https://github.com/<your_github_username>/kickstart.nvim.git`
+In that mode:
 
-#### Examples of adding popularly requested plugins
+- the Claude Code server and session persistence don't start;
+- autoformat is off;
+- `wrap`, `linebreak` and `spell` are on;
+- `<C-s>` writes and quits, handing the text back to the tool.
 
-NOTE: You'll need to uncomment the line in the init.lua that turns on loading custom plugins.
-
-<details>
-  <summary>Adding autopairs</summary>
-
-This will automatically install [windwp/nvim-autopairs](https://github.com/windwp/nvim-autopairs) and enable it on startup. For more information, see documentation for [lazy.nvim](https://github.com/folke/lazy.nvim).
-
-In the file: `lua/custom/plugins/autopairs.lua`, add:
-
-```lua
--- File: lua/custom/plugins/autopairs.lua
-
-return {
-  "windwp/nvim-autopairs",
-  -- Optional dependency
-  dependencies = { 'hrsh7th/nvim-cmp' },
-  config = function()
-    require("nvim-autopairs").setup {}
-    -- If you want to automatically add `(` after selecting a function or method
-    local cmp_autopairs = require('nvim-autopairs.completion.cmp')
-    local cmp = require('cmp')
-    cmp.event:on(
-      'confirm_done',
-      cmp_autopairs.on_confirm_done()
-    )
-  end,
-}
+```fish
+set -Ux EDITOR nvim   # or: claude config / codex settings
 ```
 
-</details>
-<details>
-  <summary>Adding a file tree plugin</summary>
+### Live reload
 
-This will install the tree plugin and add the command `:Neotree` for you. For more information, see the documentation at [neo-tree.nvim](https://github.com/nvim-neo-tree/neo-tree.nvim).
+Agents edit files while Neovim has them open:
 
-In the file: `lua/custom/plugins/filetree.lua`, add:
+- Directories of loaded buffers are watched with libuv `fs_event`. A change
+  triggers a debounced `:checktime`, so no focus change or keypress is needed.
+  `checktime` also runs on focus, `BufEnter` and `CursorHold`.
+- An **unmodified** buffer reloads silently.
+- A **modified** buffer is never overwritten. You get one warning, then choose
+  `:e!` to take the disk version or `:w!` to keep yours.
+- Autosave on `FocusLost`/`BufLeave` skips buffers in that conflict state, so
+  it can't overwrite an agent's edit.
 
-```lua
--- File: lua/custom/plugins/filetree.lua
+## Formatting and linting
 
-return {
-  "nvim-neo-tree/neo-tree.nvim",
-  version = "*",
-  dependencies = {
-    "nvim-lua/plenary.nvim",
-    "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
-    "MunifTanjim/nui.nvim",
-  },
-  config = function ()
-    require('neo-tree').setup {}
-  end,
-}
-```
+`conform.nvim` formats on save. Formatters are gated on project config:
 
-</details>
+| Filetype            | Formatter                                                                                    |
+| ------------------- | -------------------------------------------------------------------------------------------- |
+| js/ts/json/css      | `biome` if `biome.json(c)` exists, else `prettierd`/`prettier` if a prettier config exists, else LSP |
+| html                | prettier (with a config)                                                                     |
+| markdown            | prettier (with a config); `markdownlint-cli2` only with lint errors; `markdown-toc` only with `<!-- toc -->` |
+| lua / php / toml    | `stylua` / `pint` or `php-cs-fixer` / `taplo`                                                |
 
-### FAQ
+- `markdownlint-cli2` lints only where the project has a `.markdownlint*` or
+  `.markdownlint-cli2*` config, so notes, plans and `CLAUDE.md` stay quiet.
+- `eslint_d` lints only when an eslint config exists, including flat
+  `eslint.config.*`.
+- Toggle autoformat with `<leader>uf` (global) or `<leader>uF` (buffer).
+  `<leader>F` or `:Format` formats manually.
 
-* What should I do if I already have a pre-existing neovim configuration?
-  * You should back it up and then delete all associated files.
-  * This includes your existing init.lua and the neovim files in `~/.local` which can be deleted with `rm -rf ~/.local/share/nvim/`
-* Can I keep my existing configuration in parallel to kickstart?
-  * Yes! You can use [NVIM_APPNAME](https://neovim.io/doc/user/starting.html#%24NVIM_APPNAME)`=nvim-NAME` to maintain multiple configurations. For example, you can install the kickstart configuration in `~/.config/nvim-kickstart` and create an alias:
-    ```
-    alias nvim-kickstart='NVIM_APPNAME="nvim-kickstart" nvim'
-    ```
-    When you run Neovim using `nvim-kickstart` alias it will use the alternative config directory and the matching local directory `~/.local/share/nvim-kickstart`. You can apply this approach to any Neovim distribution that you would like to try out.
-* What if I want to "uninstall" this configuration:
-  * See [lazy.nvim uninstall](https://github.com/folke/lazy.nvim#-uninstalling) information
-* Why is the kickstart `init.lua` a single file? Wouldn't it make sense to split it into multiple files?
-  * The main purpose of kickstart is to serve as a teaching tool and a reference
-    configuration that someone can easily use to `git clone` as a basis for their own.
-    As you progress in learning Neovim and Lua, you might consider splitting `init.lua`
-    into smaller parts. A fork of kickstart that does this while maintaining the 
-    same functionality is available here:
-    * [kickstart-modular.nvim](https://github.com/dam9000/kickstart-modular.nvim)
-  * Discussions on this topic can be found here:
-    * [Restructure the configuration](https://github.com/nvim-lua/kickstart.nvim/issues/218)
-    * [Reorganize init.lua into a multi-file setup](https://github.com/nvim-lua/kickstart.nvim/pull/473)
+## Markdown
 
-### Install Recipes
+- `render-markdown.nvim` (obsidian preset) renders in the buffer. Toggle with
+  `<leader>um`.
+- `marksman` handles links, headings and references across files.
+- `markdown-preview.nvim` previews in the browser with `<leader>cp`.
+- `obsidian.nvim` covers the vaults. Its own UI is off so it doesn't fight
+  render-markdown. Keys are under `<leader>o`, and `o` on the dashboard opens
+  quick switch.
 
-Below you can find OS specific install instructions for Neovim and dependencies.
+## Other keymaps worth knowing
 
-After installing all the dependencies continue with the [Install Kickstart](#Install-Kickstart) step.
+| Key                       | Action                                          |
+| ------------------------- | ----------------------------------------------- |
+| `<leader>gg`              | Lazygit (was `<leader>lg`)                      |
+| `<leader>xd`              | Diagnostics to loclist (was `<leader>q`)        |
+| `<leader>qq`              | Quit all; `<leader>q*` also has session keys    |
+| `<leader>h*`              | haunt.nvim annotations                          |
+| `<leader>e` / `nvim .`    | Snacks explorer (yazi on its own keys)          |
+| `<leader>sU`              | Built-in undotree                               |
+| `<leader>snt`             | Noice history picker                            |
 
-#### Windows Installation
+`<leader>` with which-key shows the rest.
 
-<details><summary>Windows with Microsoft C++ Build Tools and CMake</summary>
-Installation may require installing build tools and updating the run command for `telescope-fzf-native`
+## Removed plugins and why
 
-See `telescope-fzf-native` documentation for [more details](https://github.com/nvim-telescope/telescope-fzf-native.nvim#installation)
+| Plugin                                     | Reason                                                   |
+| ------------------------------------------ | -------------------------------------------------------- |
+| copilot.lua (+ lualine and toggle)         | No inline AI typing; agents run in their own CLI          |
+| fzf-lua                                    | Duplicated the Snacks picker                              |
+| nvim-dap and adapters, neotest             | Agents run tests and debug; not used for reading code     |
+| oil.nvim                                   | Snacks explorer and yazi already cover it                 |
+| yanky, dial, nvim-autopairs, mini.surround | Typing aids for a config that rarely types code           |
+| mini.comment + ts-context-commentstring    | Replaced by native `gc` + `folke/ts-comments.nvim`        |
+| emmet-language-server, nvim-navic          | Emmet: typing aid. Navic: never attached (dropbar covers it) |
 
-This requires:
+## Requirements
 
-- Install CMake and the Microsoft C++ Build Tools on Windows
-
-```lua
-{'nvim-telescope/telescope-fzf-native.nvim', build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
-```
-</details>
-<details><summary>Windows with gcc/make using chocolatey</summary>
-Alternatively, one can install gcc and make which don't require changing the config,
-the easiest way is to use choco:
-
-1. install [chocolatey](https://chocolatey.org/install)
-either follow the instructions on the page or use winget,
-run in cmd as **admin**:
-```
-winget install --accept-source-agreements chocolatey.chocolatey
-```
-
-2. install all requirements using choco, exit previous cmd and
-open a new one so that choco path is set, and run in cmd as **admin**:
-```
-choco install -y neovim git ripgrep wget fd unzip gzip mingw make
-```
-</details>
-<details><summary>WSL (Windows Subsystem for Linux)</summary>
-
-```
-wsl --install
-wsl
-sudo add-apt-repository ppa:neovim-ppa/unstable -y
-sudo apt update
-sudo apt install make gcc ripgrep unzip neovim
-```
-</details>
-
-#### Linux Install
-<details><summary>Ubuntu Install Steps</summary>
-
-```
-sudo add-apt-repository ppa:neovim-ppa/unstable -y
-sudo apt update
-sudo apt install make gcc ripgrep unzip neovim
-```
-</details>
-<details><summary>Debian Install Steps</summary>
-
-```
-sudo apt update
-sudo apt install make gcc ripgrep unzip git
-echo "deb https://deb.debian.org/debian unstable main" | sudo tee -a /etc/apt/sources.list
-sudo apt update
-sudo apt install -t unstable neovim
-```
-</details>
-<details><summary>Fedora Install Steps</summary>
-
-```
-sudo dnf install -y gcc make git ripgrep fd-find neovim
-```
-</details>
-
+- Neovim nightly (`bob use nightly`), `git`, `rg`, `fd`, a Nerd Font.
+- `tree-sitter` CLI for parser builds. Installed automatically through mason if
+  missing.
+- Optional: `lazygit`, `yazi`, `zellij`, and `imagemagick` + `mmdc` (mermaid)
+  for Snacks image rendering.
+- Mason installs LSPs and formatters. `:checkhealth` should be clean apart from
+  optional toolchains.

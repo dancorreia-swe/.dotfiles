@@ -1,18 +1,16 @@
 return {
   'obsidian-nvim/obsidian.nvim',
   version = '*', -- recommended, use latest release instead of latest commit
-  ft = 'markdown',
-  -- Replace the above line with this if you only want to load obsidian.nvim for markdown files in your vault:
-  -- event = {
-  --   -- If you want to use the home shortcut '~' here you need to call 'vim.fn.expand'.
-  --   -- E.g. "BufReadPre " .. vim.fn.expand "~" .. "/my-vault/*.md"
-  --   -- refer to `:h file-pattern` for more examples
-  --   "BufReadPre path/to/my-vault/*.md",
-  --   "BufNewFile path/to/my-vault/*.md",
-  -- },
+  -- Only load for notes inside a vault (or via the keymaps below), so markdown
+  -- files elsewhere don't trigger obsidian.nvim.
+  event = {
+    'BufReadPre ' .. vim.fn.expand '~' .. '/Obsidian/*.md',
+    'BufNewFile ' .. vim.fn.expand '~' .. '/Obsidian/*.md',
+  },
+  cmd = 'Obsidian',
   dependencies = {
     'nvim-lua/plenary.nvim',
-    'ibhagwan/fzf-lua',
+    'folke/snacks.nvim',
   },
   keys = {
     { '<leader>odt', '<CMD>Obsidian today<CR>', desc = 'Open Obsidian Today Note' },
@@ -33,42 +31,49 @@ return {
   opts = {
     workspaces = {
       {
-        name = 'personal',
-        path = '~/vaults/personal',
+        name = 'atlas',
+        path = '~/Obsidian/atlas',
         overrides = {
-          notes_subdir = 'slip-box',
+          daily_notes = {
+            folder = 'Calendar/Daily',
+          },
+          templates = {
+            folder = '_templates',
+          },
+          attachments = {
+            folder = '_attachments',
+          },
         },
       },
       {
-        name = 'work',
-        path = '~/vaults/work',
+        name = 'grimoire',
+        path = '~/Obsidian/grimoire',
+        overrides = {
+          new_notes_location = 'current_dir',
+          templates = {
+            folder = '99 - Templates',
+          },
+        },
       },
     },
 
     legacy_commands = false,
+    -- render-markdown.nvim draws checkboxes, links and headings; obsidian's own
+    -- UI layer would render on top of it (see :checkhealth render-markdown)
+    ui = { enable = false },
     new_notes_location = 'notes_subdir',
     daily_notes = {
-      -- Optional, if you keep daily notes in a separate directory.
-      folder = 'daily notes',
-      -- Optional, if you want to change the date format for the ID of daily notes.
       date_format = '%Y-%m-%d',
-      -- Optional, if you want to change the date format of the default alias of daily notes.
       alias_format = '%B %-d, %Y',
-      -- Optional, default tags to add to each new daily note created.
       default_tags = { 'daily-notes' },
-      -- Optional, if you want to automatically insert a template from your template directory like 'daily.md'
+      -- The vault's Daily template uses Templater syntax, which obsidian.nvim can't expand.
       template = nil,
     },
 
     log_level = vim.log.levels.INFO, -- see below for full list of options 👇
-    completion = {
-      blink = true,
-      min_chars = 2,
-      create_new = true,
-    },
 
     picker = {
-      name = 'snacks.pick',
+      name = 'snacks.picker',
       note_mappings = {
         new = '<C-x>',
         insert_link = '<C-l>',
@@ -80,15 +85,14 @@ return {
     },
 
     templates = {
-      folder = 'templates',
       date_format = '%Y-%m-%d',
       time_format = '%H:%M',
       substitutions = {
         titlecase = function(ctx)
           local title = ctx.partial_note and ctx.partial_note:display_name() or ''
-          return title:gsub('(%a)([%w]*)', function(first, rest)
+          return (title:gsub('(%a)([%w]*)', function(first, rest)
             return first:upper() .. rest:lower()
-          end)
+          end))
         end,
       },
     },

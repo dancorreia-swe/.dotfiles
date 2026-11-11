@@ -54,7 +54,10 @@ function M.execute(opts)
       params = params,
     }
   else
-    vim.list_extend(params, { title = opts.title })
+    if not client then
+      return GaVim.warn(('No LSP client available for `%s`'):format(opts.command))
+    end
+    params.title = opts.title
     return client:exec_cmd(params, { bufnr = buf }, opts.handler)
   end
 end

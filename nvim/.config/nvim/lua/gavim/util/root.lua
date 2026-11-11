@@ -159,11 +159,7 @@ function M.info()
   local first = true
   for _, root in ipairs(roots) do
     for _, path in ipairs(root.paths) do
-      lines[#lines + 1] = ('- [%s] `%s` **(%s)**'):format(
-        first and 'x' or ' ',
-        path,
-        type(root.spec) == 'table' and table.concat(root.spec, ', ') or root.spec
-      )
+      lines[#lines + 1] = ('- [%s] `%s` **(%s)**'):format(first and 'x' or ' ', path, type(root.spec) == 'table' and table.concat(root.spec, ', ') or root.spec)
       first = false
     end
   end
