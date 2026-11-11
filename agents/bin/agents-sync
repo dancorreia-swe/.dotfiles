@@ -8,7 +8,8 @@
 # hook_defs, the shared files and skills. Everything else in settings.json / config.toml is left alone.
 # Other-user targets (e.g. the VPS `agent` user) get copies, written as that user via `sudo -n -H -u`.
 set -euo pipefail
-SRC=$(cd "$(dirname "$0")/.." && pwd -P)
+self=$0; while [ -L "$self" ]; do t=$(readlink "$self"); case $t in /*) self=$t ;; *) self=$(dirname "$self")/$t ;; esac; done
+SRC=$(cd "$(dirname "$self")/.." && pwd -P)
 HOST=${AGENTS_HOST:-}; DRY=0; CHECK=0; LOCAL=""; PULL=0; ARGS=()
 for a in "$@"; do [ "$a" = --pull ] || ARGS+=("$a"); done
 while [ $# -gt 0 ]; do case $1 in
