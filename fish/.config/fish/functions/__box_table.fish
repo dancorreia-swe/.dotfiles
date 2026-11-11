@@ -10,6 +10,7 @@ function __box_table --description 'Every Mac command for the homelab boxes, one
         devbox openbot-env 'openbot-env devbox' '[list|set KEY|unset KEY|apply]' 'Env vars for OpenBot agents (values never shown)' \
         'list=names of the variables;set=set KEY from a hidden prompt;unset=remove KEY;apply=restart OpenBot to load them' \
         devbox openbot-edit 'openbot-edit devbox' '<path under /data>' 'Edit a file an OpenBot agent asked for' '' \
+        devbox agents-sync 'agents-sync devbox' '' 'Pull and apply the shared Claude/Codex setup now' '' \
         devbox ssh 'ssh devbox' '[command]' 'Shell on the devbox (user dan)' '' \
         vps update vps-update '[orca|all|cli|openbot]' 'Update now (default orca)' \
         'orca=Orca server .deb (default);all=everything, like the 04:45 nightly run;cli=Claude, Codex, T3 Code;openbot=OpenBot image, t3-tls Caddy, Node' \
@@ -19,6 +20,7 @@ function __box_table --description 'Every Mac command for the homelab boxes, one
         vps openbot-env 'openbot-env vps' '[list|set KEY|unset KEY|apply]' 'Env vars for OpenBot agents (values never shown)' \
         'list=names of the variables;set=set KEY from a hidden prompt;unset=remove KEY;apply=restart OpenBot to load them' \
         vps openbot-edit 'openbot-edit vps' '<path under /data>' 'Edit a file an OpenBot agent asked for' '' \
+        vps agents-sync 'agents-sync vps' '' 'Pull and apply the shared Claude/Codex setup now (dan + agent)' '' \
         vps ssh 'ssh vps' '[command]' 'Shell on the VPS (user dan; sudo -iu agent for the agents)' '' \
         forge update forge-update '[all|cts|check|host|<ctid>...]' 'Container and host maintenance (default all)' \
         'all=every CT + host report, Telegram, Kuma (default);cts=every CT, no report;check=list pending updates, change nothing;host=upgrade Proxmox itself (asks first)' \

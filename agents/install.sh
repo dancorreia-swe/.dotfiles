@@ -5,6 +5,9 @@ set -euo pipefail
 A=$(cd "$(dirname "$0")" && pwd -P)
 command -v jq >/dev/null || { echo "agents: jq is required" >&2; exit 1; }
 "$A/bin/agents-sync"
+if [ "$(uname -s)" != Darwin ]; then # boxes: same command name as the Mac's fish function
+  mkdir -p "$HOME/.local/bin"; ln -sfn "$A/bin/agents-sync" "$HOME/.local/bin/agents-sync"
+fi
 [ "${1:-}" = --no-timer ] && exit 0
 case "$(uname -s)" in
   Darwin)
