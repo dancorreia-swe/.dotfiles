@@ -1,7 +1,6 @@
 if status is-interactive
     # Cross-platform paths
     fish_add_path "$HOME/.local/share/bob/nvim-bin"
-    fish_add_path "$HOME/.local/bin"
 
     # macOS-specific paths
     if test (uname) = Darwin
@@ -9,23 +8,24 @@ if status is-interactive
         fish_add_path /opt/homebrew/bin
     end
 
-    oh-my-posh init fish --config $HOME/.config/ohmyposh/zen.toml | source
+    fish_add_path "$HOME/.local/bin"
+    fish_add_path "$HOME/.bun/bin"
 
-    zoxide init fish | source
-
-    # ASDF configuration code
+    # ASDF must follow Homebrew path setup so version-manager shims win.
     if test -z "$ASDF_DATA_DIR"
         set _asdf_shims "$HOME/.asdf/shims"
     else
         set _asdf_shims "$ASDF_DATA_DIR/shims"
     end
 
-    # Do not use fish_add_path (added in Fish 3.2) because it
-    # potentially changes the order of items in PATH
-    if not contains $_asdf_shims $PATH
-        set -gx --prepend PATH $_asdf_shims
-    end
+    # Do not use fish_add_path because it can change PATH ordering.
+    # Remove an inherited shim entry first, then place it ahead of Homebrew.
+    set -gx PATH $_asdf_shims (string match --invert -- $_asdf_shims $PATH)
     set --erase _asdf_shims
+
+    oh-my-posh init fish --config $HOME/.config/ohmyposh/zen.toml | source
+
+    zoxide init fish | source
 
     # Machine-specific config (not tracked in git)
     if test -f ~/.config/fish/conf.d/local.fish
@@ -57,3 +57,10 @@ source ~/.orbstack/shell/init2.fish 2>/dev/null || :
 
 # Mole shell completion
 set -l output (mole completion fish 2>/dev/null); and echo "$output" | source
+
+# >>> grok installer >>>
+fish_add_path $HOME/.grok/bin
+# <<< grok installer <<<
+
+# TeX Live (TinyTeX) - added by /setup for LaTeX CV/cover-letter compilation
+fish_add_path $HOME/Library/TinyTeX/bin/universal-darwin
