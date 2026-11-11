@@ -177,7 +177,6 @@ automatically-unhide-macos-hidden-apps = false
   ctrl-alt-shift-cmd-g = 'exec-and-forget open -b com.mitchellh.ghostty'  # (G)hostty
   ctrl-alt-shift-cmd-z = 'exec-and-forget open -b app.zen-browser.zen'    # (Z)en
   ctrl-alt-shift-cmd-w = 'exec-and-forget open -b net.whatsapp.WhatsApp'  # (W)hatsApp
-  ctrl-alt-shift-cmd-d = 'exec-and-forget open -b com.hnc.Discord'        # (D)iscord
   ctrl-alt-shift-cmd-n = 'exec-and-forget open -b md.obsidian'            # (N)otes - Obsidian
   ctrl-alt-shift-cmd-m = 'exec-and-forget open -b com.spotify.client'     # (M)usic - Spotify
   ctrl-alt-shift-cmd-t = 'exec-and-forget open -b com.TickTick.task.mac'  # (T)ickTick
