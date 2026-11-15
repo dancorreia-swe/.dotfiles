@@ -34,7 +34,7 @@
     "delegate-model-guard": { "event": "PreToolUse", "matcher": "mcp__t3-code__delegate_task", "timeout": 5 },
     "rotation-nudge": { "event": "PostToolUse", "matcher": "*", "timeout": 5 }
   },
-  "hooks": ["orca-model-guard", "delegate-model-guard", "rotation-nudge"],
+  "hooks": ["emulator-qa-guard", "orca-model-guard", "delegate-model-guard", "rotation-nudge"],
   "codex": {
     "model": "gpt-6.1-sol",
     "model_reasoning_effort": "high"
