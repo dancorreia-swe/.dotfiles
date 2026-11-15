@@ -20,7 +20,7 @@ endif
 # Package groups
 CORE := fish nvim wezterm ghostty zellij
 WM_MAC := aerospace aerospace-swipe sketchybar yabai skhd
-TOOLS := yazi fastfetch ohmyposh claude
+TOOLS := yazi fastfetch ohmyposh
 
 .PHONY: help install uninstall list deps bob fisher core tools wm all
 
@@ -90,7 +90,7 @@ core: ## Install core packages (fish, nvim, scripts, wezterm)
 	@echo "Installing core packages..."
 	@cd $(DOTFILES_DIR) && stow $(CORE)
 
-tools: ## Install tool packages (yazi, fastfetch, ohmyposh, claude)
+tools: ## Install tool packages (yazi, fastfetch, ohmyposh)
 	@echo "Installing tool packages..."
 	@cd $(DOTFILES_DIR) && stow $(TOOLS)
 

@@ -29,7 +29,7 @@ just deps               # Install dependencies (Brewfile/packages.txt)
 just bob                # Install bob + neovim nightly
 just fisher             # Install fisher and fish plugins
 just core               # Install core packages (fish, nvim, wezterm, ghostty, zellij)
-just tools              # Install tool packages (yazi, fastfetch, ohmyposh, claude)
+just tools              # Install tool packages (yazi, fastfetch, ohmyposh)
 just wm                 # Install window manager packages (macOS only)
 just all                # Full setup: deps + bob + stow + fisher
 just list               # List available packages
@@ -55,7 +55,6 @@ stow */             # Symlink all packages
 | `yazi` | File manager | All |
 | `fastfetch` | System info | All |
 | `ohmyposh` | Prompt theme | All |
-| `claude` | Claude CLI settings | All |
 | `jj` | Jujutsu VCS config | All |
 | `jjui` | Jujutsu TUI config | All |
 | `aerospace` | Tiling window manager | macOS |

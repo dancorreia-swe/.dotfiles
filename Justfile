@@ -10,7 +10,7 @@ pkg_install := if os == "macos" { "brew install" } else { `command -v yay >/dev/
 # Package groups
 core := "fish nvim wezterm ghostty zellij"
 wm_mac := "aerospace aerospace-swipe sketchybar yabai skhd"
-tools := "yazi fastfetch ohmyposh claude"
+tools := "yazi fastfetch ohmyposh"
 
 # List available recipes
 [private]
@@ -90,7 +90,7 @@ core:
     @echo "Installing core packages..."
     @cd {{dotfiles_dir}} && stow {{core}}
 
-# Install tool packages (yazi, fastfetch, ohmyposh, claude)
+# Install tool packages (yazi, fastfetch, ohmyposh)
 tools:
     @echo "Installing tool packages..."
     @cd {{dotfiles_dir}} && stow {{tools}}
