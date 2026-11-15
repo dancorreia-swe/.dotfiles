@@ -1,5 +1,5 @@
 {
-  "hooks": ["emulator-qa-guard", "orca-model-guard"],
+  "hooks": ["emulator-qa-guard", "orca-model-guard", "delegate-model-guard", "rotation-nudge"],
   "claude": {
     "enabledPlugins": { "cloudflare@cloudflare": false }
   },

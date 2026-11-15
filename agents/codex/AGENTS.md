@@ -6,7 +6,7 @@ When interacting with Cloudflare, use the cf CLI unless the project has a Wrangl
 - Orca coordinator waiting: after dispatching, end the turn and idle until Orca's "You have N orchestration message(s)…" nudge; then run one `check`. Never poll: no `sleep`/`until`/`for` loops around `orca` or `gh pr checks`, and no `check` without a nudge. Emulator tap loops belong to a QA helper, never the coordinator (`coordinating`).
 
 ## Context hygiene
-- Rotate, don't compact. Write the handoff and stop at the first of: ~190k tokens of context, any auto-compact warning, 25 orchestration rounds (Orca nudges processed, or T3 child results received), or a phase end (plan → build → verify, a wave boundary).
+- Rotate, don't compact. Write the handoff and stop at the first of: ~190k tokens of context, any auto-compact warning, 25 orchestration rounds (`orca orchestration check` plus `delegate_task` calls), or a phase end (plan → build → verify, a wave boundary).
 - Handoff file path and sections: `coordinating` skill §6. Then tell Daniel to start a fresh session (Orca: new terminal; T3: new thread) from "Read <file> in full, start at START HERE".
 - After a usage-limit reset or "continue where you left off", re-read the handoff file before the next step.
 
