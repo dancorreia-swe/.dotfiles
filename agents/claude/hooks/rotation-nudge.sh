@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # PostToolUse(*): nudges the main agent to write its handoff and rotate (CLAUDE.md, Context hygiene).
-# Fires once when context reaches ROTATE_TOKENS (default 190000), then every further 20k, and once
-# at ROTATE_ROUNDS orchestration rounds (default 25: `orca orchestration check` calls plus
-# delegate_task calls), then every further 10. Main agent only. ROTATION_NUDGE=0 disables.
+# Fires once when context reaches ROTATE_TOKENS (default 250000; 190000 for Codex, whose window is ~258k),
+# then every further 20k, and once at ROTATE_ROUNDS orchestration rounds (default 25: `orca orchestration
+# check` calls plus delegate_task calls), then every further 10. Main agent only. ROTATION_NUDGE=0 disables.
 set -u
 input=$(cat)
 [ "${ROTATION_NUDGE:-1}" = "0" ] && exit 0
@@ -18,7 +18,7 @@ if [[ $tool =~ ^mcp__t3[-_]code__delegate_task$ ]] ||
   rounds=$((rounds + 1))
 fi
 
-tokens=0
+tokens=0; default_t=250000
 tp=$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/null)
 if [ -n "$tp" ] && [ -r "$tp" ]; then
   # Claude transcript: assistant usage; Codex rollout: token_count events (input_tokens includes cached)
@@ -28,9 +28,10 @@ if [ -n "$tp" ] && [ -r "$tp" ]; then
     elif .type == "event_msg" and .payload.type == "token_count" then .payload.info.last_token_usage.input_tokens // empty
     else empty end' 2>/dev/null | tail -n 1)
   tokens=${tokens:-0}
+  tail -n 40 "$tp" | grep -q "\"type\":\"event_msg\"" && default_t=190000 # Codex rollout
 fi
 
-limit_t=${ROTATE_TOKENS:-190000}; limit_r=${ROTATE_ROUNDS:-25}
+limit_t=${ROTATE_TOKENS:-$default_t}; limit_r=${ROTATE_ROUNDS:-25}
 msg=""
 if [ "$tokens" -ge "$limit_t" ]; then
   band=$(( (tokens - limit_t) / 20000 + 1 ))
