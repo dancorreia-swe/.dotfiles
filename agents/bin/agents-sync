@@ -5,7 +5,7 @@
 #   --dry-run  print what would change (settings as a diff), change nothing
 #   --check    same, but exit 1 when anything drifted (for timers/alerts)
 # Owns only what the repo declares: listed settings keys (deep-merged; arrays unioned), the hooks named in
-# hook_defs, the shared files and skills. Everything else in settings.json / config.toml is left alone.
+# hook_defs, the shared files, and skills from skill_repos (npx skills). Everything else in settings.json / config.toml is left alone.
 # Other-user targets (e.g. the VPS `agent` user) get copies, written as that user via `sudo -n -H -u`.
 set -euo pipefail
 self=$0; while [ -L "$self" ]; do t=$(readlink "$self"); case $t in /*) self=$t ;; *) self=$(dirname "$self")/$t ;; esac; done
@@ -58,12 +58,22 @@ place() { # place <src> <rel>: link (or copy) a file/dir into $HOME/<rel>
   backup "$rel"; rm -rf "$dest"; mkdir -p "$(dirname "$dest")"
   if [ "$LOCAL" = link ]; then ln -s "$src" "$dest"; else cp -R "$src" "$dest"; fi
 }
-place_claude_skill() { # ~/.claude/skills/<s> must resolve to ~/.agents/skills/<s>
-  local s=$1 rel=".claude/skills/$1" want; want="$(cd "$HOME/.agents/skills" && pwd -P)/$1"
-  [ -L "$HOME/$rel" ] && [ "$(link_target "$HOME/$rel")" = "$want" ] && return 0
-  act "link ~/$rel -> ~/.agents/skills/$s"
-  [ "$DRY" = 1 ] && return 0
-  backup "$rel"; rm -rf "${HOME:?}/$rel"; mkdir -p "$HOME/.claude/skills"; ln -s "$HOME/.agents/skills/$s" "$HOME/$rel"
+sync_skill_repos() { # each published repo in skill_repos: npx skills add once, then npx skills update its skills
+  local lock="$HOME/.agents/.skill-lock.json" r names
+  for r in $(jq -r '.skill_repos // [] | .[]' <<<"$CFG"); do
+    names=$(jq -r --arg r "$r" '.skills // {} | to_entries[] | select(.value.source == $r) | .key' "$lock" 2>/dev/null || true)
+    if [ -z "$names" ]; then
+      act "install skills from $r"
+      [ "$DRY" = 1 ] && continue
+      command -v npx >/dev/null || { echo "agents-sync: npx not found, cannot install $r" >&2; continue; }
+      (cd "$HOME" && npx -y skills add "$r" -g -s '*' -a claude-code codex -y) >/dev/null 2>&1 </dev/null ||
+        echo "agents-sync: npx skills add $r failed" >&2
+    elif [ "$DRY" = 0 ] && command -v npx >/dev/null; then # not reported as drift: needs the network to know
+      # shellcheck disable=SC2086 # one skill name per word
+      (cd "$HOME" && npx -y skills update -g -y $names) >/dev/null 2>&1 </dev/null ||
+        echo "agents-sync: npx skills update ($r) failed" >&2
+    fi
+  done
 }
 
 merge_claude() {
@@ -116,11 +126,7 @@ sync_local() {
   for h in "$SRC"/claude/hooks/*.sh; do place "$h" ".claude/hooks/$(basename "$h")"; done
   for t in "$SRC"/claude/tools/*; do place "$t" ".claude/tools/$(basename "$t")"; done
   place "$SRC/codex/AGENTS.md" .codex/AGENTS.md
-  [ "$DRY" = 1 ] || mkdir -p "$HOME/.agents/skills"
-  for s in $(jq -r '.skills[]' <<<"$CFG"); do
-    place "$SRC/skills/$s" ".agents/skills/$s"
-    if [ -d "$HOME/.agents/skills" ]; then place_claude_skill "$s"; fi
-  done
+  sync_skill_repos
   merge_claude
   merge_codex
   [ "$DRIFT" = 1 ] || echo "  up to date"

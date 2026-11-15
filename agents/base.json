@@ -37,6 +37,6 @@
     "model": "gpt-6.1-sol",
     "model_reasoning_effort": "high"
   },
-  "skills": ["orca-workflow", "t3-workflow"],
+  "skill_repos": ["dancorreia-swe/skills"],
   "targets": [{ "user": "self" }]
 }

@@ -4,12 +4,11 @@ Git is the one-way source of truth. Edit here, commit, push; each host pulls hou
 
 ```
 base.json            shared settings: claude (settings.json keys), codex (config.toml top-level keys),
-                     hook_defs + hooks (managed hook scripts), skills, targets
+                     hook_defs + hooks (managed hook scripts), skill_repos, targets
 hosts/<host>.json    per-host overlay, deep-merged over base (arrays replace). Host = mac on macOS,
                      otherwise `hostname -s`; override with --host or AGENTS_HOST
 claude/              CLAUDE.md, hooks/*.sh, tools/* → ~/.claude/
 codex/AGENTS.md      → ~/.codex/AGENTS.md
-skills/<name>/       → ~/.agents/skills/<name>, plus ~/.claude/skills/<name> → that
 bin/agents-sync      the sync (--dry-run shows a diff; --check exits 1 on drift)
 install.sh           first run + hourly timer (launchd / systemd --user)
 ```
@@ -18,6 +17,11 @@ install.sh           first run + hourly timer (launchd / systemd --user)
 `permissions.deny` are unioned), so app-managed keys (Orca/ai-memory hooks, theme, statusLine, plugins, MCP)
 stay as they are. For hooks it removes and re-adds only commands under `~/.claude/hooks/<hook_defs name>.sh`.
 Removing a key from the repo does **not** remove it from hosts; delete it there by hand.
+
+**Skills** are published, not copied: each repo in `skill_repos` (e.g. the private `dancorreia-swe/skills`)
+is installed once with `npx skills add <repo> -g` (→ `~/.agents/skills`, linked into `~/.claude/skills`), then
+every run does `npx skills update -g` for that repo's skills. Edit skills in that repo, push, and every host
+picks them up within the hour (or now: `agents-sync all`). Project skills stay in each project's `skills-lock.json`.
 
 **Targets:** `self` gets symlinks into this checkout. Another user (VPS `agent`, which runs T3) gets copies,
 written as that user via `sudo -n -H -u <user>`, because home directories are 0700.

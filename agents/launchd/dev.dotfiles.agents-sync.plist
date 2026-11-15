@@ -10,7 +10,7 @@
     <string>__HOME__/.dotfiles/agents/bin/agents-sync</string>
   </array>
   <key>EnvironmentVariables</key>
-  <dict><key>PATH</key><string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string></dict>
+  <dict><key>PATH</key><string>__HOME__/.asdf/shims:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string></dict>
   <key>StartInterval</key><integer>3600</integer>
   <key>RunAtLoad</key><true/>
   <key>StandardOutPath</key><string>__HOME__/Library/Logs/agents-sync.log</string>
