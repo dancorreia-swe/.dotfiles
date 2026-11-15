@@ -38,5 +38,6 @@
     "model_reasoning_effort": "high"
   },
   "skill_repos": ["dancorreia-swe/skills"],
+  "skills_retired": ["orca-workflow", "t3-workflow"],
   "targets": [{ "user": "self" }]
 }
