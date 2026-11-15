@@ -24,8 +24,8 @@ function __box_table --description 'Every Mac command for the homelab boxes, one
         vps ssh 'ssh vps' '[command]' 'Shell on the VPS (user dan; sudo -iu agent for the agents)' '' \
         forge update forge-update '[all|cts|check|host|<ctid>...]' 'Container and host maintenance (default all)' \
         'all=every CT + host report, Telegram, Kuma (default);cts=every CT, no report;check=list pending updates, change nothing;host=upgrade Proxmox itself (asks first)' \
-        forge gaming forge-gaming '[status|on|off]' 'Bazzite gaming VM' \
-        'status=is it running, what is paused;on=make room and start Bazzite;off=shut Bazzite down, give memory back' \
+        forge gaming forge-gaming '[status|on|off|probe [live]]' 'Bazzite gaming VM' \
+        'status=is it running, what is paused;on=make room and start Bazzite;off=shut Bazzite down, give memory back;probe=stream/lag summary of the last session (probe live: follow it)' \
         forge ci forge-ci '[status|route|pause|resume]' 'GitHub Actions runners on forge' \
         'status=slots and jobs;route=where jobs run now (forge or GitHub);pause=stop taking jobs;resume=take jobs again' \
         forge ssh 'ssh forge' '[command]' 'Root shell on the Proxmox host (home network only)' ''
