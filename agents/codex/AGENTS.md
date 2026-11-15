@@ -7,7 +7,7 @@ When interacting with Cloudflare, use the cf CLI unless the project has a Wrangl
 
 ## Context hygiene
 - Rotate, don't compact. Write the handoff and stop at the first of: ~190k tokens of context, any auto-compact warning, 25 orchestration rounds (`orca orchestration check` plus `delegate_task` calls), or a phase end (plan → build → verify, a wave boundary).
-- Handoff file path and sections: `coordinating` skill §6. Then tell Daniel to start a fresh session (Orca: new terminal; T3: new thread) from "Read <file> in full, start at START HERE".
+- Handoff file path and sections: `coordinating` skill §6. Then launch the successor yourself (T3: new thread; Orca: new terminal; how: the skill's host map, "New owner") with the §6 pointer, reply with its link, and stop. This standing rule is Daniel's request for that new thread; ask him only if the launch fails.
 - After a usage-limit reset or "continue where you left off", re-read the handoff file before the next step.
 
 ## Worktrees and threads

@@ -43,6 +43,6 @@ if [ "$rounds" -ge "$limit_r" ]; then
 fi
 echo "$rounds $tok_band $round_band" > "$f"
 [ -z "$msg" ] && exit 0
-jq -n --arg c "Rotation nudge: $msg. Rotate, don't compact: finish the current step, write the handoff file (path and sections: coordinating skill section 6), then stop and tell Daniel to start a fresh session from it." \
+jq -n --arg c "Rotation nudge: $msg. Rotate, don't compact: finish the current step, write the handoff file (path and sections: coordinating skill section 6), then launch the successor session yourself with the section 6 pointer (host map, New owner), reply with its link, and stop." \
   '{hookSpecificOutput:{hookEventName:"PostToolUse",additionalContext:$c}}'
 exit 0
