@@ -12,8 +12,8 @@ f="${TMPDIR:-/tmp}/rotation-nudge-${sid}"
 { read -r rounds tok_band round_band < "$f"; } 2>/dev/null || { rounds=0; tok_band=0; round_band=0; }
 
 tool=$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)
-cmd=$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)
-if [ "$tool" = "mcp__t3-code__delegate_task" ] ||
+cmd=$(printf '%s' "$input" | jq -r '.tool_input | if type == "object" then (.command // .cmd // .input // "") else (. // "") end | if type == "array" then join(" ") else tostring end' 2>/dev/null)
+if [[ $tool =~ ^mcp__t3[-_]code__delegate_task$ ]] ||
    { [ "$tool" = "Bash" ] && printf '%s' "$cmd" | grep -Eq 'orca[[:space:]]+orchestration[[:space:]]+check'; }; then
   rounds=$((rounds + 1))
 fi
@@ -21,8 +21,12 @@ fi
 tokens=0
 tp=$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/null)
 if [ -n "$tp" ] && [ -r "$tp" ]; then
-  tokens=$(tail -n 40 "$tp" | jq -r 'select(.type == "assistant" and (.isSidechain | not)) | .message.usage
-    | select(. != null) | (.input_tokens // 0) + (.cache_read_input_tokens // 0) + (.cache_creation_input_tokens // 0)' 2>/dev/null | tail -n 1)
+  # Claude transcript: assistant usage; Codex rollout: token_count events (input_tokens includes cached)
+  tokens=$(tail -n 40 "$tp" | jq -r '
+    if .type == "assistant" and (.isSidechain | not) then .message.usage | select(. != null)
+      | (.input_tokens // 0) + (.cache_read_input_tokens // 0) + (.cache_creation_input_tokens // 0)
+    elif .type == "event_msg" and .payload.type == "token_count" then .payload.info.last_token_usage.input_tokens // empty
+    else empty end' 2>/dev/null | tail -n 1)
   tokens=${tokens:-0}
 fi
 

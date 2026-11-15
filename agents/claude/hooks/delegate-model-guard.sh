@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# PreToolUse(mcp__t3-code__delegate_task): a T3 delegation must name target.model,
+# PreToolUse(mcp__t3[-_]code__delegate_task): a T3 delegation must name target.model,
 # otherwise the child inherits the parent's model (often Opus). DELEGATE_MODEL_GUARD=0 disables.
 set -u
 input=$(cat)

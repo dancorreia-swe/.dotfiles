@@ -29,9 +29,9 @@
     }
   },
   "hook_defs": {
-    "emulator-qa-guard": { "event": "PreToolUse", "matcher": "Bash|mcp__t3-code__device_screenshot", "timeout": 5 },
+    "emulator-qa-guard": { "event": "PreToolUse", "matcher": "Bash|mcp__t3[-_]code__device_screenshot", "timeout": 5 },
     "orca-model-guard": { "event": "PreToolUse", "matcher": "Bash", "timeout": 5 },
-    "delegate-model-guard": { "event": "PreToolUse", "matcher": "mcp__t3-code__delegate_task", "timeout": 5 },
+    "delegate-model-guard": { "event": "PreToolUse", "matcher": "mcp__t3[-_]code__delegate_task", "timeout": 5 },
     "rotation-nudge": { "event": "PostToolUse", "matcher": "*", "timeout": 5 }
   },
   "hooks": ["emulator-qa-guard", "orca-model-guard", "delegate-model-guard", "rotation-nudge"],

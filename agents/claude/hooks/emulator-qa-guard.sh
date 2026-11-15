@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# PreToolUse(Bash|mcp__t3-code__device_screenshot) guard: keeps emulator/simulator tap loops out of the
+# PreToolUse(Bash|mcp__t3[-_]code__device_screenshot) guard: keeps emulator/simulator tap loops out of the
 # main agent's context. Counts Orca emulator input, simctl io, adb input, T3 agent-device input and
 # T3 device_screenshot calls. Main agent only (subagents carry agent_id and pass straight through).
 # Nudge at EMU_QA_NUDGE calls per session, deny from EMU_QA_BLOCK on. EMU_QA_GUARD=0 disables.
@@ -9,8 +9,8 @@ input=$(cat)
 agent_id=$(printf '%s' "$input" | jq -r '.agent_id // empty' 2>/dev/null)
 [ -n "$agent_id" ] && exit 0
 tool=$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)
-if [ "$tool" != "mcp__t3-code__device_screenshot" ]; then
-  cmd=$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)
+if ! [[ $tool =~ ^mcp__t3[-_]code__device_screenshot$ ]]; then # `-` in Claude, maybe `_` in Codex
+  cmd=$(printf '%s' "$input" | jq -r '.tool_input | if type == "object" then (.command // .cmd // .input // "") else (. // "") end | if type == "array" then join(" ") else tostring end' 2>/dev/null)
   printf '%s' "$cmd" | grep -Eq \
     -e 'orca[[:space:]]+emulator[[:space:]]+(tap|type|gesture|button|swipe)' \
     -e 'xcrun[[:space:]]+simctl[[:space:]]+io' \

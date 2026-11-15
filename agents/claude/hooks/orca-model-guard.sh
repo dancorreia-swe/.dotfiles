@@ -4,7 +4,7 @@
 set -u
 input=$(cat)
 [ "${ORCA_MODEL_GUARD:-1}" = "0" ] && exit 0
-cmd=$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)
+cmd=$(printf '%s' "$input" | jq -r '.tool_input | if type == "object" then (.command // .cmd // .input // "") else (. // "") end | if type == "array" then join(" ") else tostring end' 2>/dev/null)
 printf '%s' "$cmd" | grep -Eq 'orca[[:space:]]+(orchestration[[:space:]]+worker-start|worktree[[:space:]]+create|agent[[:space:]]+launch)' || exit 0
 printf '%s' "$cmd" | grep -Eq -- '--agent[= ]+["'"'"']?(claude|codex)\b' || exit 0
 printf '%s' "$cmd" | grep -Eq -- '--model[= ]' && exit 0

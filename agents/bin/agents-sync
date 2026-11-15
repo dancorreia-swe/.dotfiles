@@ -78,30 +78,41 @@ sync_skill_repos() { # each repo in skill_repos: npx skills add (installs new sk
     echo "agents-sync: npx skills remove failed" >&2
 }
 
+# jq def: drop our handlers (commands under <dir>/hooks/<hook_defs name>.sh), then append ours grouped by
+# event+matcher at the end, in a fixed order (Codex trusts hooks by position). App-managed entries stay put.
+HOOKS_JQ='def managed_hooks($cfg; $dir):
+  ("\\." + $dir + "/hooks/(" + ($cfg.hook_defs|keys|join("|")) + ")\\.sh") as $pat
+  | if .hooks == null and ($cfg.hooks|length) == 0 then . else
+      .hooks = ((.hooks // {})
+        | with_entries(.value |= (map(.hooks |= map(select((.command // "") | test($pat) | not)))
+                                 | map(select((.hooks|length) > 0))))
+        | with_entries(select((.value|length) > 0)))
+      | reduce ([$cfg.hooks[] as $h | $cfg.hook_defs[$h] + {name: $h}]
+                | group_by(.event + " " + .matcher)[]) as $g (.;
+          .hooks[$g[0].event] += [{matcher: $g[0].matcher, hooks: [$g[] |
+            {type: "command", command: ("bash \"$HOME/." + $dir + "/hooks/" + .name + ".sh\""), timeout: .timeout}]}])
+    end;'
+
+write_json() { # write_json <rel path> <live json> <new json> <label>: diff on --dry-run, else back up and write
+  local rel=$1 live=$2 new=$3
+  [ "$(jq -S . <<<"$live")" = "$(jq -S . <<<"$new")" ] && return 0
+  act "merge ~/$rel$4"
+  if [ "$DRY" = 1 ]; then diff <(jq -S . <<<"$live") <(jq -S . <<<"$new") | sed 's/^/    /' | cut -c1-200 || true; return 0; fi
+  backup "$rel"; mkdir -p "$(dirname "$HOME/$rel")"; printf '%s\n' "$new" > "$HOME/$rel"
+}
+read_json() { local v; v=$(cat "$HOME/$1" 2>/dev/null || true); [ -n "$v" ] || v='{}'; printf '%s' "$v"; }
+
 merge_claude() {
-  local f="$HOME/.claude/settings.json" live new
-  live=$(cat "$f" 2>/dev/null || echo '{}'); [ -n "$live" ] || live='{}'
-  new=$(jq --argjson cfg "$CFG" '
+  local live new
+  live=$(read_json .claude/settings.json)
+  new=$(jq --argjson cfg "$CFG" "$HOOKS_JQ"'
     def m($a; $b): if ($a|type) == "object" and ($b|type) == "object"
         then reduce ($b|keys_unsorted[]) as $k ($a; .[$k] = m($a[$k]; $b[$k]))
       elif ($a|type) == "array" and ($b|type) == "array" then $a + ($b - $a) else $b end;
-    ("\\.claude/hooks/(" + ($cfg.hook_defs|keys|join("|")) + ")\\.sh") as $pat
-    | m(.; $cfg.claude)
-    | if .hooks == null and ($cfg.hooks|length) == 0 then . else
-        .hooks = ((.hooks // {})
-          | with_entries(.value |= (map(.hooks |= map(select((.command // "") | test($pat) | not)))
-                                   | map(select((.hooks|length) > 0))))
-          | with_entries(select((.value|length) > 0)))
-        | reduce ([$cfg.hooks[] as $h | $cfg.hook_defs[$h] + {name: $h}]
-                  | group_by(.event + " " + .matcher)[]) as $g (.;
-            .hooks[$g[0].event] += [{matcher: $g[0].matcher, hooks: [$g[] |
-              {type: "command", command: ("bash \"$HOME/.claude/hooks/" + .name + ".sh\""), timeout: .timeout}]}])
-      end' <<<"$live")
-  [ "$(jq -S . <<<"$live")" = "$(jq -S . <<<"$new")" ] && return 0
-  act "merge ~/.claude/settings.json"
-  if [ "$DRY" = 1 ]; then diff <(jq -S . <<<"$live") <(jq -S . <<<"$new") | sed 's/^/    /' | cut -c1-200 || true; return 0; fi
-  backup .claude/settings.json; mkdir -p "$HOME/.claude"; printf '%s\n' "$new" > "$f"
+    m(.; $cfg.claude) | managed_hooks($cfg; "claude")' <<<"$live")
+  write_json .claude/settings.json "$live" "$new" ""
 }
+
 
 merge_codex() { # owned top-level keys only; tables untouched
   local f="$HOME/.codex/config.toml" kv new
@@ -122,15 +133,25 @@ merge_codex() { # owned top-level keys only; tables untouched
   backup .codex/config.toml; mkdir -p "$HOME/.codex"; printf '%s\n' "$new" > "$f"
 }
 
+merge_codex_hooks() { # same managed hooks into ~/.codex/hooks.json; Codex skips each until reviewed once in /hooks
+  local live new
+  live=$(read_json .codex/hooks.json)
+  new=$(jq --argjson cfg "$CFG" "$HOOKS_JQ"' managed_hooks($cfg; "codex")' <<<"$live")
+  write_json .codex/hooks.json "$live" "$new" " (new or changed hooks need one review: /hooks in Codex)"
+}
+
+
 sync_local() {
   echo "== $(id -un)@$HOST ($LOCAL)"
   place "$SRC/claude/CLAUDE.md" .claude/CLAUDE.md
   for h in "$SRC"/claude/hooks/*.sh; do place "$h" ".claude/hooks/$(basename "$h")"; done
+  for h in "$SRC"/claude/hooks/*.sh; do place "$h" ".codex/hooks/$(basename "$h")"; done
   for t in "$SRC"/claude/tools/*; do place "$t" ".claude/tools/$(basename "$t")"; done
   place "$SRC/codex/AGENTS.md" .codex/AGENTS.md
   sync_skill_repos
   merge_claude
   merge_codex
+  merge_codex_hooks
   [ "$DRIFT" = 1 ] || echo "  up to date"
   [ "$DRIFT" = 1 ] && [ "$DRY" = 0 ] && [ -d "$BK" ] && echo "  backups: $BK"
   [ "$CHECK" = 1 ] && [ "$DRIFT" = 1 ] && return 1
