@@ -68,8 +68,8 @@ sync_skill_repos() { # each repo in skill_repos: npx skills add (installs new sk
     (cd "$HOME" && npx -y skills add "$r" -g -s '*' -a claude-code codex -y) >/dev/null 2>&1 </dev/null ||
       echo "agents-sync: npx skills add $r failed" >&2
   done
-  retired=$(jq -r '.skills_retired // [] | .[]' <<<"$CFG" | while read -r n; do
-    jq -e --arg n "$n" '.skills[$n]' "$lock" >/dev/null 2>&1 && echo "$n"; done)
+  retired=$(jq -r '.skills_retired // [] | .[]' <<<"$CFG" | while read -r n; do # `if`, not `&&`: a failing last test would kill set -e copy runs
+    if jq -e --arg n "$n" '.skills[$n]' "$lock" >/dev/null 2>&1; then echo "$n"; fi; done)
   [ -z "$retired" ] && return 0
   act "remove retired skills: $(echo $retired)"
   [ "$DRY" = 1 ] && return 0
