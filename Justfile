@@ -106,6 +106,11 @@ wm:
         echo "Window manager packages are macOS only, skipping..."
     fi
 
+# Copy T3 Code themes into place (T3 ignores symlinked themes, so these are copied, not stowed)
+t3-themes:
+    @mkdir -p ~/.t3/userdata/themes
+    @cp -v {{dotfiles_dir}}/t3/themes/*.json ~/.t3/userdata/themes/
+
 # Full setup: deps + bob + stow + fisher
 all: deps bob install fisher
     @echo "Full installation complete!"
