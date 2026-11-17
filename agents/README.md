@@ -19,8 +19,10 @@ stay as they are. For hooks it removes and re-adds only commands under `~/.claud
 (in settings.json) and `~/.codex/hooks/<name>.sh` (in `~/.codex/hooks.json`; Codex hooks share Claude's input format). Codex runs a
 new or changed hook only after one review per host: `/hooks` in Codex. It keys trust by position, so ours stay last.
 Removing a key from the repo does **not** remove it from hosts; delete it there by hand.
+`delegate-model-guard`, `orca-model-guard` and `rotation-nudge` are wrappers that run the same-named hook from
+the `coordinating` skill (`~/.agents/skills/coordinating/hooks/`); edit those in the skills repo, not here.
 
-**Skills** are published, not copied: each repo in `skill_repos` (e.g. the private `dancorreia-swe/skills`)
+**Skills** are published, not copied: each repo in `skill_repos` (e.g. the public `dancorreia-swe/skills`)
 is installed once with `npx skills add <repo> -g` (→ `~/.agents/skills`, linked into `~/.claude/skills`), then
 every run does `npx skills update -g` for that repo's skills. Edit skills in that repo, push, and every host
 picks them up within the hour (or now: `agents-sync all`). Project skills stay in each project's `skills-lock.json`.

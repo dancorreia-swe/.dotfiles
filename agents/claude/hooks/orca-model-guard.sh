@@ -1,12 +1,7 @@
 #!/usr/bin/env bash
-# PreToolUse(Bash): an Orca launch of a claude/codex agent must name --model,
-# otherwise it inherits the default (Opus 5.5 high). ORCA_MODEL_GUARD=0 disables.
-set -u
-input=$(cat)
-[ "${ORCA_MODEL_GUARD:-1}" = "0" ] && exit 0
-cmd=$(printf '%s' "$input" | jq -r '.tool_input | if type == "object" then (.command // .cmd // .input // "") else (. // "") end | if type == "array" then join(" ") else tostring end' 2>/dev/null)
-printf '%s' "$cmd" | grep -Eq 'orca[[:space:]]+(orchestration[[:space:]]+worker-start|worktree[[:space:]]+create|agent[[:space:]]+launch)' || exit 0
-printf '%s' "$cmd" | grep -Eq -- '--agent[= ]+["'"'"']?(claude|codex)\b' || exit 0
-printf '%s' "$cmd" | grep -Eq -- '--model[= ]' && exit 0
-jq -n --arg r "Orca model guard: this launches a claude/codex agent without --model, so it would inherit the default (Opus 5.5, high effort). Size the task with the coordinating skill (~/.agents/skills/coordinating/SKILL.md, sections 1-2) and add --model (plus --effort), e.g. --model claude-sonnet-5-5 --effort medium for S/M builds, claude-haiku-5-5 --effort low for XS or re-checks, claude-opus-5-5 --effort high only for coordinators, planners, advisors and L work. Opus is fine when chosen on purpose; just name it." \
-  '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}'
+# Wrapper: runs the hook of the same name from the coordinating skill (dancorreia-swe/skills),
+# which agents-sync installs into ~/.agents/skills for every target user. The hook's code lives
+# only there; edit it in the skills repo. Skill not installed yet: allow (exit 0).
+h="$HOME/.agents/skills/coordinating/hooks/$(basename "$0")"
+[ -r "$h" ] || exit 0
+exec bash "$h"
